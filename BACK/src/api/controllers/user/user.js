@@ -1,10 +1,11 @@
-import User from '../models/User/User';
-import { handleControllerError as handleError } from '../../utils/errorHandlers';
+import User from '../../models/User/User';
+import { handleControllerError as handleError } from '../../../utils/errorHandlers';
+import { isAdmin, isCurrentUser } from '../../../utils/controllerhelpers';
 
 // * GET
 
 // ? ADMIN ONLY
-export const getUsers = async (req, res) => {
+export const geAllUsers = async (req, res) => {
   try {
     const users = await User.find();
 
@@ -15,19 +16,29 @@ export const getUsers = async (req, res) => {
       error,
       status: 500,
       method: 'GET',
-      controllerName: 'getUsers',
+      controllerName: 'getAllUsers',
       action: 'fetch users from DB'
     });
   }
 };
 
 export const getUserById = async (req, res) => {
+  const { id } = req.params;
+
+  const isOwner = isCurrentUser(req, id);
+  const isAdmin = isAdmin(req);
+
+  const projection = isAdmin
+    ? null
+    : isOwner
+    ? '-role -password'
+    : 'userName nickName country languageCode';
+
   try {
-    const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).select(projection).lean();
 
     if (!user) {
-      return handleCError({
+      return handleError({
         res,
         error: new Error('user not found'),
         status: 404,
@@ -36,12 +47,6 @@ export const getUserById = async (req, res) => {
         action: 'check if user exists in DB'
       });
     }
-
-    const owner = isCurrentUser(req, user._id);
-    const admin = isAdmin(req);
-
-    // Return full info only
-    const projection = isOwner || admin ? '' : PUBLIC_USER_FIELDS;
 
     return res.status(200).json(user);
   } catch (error) {
