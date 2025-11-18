@@ -1,10 +1,13 @@
 import { model } from 'mongoose';
-import { buildSchema, mediaRef, ref } from '../../../../utils/modelUtils';
-import { userRef } from '../../../../utils/modelUtils';
+import {
+  buildSchema,
+  mediaRef,
+  userRefRequired
+} from '../../../../utils/modelUtils';
 
 const WatchListsSchema = buildSchema(
   {
-    user: userRef,
+    user: userRefRequired,
 
     medias: [mediaRef]
   },

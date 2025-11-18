@@ -1,18 +1,21 @@
 import { model } from 'mongoose';
-import { buildSchema } from '../../../../utils/modelUtils';
-import { userRef, userRef_unrequired } from '../../../../utils/modelUtils';
+import {
+  buildSchema,
+  userRef,
+  userRefRequired
+} from '../../../../utils/modelUtils';
 
 const RequestsSchema = buildSchema(
   {
-    user: userRef,
+    user: userRefRequired,
 
     friends: {
-      sent: [userRef_unrequired],
-      received: [userRef_unrequired]
+      sent: [userRef],
+      received: [userRef]
     },
     sessions: {
-      sent: [userRef_unrequired],
-      received: [userRef_unrequired]
+      sent: [userRef],
+      received: [userRef]
     }
   },
   { timestamps: true, collection: 'requests' }

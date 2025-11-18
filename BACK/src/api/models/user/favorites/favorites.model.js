@@ -1,10 +1,13 @@
 import { model } from 'mongoose';
-import { mediaRef, userRef } from '../../../../utils/modelUtils';
-import { buildSchema, ref } from '../../../../utils/modelUtils';
+import {
+  buildSchema,
+  mediaRef,
+  userRefRequired
+} from '../../../../utils/modelUtils';
 
 const FavoritesSchema = buildSchema(
   {
-    user: userRef,
+    user: userRefRequired,
 
     genres: [String],
     medias: [mediaRef]

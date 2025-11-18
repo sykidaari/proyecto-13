@@ -1,10 +1,9 @@
 import { model } from 'mongoose';
-import { buildSchema } from '../../../../utils/modelUtils';
-import { userRef } from '../../../../utils/modelUtils';
+import { buildSchema, userRefRequired } from '../../../../utils/modelUtils';
 
 const SessionsListSchema = buildSchema(
   {
-    user: userRef,
+    user: userRefRequired,
 
     SessionsList: [ref('Session')]
   },

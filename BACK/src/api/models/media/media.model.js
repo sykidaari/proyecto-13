@@ -7,7 +7,7 @@ const MediaSchema = buildSchema(
 
     showType: requiredString,
 
-    title: [{ languageCode: { requiredString }, text: { requiredString } }],
+    title: { languageCode: requiredString, text: requiredString },
 
     imageSet: {
       verticalPoster: String,

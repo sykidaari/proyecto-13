@@ -1,6 +1,9 @@
 import { model } from 'mongoose';
-import { buildSchema, mediaRef } from '../../../utils/modelUtils';
-import { userRef } from '../user/utils';
+import {
+  buildSchema,
+  mediaRef,
+  userRefRequired
+} from '../../../utils/modelUtils';
 
 const SessionSchema = buildSchema(
   {
@@ -14,7 +17,7 @@ const SessionSchema = buildSchema(
 
     participants: [
       {
-        user: userRef,
+        user: userRefRequired,
 
         hearts: [mediaRef],
 

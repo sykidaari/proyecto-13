@@ -2,13 +2,16 @@ import { model } from 'mongoose';
 import { buildSchema, requiredString } from '../../../utils/modelUtils';
 import { hash } from 'bcrypt';
 
+// PUBLIC FIELDS HAVE SELECT:TRUE(DEFAULT, NOT WRITTEN) WHILE FIELDS THAT ARE MEANT FOR CURRENT-USER/ADMIN HAVE SELECT:FALSE AND ARE SELECTED IN CONTROLLERS WHEN NEEDED
 const UserSchema = buildSchema(
   {
     role: {
       ...requiredString,
       enum: ['admin', 'user'],
-      default: 'user'
+      default: 'user',
+      select: false
     },
+
     userName: {
       ...requiredString,
       unique: true,
@@ -20,6 +23,7 @@ const UserSchema = buildSchema(
       minlength: 3,
       maxlength: 30
     },
+
     emailAddress: {
       ...requiredString,
       unique: true,
@@ -27,7 +31,9 @@ const UserSchema = buildSchema(
       minlength: 3,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format']
     },
+
     nickName: { ...requiredString, minlength: 3, maxlength: 30 },
+
     password: {
       ...requiredString,
       minlength: 8,
@@ -35,24 +41,33 @@ const UserSchema = buildSchema(
       match: [
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
         'invalid password format. Password must contain at least one uppercase letter, one lowwercase letter and one number'
-      ]
+      ],
+      select: false
     },
+
     country: { ...requiredString },
-    languageCode: { ...requiredString, minlength: 2, maxlength: 2 },
+
+    languageCode: {
+      ...requiredString,
+      minlength: 2,
+      maxlength: 2,
+      select: false
+    },
 
     img: { type: String, trim: true },
 
     accountSettings: {
       // is sharedInfo shared only with friends or everyone
-      isPublicAccount: boolean,
+      isPublicAccount: { type: Boolean, default: true },
 
       // what info is shared with others
       isSharedInfo: {
-        watchList: Boolean,
-        favorites: Boolean,
-        friends: Boolean,
-        country: Boolean
-      }
+        watchList: { type: Boolean, default: true },
+        favorites: { type: Boolean, default: true },
+        friends: { type: Boolean, default: true },
+        country: { type: Boolean, default: true }
+      },
+      select: false
     }
   },
   'users'

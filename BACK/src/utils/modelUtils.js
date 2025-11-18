@@ -18,7 +18,7 @@ export const ref = (model, required = false) => ({
   required
 });
 
-export const userRef = ref('User', true);
-export const userRef_unrequired = ref('User');
+export const userRefRequired = ref('User', true);
+export const userRef = ref('User');
 
 export const mediaRef = ref('Media');

@@ -1,12 +1,15 @@
 import { model } from 'mongoose';
-import { buildSchema } from '../../../../utils/modelUtils';
-import { userRef, userRef_unrequired } from '../../../../utils/modelUtils';
+import {
+  buildSchema,
+  userRef,
+  userRefRequired
+} from '../../../../utils/modelUtils';
 
 const FriendsSchema = buildSchema(
   {
-    user: userRef,
+    user: userRefRequired,
 
-    friends: [userRef_unrequired]
+    friends: [userRef]
   },
   'friends'
 );
