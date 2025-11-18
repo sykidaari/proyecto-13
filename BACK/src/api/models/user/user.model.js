@@ -57,15 +57,11 @@ const UserSchema = buildSchema(
     img: { type: String, trim: true },
 
     accountSettings: {
-      // is sharedInfo shared only with friends or everyone
-      isPublicAccount: { type: Boolean, default: true },
-
       // what info is shared with others
       isSharedInfo: {
         watchList: { type: Boolean, default: true },
         favorites: { type: Boolean, default: true },
-        friends: { type: Boolean, default: true },
-        country: { type: Boolean, default: true }
+        friends: { type: Boolean, default: true }
       },
       select: false
     }

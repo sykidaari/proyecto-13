@@ -17,13 +17,3 @@ export const missingFields = (requiredKeys) => {
 //* USERS
 //!   ERRORS
 export const userNotFoundError = customError(404, 'user not found');
-
-//?   BOOLEANS
-export const isCurrentUser = (req, currentUserId) => {
-  if (!req.user) return false;
-  return String(req.user._id) === String(currentUserId);
-};
-
-export const isAdmin = (req) => {
-  return req.user && req.user.account.role === 'admin';
-};

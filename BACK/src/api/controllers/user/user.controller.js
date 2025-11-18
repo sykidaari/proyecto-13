@@ -5,8 +5,6 @@ import {
 } from '../../../utils/cloudinaryUtils';
 import {
   customError,
-  isAdmin,
-  isCurrentUser,
   missingFields,
   userNotFoundError
 } from '../../../utils/controllerUtils';
@@ -27,11 +25,15 @@ export const getAllUsers = async (req, res, next) => {
 };
 
 export const getUserById = async (req, res, next) => {
-  const { id } = req.params;
+  const {
+    params: { id },
+    isAdmin,
+    isCurrentUser
+  } = req;
 
-  const projection = isAdmin(req)
+  const projection = isAdmin
     ? '+role'
-    : isCurrentUser(req, id)
+    : isCurrentUser
     ? '+accountSettings +languageCode'
     : null;
 
@@ -131,10 +133,16 @@ export const loginUser = async (req, res, next) => {
 // * PUT
 
 export const uploadProfilePicture = async (req, res, next) => {
-  const { file, user } = req;
+  const {
+    params: { id },
+    file
+  } = req;
+
+  if (!file) return next(customError(400, 'no file uploaded'));
 
   try {
-    if (!file) return next(customError(400, 'no file uploaded'));
+    const user = await User.findById(id);
+    if (!user) return next(userNotFoundError);
 
     const imgUrl = await uploadToCloudinary(file.buffer, 'movieApp/users');
     if (user.img) await deleteFromCloudinary(user.img);
@@ -154,7 +162,6 @@ export const uploadProfilePicture = async (req, res, next) => {
 // DOES NOT HANDLE IMG!
 export const editUser = async (req, res, next) => {
   const { id } = req.params;
-
   try {
     // PROJECTION HAS ALL EXCEPT IMG AND ROLE
     const user = await User.findById(id).select(
