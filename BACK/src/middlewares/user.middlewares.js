@@ -1,11 +1,15 @@
-import User from '../api/models/user/user.model';
-import { verifyToken } from '../config/jwt';
-import { customError } from '../utils/controllerUtils';
+import User from '../api/models/user/user.model.js';
+import { verifyToken } from '../config/jwt.js';
+import { customError } from '../utils/controllerUtils.js';
+
+//! IMPORTANT NOTE ABOUT MIDDLEWARES
+//* setAccessFlags used to set req.isOwner, but that caused issues. When setAccessFlags runs in userRouter (src/routes/user/user.router.js), Express hasn’t reached the /:id route yet, so req.params.id does not exist. Since req.isOwner depends on req.params.id, the check was moved to a separate middleware (setIsOwner) that runs after the params are available. This ensures req.isOwner is set correctly.
+
+//! So be careful with these middlewares!!! Easy to accidentally break system
 
 export const setAccessFlags = async (req, res, next) => {
   req.user = null;
   req.isAdmin = false;
-  req.isCurrentUser = false;
 
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -17,32 +21,40 @@ export const setAccessFlags = async (req, res, next) => {
 
     req.user = user;
     req.isAdmin = user.role === 'admin';
-    req.isCurrentUser = req.params?.id === user._id.toString();
   } catch (err) {
     // ignores errors, continues, just keeps initial values
   }
-
   next();
 };
 
-export const isGuest = (req, res, next) => {
+export const setIsOwner = (req, res, next) => {
+  req.isOwner = req.user?._id?.toString() === req.params.id;
+  next();
+};
+
+export const requireGuest = (req, res, next) => {
   if (req.user) return next(customError(403, 'already logged in'));
   next();
 };
 
-export const isUser = () => {
+export const requireUser = (req, res, next) => {
   if (!req.user) return next(customError(401, "you're unauthorized"));
   next();
 };
 
-export const canEdit = (req, res, next) => {
-  if (!req.isCurrentUser && !req.isAdmin)
-    return next(customError(403, "you're unauthorized"));
+export const requireOwner = (req, res, next) => {
+  if (!req.isOwner) return next(customError(401, "you're unauthorized"));
   next();
 };
 
 export const requireAdmin = (req, res, next) => {
   if (!req.isAdmin) return next(customError(403, 'admin access required'));
+  next();
+};
+
+export const requireOwnerOrAdmin = (req, res, next) => {
+  if (!req.isOwner && !req.isAdmin)
+    return next(customError(403, "you're unauthorized"));
   next();
 };
 

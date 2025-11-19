@@ -1,7 +1,6 @@
 const errorHandler = (err, req, res, next) => {
   let status = err.status || 500;
   let message = err.message;
-
   // Duplicate key
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];
@@ -43,6 +42,7 @@ const errorHandler = (err, req, res, next) => {
   console.error('User:', req.user ? req.user._id : 'Not authenticated');
   console.error('Status:', status);
   console.error('Message:', message);
+  console.error(err);
 
   res.status(status).json({
     error: message,

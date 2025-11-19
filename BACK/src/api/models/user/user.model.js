@@ -1,8 +1,9 @@
-import { model } from 'mongoose';
-import { buildSchema, requiredString } from '../../../utils/modelUtils';
+import { model, Schema } from 'mongoose';
+import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 import { hash } from 'bcrypt';
 
 // PUBLIC FIELDS HAVE SELECT:TRUE(DEFAULT, NOT WRITTEN) WHILE FIELDS THAT ARE MEANT FOR CURRENT-USER/ADMIN HAVE SELECT:FALSE AND ARE SELECTED IN CONTROLLERS WHEN NEEDED
+
 const UserSchema = buildSchema(
   {
     role: {
@@ -57,13 +58,18 @@ const UserSchema = buildSchema(
     img: { type: String, trim: true },
 
     accountSettings: {
-      // what info is shared with others
-      isSharedInfo: {
-        watchList: { type: Boolean, default: true },
-        favorites: { type: Boolean, default: true },
-        friends: { type: Boolean, default: true }
-      },
-      select: false
+      type: new Schema(
+        {
+          isSharedInfo: {
+            watchList: { type: Boolean, default: true },
+            favorites: { type: Boolean, default: true },
+            friends: { type: Boolean, default: true }
+          }
+        },
+        { _id: false }
+      ),
+      select: false,
+      default: {}
     }
   },
   'users'

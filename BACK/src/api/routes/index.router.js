@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import userRouter from './users/user.router';
-import { setAccessFlags } from '../../middlewares/user.middlewares';
+import userRouter from './users/user.router.js';
+import { setAccessFlags } from '../../middlewares/user.middlewares.js';
 
 const mainRouter = Router();
 
-mainRouter.use('/user', [setAccessFlags], userRouter);
+mainRouter.use('/user', userRouter);
 
 export default mainRouter;

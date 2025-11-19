@@ -1,14 +1,15 @@
-import { generateToken } from '../../../config/jwt';
+import { generateToken } from '../../../config/jwt.js';
 import {
   deleteFromCloudinary,
   uploadToCloudinary
-} from '../../../utils/cloudinaryUtils';
+} from '../../../utils/cloudinaryUtils.js';
 import {
+  allowedEditFields,
   customError,
   missingFields,
   userNotFoundError
-} from '../../../utils/controllerUtils';
-import User from '../../models/user/user.model';
+} from '../../../utils/controllerUtils.js';
+import User from '../../models/user/user.model.js';
 import { compare as compareEncryption } from 'bcrypt';
 
 // * GET
@@ -91,6 +92,8 @@ export const registerUser = async (req, res, next) => {
     await user.save();
     const userObject = user.toObject();
 
+    delete userObject.password;
+
     const token = generateToken(userObject._id);
 
     return res.status(201).json({
@@ -164,21 +167,43 @@ export const editUser = async (req, res, next) => {
   const { id } = req.params;
   try {
     // PROJECTION HAS ALL EXCEPT IMG AND ROLE
-    const user = await User.findById(id).select(
-      '+password +languageCode +accountSettings -img'
-    );
+
+    const user = await User.findById(id);
     if (!user) return next(userNotFoundError);
 
     for (const [key, updateValue] of Object.entries(req.body)) {
-      user[key] = updateValue;
+      const isAllowed = allowedEditFields.includes(key);
+      if (isAllowed) user[key] = updateValue;
     }
 
     await user.save();
     const userObject = user.toObject();
+    delete userObject.password;
 
     return res.status(200).json({
       message: 'user updated successfully',
       user: userObject
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  const {
+    user,
+    body: { currentPassword, newPassword }
+  } = req;
+
+  try {
+    const matches = await compareEncryption(currentPassword, user.password);
+    if (!matches) return next(customError(400, 'incorrect password'));
+
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: 'password updated successfully'
     });
   } catch (err) {
     next(err);

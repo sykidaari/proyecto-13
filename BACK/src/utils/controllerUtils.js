@@ -17,3 +17,15 @@ export const missingFields = (requiredKeys) => {
 //* USERS
 //!   ERRORS
 export const userNotFoundError = customError(404, 'user not found');
+
+// CONSTS
+export const allowedEditFields = [
+  'userName',
+  'emailAddress',
+  'nickName',
+  'country',
+  'languageCode',
+  'isSharedInfo.watchList',
+  'isSharedInfo.favorites',
+  'isSharedInfo.friends'
+];
