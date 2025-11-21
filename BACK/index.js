@@ -4,7 +4,6 @@ import connectDB from './src/config/db.js';
 import cors from 'cors';
 import errorHandler from './src/middlewares/errorHandler.js';
 import mainRouter from './src/api/routes/index.router.js';
-import userRouter from './src/api/routes/users/user.router.js';
 
 const app = express();
 

@@ -19,6 +19,6 @@ const MediaSchema = buildSchema(
   'medias'
 );
 
-export const Media = model('Media', MediaSchema, 'medias');
+export const Media = model('Media', MediaSchema);
 
 export default Media;

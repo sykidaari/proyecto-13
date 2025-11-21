@@ -58,22 +58,6 @@ export const requireOwnerOrAdmin = (req, res, next) => {
   next();
 };
 
-export const checkDuplicateUser = async (req, res, next) => {
-  const { userName, emailAddress } = req.body;
-
-  try {
-    const duplicateUser = await User.findOne({
-      $or: [{ userName }, { emailAddress }]
-    }).lean();
-    if (duplicateUser)
-      return next(customError(409, 'username or email already exists'));
-
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
-
 //? OLD MIDDLEWARES BELOW, REPLACED BY setAccessFlags and rest
 // const verifiedUser = async (req, projection) => {
 //   const token = req.headers.authorization;

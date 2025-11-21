@@ -1,17 +1,13 @@
 import { model } from 'mongoose';
-import {
-  buildSchema,
-  userRef,
-  userRefRequired
-} from '../../../../utils/modelUtils';
+import { buildUserChildSchema, userRef } from '../../../../utils/modelUtils.js';
 
-const FriendsSchema = buildSchema(
+const FriendsSchema = buildUserChildSchema(
   {
-    user: userRefRequired,
-
     friends: [userRef]
   },
   'friends'
 );
 
-const Friends = model('Friends', FriendsSchema, 'friends');
+const Friends = model('Friends', FriendsSchema);
+
+export default Friends;

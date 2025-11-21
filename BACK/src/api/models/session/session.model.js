@@ -2,7 +2,7 @@ import { model } from 'mongoose';
 import {
   buildSchema,
   mediaRef,
-  userRefRequired
+  userRefRequiredUnique
 } from '../../../utils/modelUtils';
 
 const SessionSchema = buildSchema(
@@ -17,7 +17,7 @@ const SessionSchema = buildSchema(
 
     participants: [
       {
-        user: userRefRequired,
+        user: userRefRequiredUnique,
 
         hearts: [mediaRef],
 
@@ -33,6 +33,6 @@ const SessionSchema = buildSchema(
   'sessions'
 );
 
-const Session = model('Session', SessionSchema, 'sessions');
+const Session = model('Session', SessionSchema);
 
 export default Session;

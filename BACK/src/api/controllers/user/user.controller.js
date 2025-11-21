@@ -1,13 +1,17 @@
+import { startSession } from 'mongoose';
 import { generateToken } from '../../../config/jwt.js';
 import {
   deleteFromCloudinary,
   uploadToCloudinary
 } from '../../../utils/cloudinaryUtils.js';
 import {
-  allowedEditFields,
+  childModels,
+  createAdditionalUserDocs,
   customError,
+  deleteAdditionalUserDocs,
   missingFields,
-  userNotFoundError
+  userNotFoundError,
+  validateAndApplyUpdates
 } from '../../../utils/controllerUtils.js';
 import User from '../../models/user/user.model.js';
 import { compare as compareEncryption } from 'bcrypt';
@@ -83,15 +87,25 @@ export const registerUser = async (req, res, next) => {
   const missingFieldErr = missingFields(fields);
   if (missingFieldErr) return next(missingFieldErr);
 
+  let session;
   try {
-    const user = new User({
-      ...fields,
-      role: 'user'
+    session = await startSession();
+    session.startTransaction();
+
+    const [user] = await User.create([{ ...fields, role: 'user' }], {
+      session
     });
 
-    await user.save();
-    const userObject = user.toObject();
+    const additionalDocs = await createAdditionalUserDocs(
+      session,
+      user._id,
+      childModels
+    );
 
+    await session.commitTransaction();
+    session.endSession();
+
+    const userObject = user.toObject();
     delete userObject.password;
 
     const token = generateToken(userObject._id);
@@ -99,9 +113,12 @@ export const registerUser = async (req, res, next) => {
     return res.status(201).json({
       message: 'user registered successfully',
       user: userObject,
-      token
+      token,
+      additionalDocs
     });
   } catch (err) {
+    await session.abortTransaction().catch(() => {});
+    session.endSession();
     next(err);
   }
 };
@@ -162,19 +179,56 @@ export const uploadProfilePicture = async (req, res, next) => {
   }
 };
 
+export const deleteProfilePicture = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    if (!user) return next(userNotFoundError);
+
+    if (!user.img)
+      return next(customError(400, 'no profile picture to delete'));
+
+    await deleteFromCloudinary(user.img);
+
+    user.img = null;
+    await user.save();
+
+    return res.status(200).json({
+      message: 'profile picture deleted successfully'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // DOES NOT HANDLE IMG!
 export const editUser = async (req, res, next) => {
-  const { id } = req.params;
+  const {
+    params: { id },
+    isCurrentUser,
+    body
+  } = req;
+
+  const allowedEditFields = ['userName', 'nickName'];
+
+  if (isCurrentUser)
+    allowedEditFields.push(
+      'emailAddress',
+      'country',
+      'languageCode',
+      'isSharedInfo.watchList',
+      'isSharedInfo.favorites',
+      'isSharedInfo.friends'
+    );
+
   try {
     // PROJECTION HAS ALL EXCEPT IMG AND ROLE
 
     const user = await User.findById(id);
     if (!user) return next(userNotFoundError);
 
-    for (const [key, updateValue] of Object.entries(req.body)) {
-      const isAllowed = allowedEditFields.includes(key);
-      if (isAllowed) user[key] = updateValue;
-    }
+    const invalid = validateAndApplyUpdates(user, body, allowedEditFields);
+    if (invalid) return next(customError(400, `Invalid field: ${invalid}`));
 
     await user.save();
     const userObject = user.toObject();
@@ -191,11 +245,14 @@ export const editUser = async (req, res, next) => {
 
 export const changePassword = async (req, res, next) => {
   const {
-    user,
+    params: { id },
     body: { currentPassword, newPassword }
   } = req;
 
   try {
+    const user = await User.findById(id).select('+password');
+    if (!user) return next(userNotFoundError);
+
     const matches = await compareEncryption(currentPassword, user.password);
     if (!matches) return next(customError(400, 'incorrect password'));
 
@@ -212,16 +269,35 @@ export const changePassword = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   const { id } = req.params;
-  try {
-    const user = await User.findByIdAndDelete(id).lean();
-    if (!user) return next(userNotFoundError);
 
-    if (user.img) await deleteFromCloudinary(user.img);
+  let session;
+  try {
+    session = await startSession();
+    session.startTransaction();
+
+    const user = await User.findById(id).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      return next(userNotFoundError);
+    }
+
+    const img = user.img;
+
+    await deleteAdditionalUserDocs(session, id, childModels);
+
+    await User.deleteOne({ _id: id }).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    if (img) await deleteFromCloudinary(img);
 
     return res.status(200).json({
       message: 'user deleted successfully'
     });
   } catch (err) {
+    await session.abortTransaction().catch(() => {});
+    session.endSession();
     next(err);
   }
 };

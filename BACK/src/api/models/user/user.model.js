@@ -83,6 +83,6 @@ UserSchema.pre('save', async function () {
   this.password = await hash(this.password, 10);
 });
 
-const User = model('User', UserSchema, 'users');
+const User = model('User', UserSchema);
 
 export default User;

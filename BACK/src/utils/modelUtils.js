@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-// SCHEMA-BUILDER
+// SCHEMA-BUILDERS
 
 export const buildSchema = (fields, collection, extraOptions = {}) =>
   new Schema(fields, {
@@ -9,16 +9,27 @@ export const buildSchema = (fields, collection, extraOptions = {}) =>
     ...extraOptions
   });
 
+export const buildUserChildSchema = (fields, collection, extraOptions = {}) =>
+  buildSchema(
+    {
+      user: userRefRequiredUnique,
+      ...fields
+    },
+    collection,
+    extraOptions
+  );
+
 export const requiredString = { type: String, required: true, trim: true };
 
 // gets ref
-export const ref = (model, required = false) => ({
+export const ref = (model, required = false, unique = false) => ({
   type: Schema.Types.ObjectId,
   ref: model,
-  required
+  required,
+  unique
 });
 
-export const userRefRequired = ref('User', true);
+export const userRefRequiredUnique = ref('User', true, true);
 export const userRef = ref('User');
 
 export const mediaRef = ref('Media');

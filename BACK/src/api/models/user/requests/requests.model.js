@@ -1,14 +1,8 @@
 import { model } from 'mongoose';
-import {
-  buildSchema,
-  userRef,
-  userRefRequired
-} from '../../../../utils/modelUtils';
+import { buildUserChildSchema, userRef } from '../../../../utils/modelUtils.js';
 
-const RequestsSchema = buildSchema(
+const RequestsSchema = buildUserChildSchema(
   {
-    user: userRefRequired,
-
     friends: {
       sent: [userRef],
       received: [userRef]
@@ -21,6 +15,6 @@ const RequestsSchema = buildSchema(
   { timestamps: true, collection: 'requests' }
 );
 
-const Requests = model('Requests', RequestsSchema, 'requests');
+const Requests = model('Requests', RequestsSchema);
 
 export default Requests;

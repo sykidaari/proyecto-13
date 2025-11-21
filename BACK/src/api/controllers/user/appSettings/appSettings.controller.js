@@ -1,47 +1,60 @@
-import AppSettings from '../../../models/user/appSettings/appsettings.model';
+import { findOrCreateByUser } from '../../../../utils/controllerUtils.js';
+import AppSettings from '../../../models/user/appSettings/appsettings.model.js';
 
 //* GET
 export const getAppSettings = async (req, res, next) => {
   const { _id: id } = req.user;
 
   try {
-    let settings = await AppSettings.findOne({
-      user: id
-    }).lean();
+    const { doc: appSettings, status } = await findOrCreateByUser(
+      AppSettings,
+      id,
+      {
+        lean: true
+      }
+    );
 
-    if (!settings) settings = await AppSettings.create({ user: id });
+    return res.status(status).json(appSettings);
   } catch (err) {
     next(err);
   }
 };
 
-export const editAppSettings = async () => {
+//* PATCH
+export const editAppSettings = async (req, res, next) => {
   const {
     user: { _id: id },
     body: { reset, ...updates }
   } = req;
 
+  const allowedTopLevelFields = ['reset', 'syncedAcrossDevices', 'settings'];
+  for (const key of Object.keys(req.body)) {
+    if (!allowedTopLevelFields.includes(key)) {
+      return next(customError(400, `Invalid field: ${key}`));
+    }
+  }
+
   const { syncedAcrossDevices, ...settings } = updates;
 
   try {
-    let appSettings = await AppSettings.findOne({
-      user: id
-    });
-
-    if (!appSettings)
-      appSettings = await AppSettings.create({
-        user: id
-      });
+    const { doc: appSettings } = await findOrCreateByUser(AppSettings, id);
 
     if (syncedAcrossDevices === false || reset) {
       if (reset) appSettings.syncedAcrossDevices = true;
 
       appSettings.settings = {};
+
       await appSettings.save();
-      return res.status(200).json(appSettings);
+      const settingsObject = appSettings.toObject();
+      return res.status(200).json(settingsObject);
     }
 
-    Object.assign(appSettings, settings);
+    if (syncedAcrossDevices !== undefined) {
+      appSettings.syncedAcrossDevices = syncedAcrossDevices;
+    }
+
+    appSettings.settings = settings;
+
     await appSettings.save();
     const settingsObject = appSettings.toObject();
 

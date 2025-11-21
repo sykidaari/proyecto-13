@@ -1,19 +1,16 @@
 import { model } from 'mongoose';
 import {
-  buildSchema,
-  mediaRef,
-  userRefRequired
-} from '../../../../utils/modelUtils';
+  buildUserChildSchema,
+  mediaRef
+} from '../../../../utils/modelUtils.js';
 
-const WatchListsSchema = buildSchema(
+const WatchListsSchema = buildUserChildSchema(
   {
-    user: userRefRequired,
-
     medias: [mediaRef]
   },
   'watchLists'
 );
 
-const WatchLists = model('WatchLists', WatchListsSchema, 'watchLists');
+const WatchLists = model('WatchLists', WatchListsSchema);
 
 export default WatchLists;

@@ -1,20 +1,19 @@
 import { model } from 'mongoose';
 import {
   buildSchema,
+  buildUserChildSchema,
   mediaRef,
-  userRefRequired
-} from '../../../../utils/modelUtils';
+  userRefRequiredUnique
+} from '../../../../utils/modelUtils.js';
 
-const FavoritesSchema = buildSchema(
+const FavoritesSchema = buildUserChildSchema(
   {
-    user: userRefRequired,
-
     genres: [String],
     medias: [mediaRef]
   },
   'favorites'
 );
 
-const Favorites = model('Favorites', FavoritesSchema, 'favorites');
+const Favorites = model('Favorites', FavoritesSchema);
 
 export default Favorites;

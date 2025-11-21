@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import userRouter from './users/user.router.js';
-import { setAccessFlags } from '../../middlewares/user.middlewares.js';
+import userRouter from './user/user.router.js';
 
 const mainRouter = Router();
 
