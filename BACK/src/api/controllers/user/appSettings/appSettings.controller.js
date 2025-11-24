@@ -1,35 +1,19 @@
-import { findOrCreateByUser } from '../../../../utils/controllerUtils.js';
-import AppSettings from '../../../models/user/appSettings/appsettings.model.js';
+import { getUserChild } from '../../userChildren.controller.js';
 
-//* GET
-export const getAppSettings = async (req, res, next) => {
-  const { _id: id } = req.user;
-
-  try {
-    const { doc: appSettings, status } = await findOrCreateByUser(
-      AppSettings,
-      id,
-      {
-        lean: true
-      }
-    );
-
-    return res.status(status).json(appSettings);
-  } catch (err) {
-    next(err);
-  }
-};
+//*
+export const getAppSettings = getUserChild;
 
 //* PATCH
 export const editAppSettings = async (req, res, next) => {
   const {
-    user: { _id: id },
+    doc: appSettings,
+    status,
     body: { reset, ...updates }
   } = req;
 
-  const allowedTopLevelFields = ['reset', 'syncedAcrossDevices', 'settings'];
+  const allowed = ['reset', 'syncedAcrossDevices', 'settings'];
   for (const key of Object.keys(req.body)) {
-    if (!allowedTopLevelFields.includes(key)) {
+    if (!allowed.includes(key)) {
       return next(customError(400, `Invalid field: ${key}`));
     }
   }
@@ -37,16 +21,14 @@ export const editAppSettings = async (req, res, next) => {
   const { syncedAcrossDevices, ...settings } = updates;
 
   try {
-    const { doc: appSettings } = await findOrCreateByUser(AppSettings, id);
-
-    if (syncedAcrossDevices === false || reset) {
+    if (reset || syncedAcrossDevices === false) {
       if (reset) appSettings.syncedAcrossDevices = true;
 
       appSettings.settings = {};
 
       await appSettings.save();
       const settingsObject = appSettings.toObject();
-      return res.status(200).json(settingsObject);
+      return res.status(status).json(settingsObject);
     }
 
     if (syncedAcrossDevices !== undefined) {
@@ -58,7 +40,7 @@ export const editAppSettings = async (req, res, next) => {
     await appSettings.save();
     const settingsObject = appSettings.toObject();
 
-    return res.status(200).json(settingsObject);
+    return res.status(status).json(settingsObject);
   } catch (err) {
     next(err);
   }

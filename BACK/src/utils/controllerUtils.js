@@ -28,6 +28,10 @@ export const validateAndApplyUpdates = (doc, reqFields, allowed) => {
   }
 };
 
+export const listContainsValue = (list, value) => {
+  list.some((listItem) => listItem.toString() === value.toString());
+};
+
 //!   ERRORS
 export const customError = (status, message) => {
   const err = new Error(message);
@@ -76,23 +80,4 @@ export const deleteAdditionalUserDocs = async (session, id, modelsArray) => {
   for (const Model of modelsArray) {
     await Model.deleteOne({ user: id }).session(session);
   }
-};
-
-export const findOrCreateByUser = async (Model, id, { lean = false }) => {
-  let doc;
-
-  doc = lean
-    ? await Model.findOne({
-        user: id
-      }).lean()
-    : await Model.findOne({
-        user: id
-      });
-
-  if (!doc) {
-    const created = await Model.create({ user: id });
-    doc = lean ? created.toObject() : created;
-    return { doc, status: 201 };
-  }
-  return { doc, status: 200 };
 };

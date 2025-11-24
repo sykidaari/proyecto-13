@@ -1,9 +1,7 @@
 import { model } from 'mongoose';
 import {
-  buildSchema,
   buildUserChildSchema,
-  mediaRef,
-  userRefRequiredUnique
+  mediaRef
 } from '../../../../utils/modelUtils.js';
 
 const FavoritesSchema = buildUserChildSchema(

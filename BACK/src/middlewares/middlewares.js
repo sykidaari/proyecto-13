@@ -10,34 +10,30 @@ const isEmptyError = customError(400, 'request body required');
 
 //* GENERAL
 export const validateBody = (allowed) => (req, res, next) => {
-  try {
-    const { body } = req;
+  const { body } = req;
 
-    if (isEmpty(body)) {
-      return next(isEmptyError);
-    }
-
-    for (const [key, value] of Object.entries(body)) {
-      if (allowed.includes(key)) continue;
-
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        for (const nestedKey of Object.keys(value)) {
-          const path = `${key}.${nestedKey}`;
-
-          if (!allowed.includes(path)) {
-            return next(customError(400, `Invalid field: ${path}`));
-          }
-        }
-        continue;
-      }
-
-      return next(customError(400, `Invalid field: ${key}`));
-    }
-
-    next();
-  } catch (err) {
-    next(err);
+  if (isEmpty(body)) {
+    return next(isEmptyError);
   }
+
+  for (const [key, value] of Object.entries(body)) {
+    if (allowed.includes(key)) continue;
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      for (const nestedKey of Object.keys(value)) {
+        const path = `${key}.${nestedKey}`;
+
+        if (!allowed.includes(path)) {
+          return next(customError(400, `Invalid field: ${path}`));
+        }
+      }
+      continue;
+    }
+
+    return next(customError(400, `Invalid field: ${key}`));
+  }
+
+  next();
 };
 
 // FOR CASES WHERE VALIDATION MUST BE DONE IN CONTROLLER
@@ -58,6 +54,39 @@ export const checkDuplicateUser = async (req, res, next) => {
     if (duplicateUser)
       return next(customError(409, 'username or email already exists'));
 
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+//* USER CHILDREN
+export const findOrCreateByUser = (Model) => async (req, res, next) => {
+  const { id } = req.params;
+
+  const isGet = req.method === 'GET';
+  let doc;
+  let status = 200;
+
+  try {
+    doc = isGet
+      ? await Model.findOne({
+          user: id
+        }).lean()
+      : await Model.findOne({
+          user: id
+        });
+
+    if (!doc) {
+      const created = await Model.create({ user: id });
+      doc = isGet ? created.toObject() : created;
+
+      // ONLY GET GIVES 201 if created
+      if (isGet) status = 201;
+    }
+
+    req.doc = doc;
+    req.status = status;
     next();
   } catch (err) {
     next(err);

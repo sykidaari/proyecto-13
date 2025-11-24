@@ -21,66 +21,67 @@ import {
   uploadProfilePicture
 } from '../../controllers/user/user.controller.js';
 import { Router } from 'express';
-import appSettingsRouter from './appSettings/appSettings.router.js';
 import {
   checkDuplicateUser,
   requireReqBody,
   validateBody
 } from '../../../middlewares/middlewares.js';
+import userChildrenRouter from './userChildren.router.js';
 
 const userRouter = Router();
 
-userRouter.use([setAccessFlags]);
-userRouter.use('/:id', [setIsOwner]);
+userRouter
 
-userRouter.get('/', [requireAdmin], getAllUsers);
-userRouter.get('/:id', [requireUser], getUserById);
-userRouter.get('/search', [requireUser], searchUsers);
+  // GENERAL MIDDLEWARES
+  .use([setAccessFlags])
+  .use('/:id', [setIsOwner])
 
-userRouter.post(
-  '/register',
-  [
-    requireGuest,
-    validateBody([
-      'userName',
-      'emailAddress',
-      'nickName',
-      'password',
-      'country',
-      'languageCode'
-    ]),
-    checkDuplicateUser
-  ],
-  registerUser
-);
-userRouter.post(
-  '/login',
-  [requireGuest, validateBody(['userName', 'emailAddress', 'password'])],
-  loginUser
-);
+  .get('/', [requireAdmin], getAllUsers)
+  .get('/:id', [requireUser], getUserById)
+  .get('/search', [requireUser], searchUsers)
 
-userRouter.patch(
-  '/:id/password',
-  [requireOwner, validateBody(['currentPassword', 'newPassword'])],
-  changePassword
-);
-userRouter.patch(
-  '/:id/img',
-  [requireOwner, uploadMemory.single('img')],
-  uploadProfilePicture
-);
+  .post(
+    '/register',
+    [
+      requireGuest,
+      validateBody([
+        'userName',
+        'emailAddress',
+        'nickName',
+        'password',
+        'country',
+        'languageCode'
+      ]),
+      checkDuplicateUser
+    ],
+    registerUser
+  )
+  .post(
+    '/login',
+    [requireGuest, validateBody(['userName', 'emailAddress', 'password'])],
+    loginUser
+  )
 
-// BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC
-userRouter.patch(
-  '/:id',
-  [requireOwnerOrAdmin, requireReqBody, checkDuplicateUser],
-  editUser
-);
+  .patch(
+    '/:id/password',
+    [requireOwner, validateBody(['currentPassword', 'newPassword'])],
+    changePassword
+  )
+  .patch(
+    '/:id/img',
+    [requireOwner, uploadMemory.single('img')],
+    uploadProfilePicture
+  )
+  .patch(
+    // BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC
+    '/:id',
+    [requireOwnerOrAdmin, requireReqBody, checkDuplicateUser],
+    editUser
+  )
 
-userRouter.delete('/:id/img', [requireOwnerOrAdmin], deleteProfilePicture);
-userRouter.delete('/:id', [requireOwnerOrAdmin], deleteUser);
+  .delete('/:id/img', [requireOwnerOrAdmin], deleteProfilePicture)
+  .delete('/:id', [requireOwnerOrAdmin], deleteUser)
 
-//* CHILD ROUTERS
-userRouter.use('/:id/appSettings', [requireOwnerOrAdmin], appSettingsRouter);
+  .use('/:id', userChildrenRouter);
 
 export default userRouter;
