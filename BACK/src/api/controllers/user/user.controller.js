@@ -1,4 +1,3 @@
-import { startSession } from 'mongoose';
 import { generateToken } from '../../../config/jwt.js';
 import {
   deleteFromCloudinary,
@@ -15,6 +14,7 @@ import {
 } from '../../../utils/controllerUtils.js';
 import User from '../../models/user/user.model.js';
 import { compare as compareEncryption } from 'bcrypt';
+import withTransaction from '../../../utils/transactionWrapper.js';
 
 // * GET
 
@@ -87,23 +87,20 @@ export const registerUser = async (req, res, next) => {
   const missingFieldErr = missingFields(fields);
   if (missingFieldErr) return next(missingFieldErr);
 
-  let session;
   try {
-    session = await startSession();
-    session.startTransaction();
+    const { user, additionalDocs } = await withTransaction(async (session) => {
+      const [user] = await User.create([{ ...fields, role: 'user' }], {
+        session
+      });
 
-    const [user] = await User.create([{ ...fields, role: 'user' }], {
-      session
+      const additionalDocs = await createAdditionalUserDocs(
+        session,
+        user._id,
+        childModels
+      );
+
+      return { user, additionalDocs };
     });
-
-    const additionalDocs = await createAdditionalUserDocs(
-      session,
-      user._id,
-      childModels
-    );
-
-    await session.commitTransaction();
-    session.endSession();
 
     const userObject = user.toObject();
     delete userObject.password;
@@ -117,8 +114,6 @@ export const registerUser = async (req, res, next) => {
       additionalDocs
     });
   } catch (err) {
-    await session.abortTransaction().catch(() => {});
-    session.endSession();
     next(err);
   }
 };
@@ -270,25 +265,19 @@ export const changePassword = async (req, res, next) => {
 export const deleteUser = async (req, res, next) => {
   const { id } = req.params;
 
-  let session;
   try {
-    session = await startSession();
-    session.startTransaction();
+    const { img } = await withTransaction(async (session) => {
+      const user = await User.findById(id).session(session);
+      if (!user) throw userNotFoundError;
 
-    const user = await User.findById(id).session(session);
-    if (!user) {
-      await session.abortTransaction();
-      return next(userNotFoundError);
-    }
+      const img = user.img;
 
-    const img = user.img;
+      await deleteAdditionalUserDocs(session, id, childModels);
 
-    await deleteAdditionalUserDocs(session, id, childModels);
+      await User.deleteOne({ _id: id }).session(session);
 
-    await User.deleteOne({ _id: id }).session(session);
-
-    await session.commitTransaction();
-    session.endSession();
+      return { img };
+    });
 
     if (img) await deleteFromCloudinary(img);
 
@@ -296,8 +285,6 @@ export const deleteUser = async (req, res, next) => {
       message: 'user deleted successfully'
     });
   } catch (err) {
-    await session.abortTransaction().catch(() => {});
-    session.endSession();
     next(err);
   }
 };
