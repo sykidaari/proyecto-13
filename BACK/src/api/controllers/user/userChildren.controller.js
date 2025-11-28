@@ -1,15 +1,29 @@
-import { listContainsValue } from '../../utils/controllerUtils.js';
+import { listContainsValue } from '../../../utils/controllerUtils.js';
 
 //* GENERIC CONTROLLERS FOR USER CHILDREN
 
-export const getUserChild = async (req, res, next) => {
-  const { doc, status } = req;
-  try {
-    return res.status(status).json(doc);
-  } catch (err) {
-    next(err);
-  }
-};
+//* GET
+
+export const getUserChild =
+  ({ populateFields = [] } = {}) =>
+  async (req, res, next) => {
+    const { doc, status } = req;
+    try {
+      for (const field of populateFields) {
+        await doc.populate(field);
+        // each field can be either a string or an object, mongoose populate allows it
+        // https://mongoosejs.com/docs/populate.html
+      }
+
+      const docObject = doc.toObject();
+
+      return res.status(status).json(docObject);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+//* PATCH
 
 export const addItemToUserChildList =
   (field, item) => async (req, res, next) => {
@@ -18,7 +32,7 @@ export const addItemToUserChildList =
     const value = body[item];
 
     if (listContainsValue(list, value))
-      return next(customError(409, `${item}:${value} already in ${field}`));
+      throw customError(409, `${item}:${value} already in ${field}`);
 
     list.push(value);
 
@@ -41,11 +55,9 @@ export const removeItemFromUserChildList =
     const value = body[item];
 
     if (!listContainsValue(list, value))
-      return next(
-        customError(
-          400,
-          `${item}:${value} doesn't exist in ${field},so it can't be removed`
-        )
+      throw customError(
+        400,
+        `${item}:${value} doesn't exist in ${field},so it can't be removed`
       );
 
     list.pull(value);

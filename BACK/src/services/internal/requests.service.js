@@ -1,8 +1,37 @@
-import Requests from '../../api/models/user/requests/requests.model';
-import { customError, listContainsValue } from '../../utils/controllerUtils';
-import withTransaction from '../../utils/transactionWrapper';
+import Requests from '../../api/models/user/requests/requests.model.js';
+import { customError } from '../../utils/controllerUtils.js';
+import withTransaction from '../../utils/transactionWrapper.js';
+
+//? EXPLANATION:
+// sender (senderId, senderDoc, etc.) is always the user who has originally made the request
+// recipient (recipientId, recipientDoc, etc.) is always the user who has received the request
+//
+// in controllers, when calling the service functions, it is important to keep this in mind.
+
+// EXAMPLE:
+// We have user A and user B:
+
+// user A sends request:
+// await requestsService.sendRequest({
+//   senderId: //* user A's id, --> this is the current user
+//   recipientId: //! user B's id,
+//   ...
+// });
+
+// user A accepts request:
+// await requestsService.acceptRequest({
+//   senderId: //! user B's id,
+//   recipientId: //* user A's id,  --> this is the current user
+//   ...
+// });
+
+// As we can see, where we place the current user (sender or recipient) changes depending on their role in the action, still //? current user is always the one who starts the action through a REST operation
 
 //* HELPERS EXCLUSIVE TO THIS SERVICE
+
+const listContainsUser = (list, userId) =>
+  list.some((item) => item.user?.toString() === userId.toString());
+
 const findRequestsDocsAndFields = async (
   senderId,
   recipientId,
@@ -70,18 +99,21 @@ const sendRequest = async ({ senderId, recipientId, type }, session) =>
 
     //* If for whatever reason request only exists on one user, it's treated as nonexisting so it can be made again to correct it
     if (
-      listContainsValue(senderSentField, recipientId) &&
-      listContainsValue(recipientReceivedField, senderId)
+      listContainsUser(senderSentField, recipientId) &&
+      listContainsUser(recipientReceivedField, senderId)
     )
       throw customError(409, "request already exists, can't send");
 
-    senderSentField.addToSet(recipientId);
-    recipientReceivedField.addToSet(senderId);
+    senderSentField.addToSet({ user: recipientId });
+    recipientReceivedField.addToSet({ user: senderId });
 
     await senderDoc.save({ session });
     await recipientDoc.save({ session });
 
-    return { senderDoc, recipientDoc };
+    return {
+      senderDoc: senderDoc.toObject(),
+      recipientDoc: recipientDoc.toObject()
+    };
   }, session);
 
 const acceptRequest = async (
@@ -93,13 +125,13 @@ const acceptRequest = async (
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
     if (
-      !listContainsValue(senderSentField, recipientId) ||
-      !listContainsValue(recipientReceivedField, senderId)
+      !listContainsUser(senderSentField, recipientId) ||
+      !listContainsUser(recipientReceivedField, senderId)
     )
       throw customError(404, "request doesn't exist, can't accept");
 
-    senderSentField.pull(recipientId);
-    recipientReceivedField.pull(senderId);
+    senderSentField.pull({ user: recipientId });
+    recipientReceivedField.pull({ user: senderId });
 
     await senderDoc.save({ session });
     await recipientDoc.save({ session });
@@ -117,13 +149,18 @@ const acceptRequest = async (
       session
     );
 
-    affectedSenderField.addToSet(recipientId);
-    affectedRecipientField.addToSet(senderId);
+    affectedSenderField.addToSet({ user: recipientId });
+    affectedRecipientField.addToSet({ user: senderId });
 
     await affectedSenderDoc.save({ session });
     await affectedRecipientDoc.save({ session });
 
-    return { senderDoc, affectedSenderDoc, recipientDoc, affectedRecipientDoc };
+    return {
+      senderDoc: senderDoc.toObject(),
+      recipientDoc: recipientDoc.toObject(),
+      affectedSenderDoc: affectedSenderDoc.toObject(),
+      affectedRecipientDoc: affectedRecipientDoc.toObject()
+    };
   }, session);
 
 const removeRequest = async ({ senderId, recipientId, type }, session) =>
@@ -132,18 +169,21 @@ const removeRequest = async ({ senderId, recipientId, type }, session) =>
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
     if (
-      !listContainsValue(senderSentField, recipientId) &&
-      !listContainsValue(recipientReceivedField, senderId)
+      !listContainsUser(senderSentField, recipientId) &&
+      !listContainsUser(recipientReceivedField, senderId)
     )
-      throw customError(404, "request doesn't exist, can't reject");
+      throw customError(404, "request doesn't exist, can't remove");
 
-    senderSentField.pull(recipientId);
-    recipientReceivedField.pull(senderId);
+    senderSentField.pull({ user: recipientId });
+    recipientReceivedField.pull({ user: senderId });
 
     await senderDoc.save({ session });
     await recipientDoc.save({ session });
 
-    return { senderDoc, recipientDoc };
+    return {
+      senderDoc: senderDoc.toObject(),
+      recipientDoc: recipientDoc.toObject()
+    };
   }, session);
 
 const requestsService = { sendRequest, acceptRequest, removeRequest };

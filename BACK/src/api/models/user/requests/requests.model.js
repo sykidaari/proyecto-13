@@ -1,15 +1,25 @@
 import { model } from 'mongoose';
-import { buildUserChildSchema, userRef } from '../../../../utils/modelUtils.js';
+import {
+  buildUserChildSchema,
+  isNewItem,
+  userRefRequired
+} from '../../../../utils/modelUtils.js';
+
+const sentRequest = { user: userRefRequired };
+const receivedRequest = {
+  user: userRefRequired,
+  isNewItem
+};
 
 const RequestsSchema = buildUserChildSchema(
   {
     friends: {
-      sent: [userRef],
-      received: [userRef]
+      sent: [sentRequest],
+      received: [receivedRequest]
     },
     sessions: {
-      sent: [userRef],
-      received: [userRef]
+      sent: [sentRequest],
+      received: [receivedRequest]
     }
   },
   { timestamps: true, collection: 'requests' }

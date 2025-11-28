@@ -31,9 +31,6 @@ import userChildrenRouter from './userChildren.router.js';
 const userRouter = Router();
 
 userRouter
-
-  // GENERAL MIDDLEWARES
-  .use([setAccessFlags])
   .use('/:id', [setIsOwner])
 
   .get('/', [requireAdmin], getAllUsers)

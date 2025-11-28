@@ -13,7 +13,7 @@ export const validateBody = (allowed) => (req, res, next) => {
   const { body } = req;
 
   if (isEmpty(body)) {
-    return next(isEmptyError);
+    throw isEmptyError;
   }
 
   for (const [key, value] of Object.entries(body)) {
@@ -24,13 +24,13 @@ export const validateBody = (allowed) => (req, res, next) => {
         const path = `${key}.${nestedKey}`;
 
         if (!allowed.includes(path)) {
-          return next(customError(400, `Invalid field: ${path}`));
+          throw customError(400, `Invalid field: ${path}`);
         }
       }
       continue;
     }
 
-    return next(customError(400, `Invalid field: ${key}`));
+    throw customError(400, `Invalid field: ${key}`);
   }
 
   next();
@@ -39,7 +39,7 @@ export const validateBody = (allowed) => (req, res, next) => {
 // FOR CASES WHERE VALIDATION MUST BE DONE IN CONTROLLER
 export const requireReqBody = (req, res, next) => {
   if (isEmpty(req.body)) {
-    return next(isEmptyError);
+    throw isEmptyError;
   }
 };
 
@@ -52,7 +52,7 @@ export const checkDuplicateUser = async (req, res, next) => {
       $or: [{ userName }, { emailAddress }]
     }).lean();
     if (duplicateUser)
-      return next(customError(409, 'username or email already exists'));
+      throw customError(409, 'username or email already exists');
 
     next();
   } catch (err) {
@@ -64,25 +64,20 @@ export const checkDuplicateUser = async (req, res, next) => {
 export const findOrCreateByUser = (Model) => async (req, res, next) => {
   const { id } = req.params;
 
-  const isGet = req.method === 'GET';
   let doc;
   let status = 200;
 
   try {
-    doc = isGet
-      ? await Model.findOne({
-          user: id
-        }).lean()
-      : await Model.findOne({
-          user: id
-        });
+    doc = await Model.findOne({
+      user: id
+    });
 
     if (!doc) {
       const created = await Model.create({ user: id });
-      doc = isGet ? created.toObject() : created;
+      doc = created;
 
       // ONLY GET GIVES 201 if created
-      if (isGet) status = 201;
+      if (req.method === 'GET') status = 201;
     }
 
     req.doc = doc;

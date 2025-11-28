@@ -1,9 +1,13 @@
 import { model } from 'mongoose';
-import { buildUserChildSchema, userRef } from '../../../../utils/modelUtils.js';
+import {
+  buildUserChildSchema,
+  isNewItem,
+  userRef
+} from '../../../../utils/modelUtils.js';
 
 const FriendsSchema = buildUserChildSchema(
   {
-    friends: [userRef]
+    friendsList: [{ user: userRef, isNewItem }]
   },
   'friends'
 );

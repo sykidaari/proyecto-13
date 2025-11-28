@@ -33,28 +33,28 @@ export const setIsOwner = (req, res, next) => {
 };
 
 export const requireGuest = (req, res, next) => {
-  if (req.user) return next(customError(403, 'already logged in'));
+  if (req.user) throw customError(403, 'already logged in');
   next();
 };
 
 export const requireUser = (req, res, next) => {
-  if (!req.user) return next(customError(401, "you're unauthorized"));
+  if (!req.user) throw customError(401, "you're unauthorized");
   next();
 };
 
 export const requireOwner = (req, res, next) => {
-  if (!req.isOwner) return next(customError(401, "you're unauthorized"));
+  if (!req.isOwner) throw customError(401, "you're unauthorized");
   next();
 };
 
 export const requireAdmin = (req, res, next) => {
-  if (!req.isAdmin) return next(customError(403, 'admin access required'));
+  if (!req.isAdmin) throw customError(403, 'admin access required');
   next();
 };
 
 export const requireOwnerOrAdmin = (req, res, next) => {
   if (!req.isOwner && !req.isAdmin)
-    return next(customError(403, "you're unauthorized"));
+    throw customError(403, "you're unauthorized");
   next();
 };
 

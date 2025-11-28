@@ -4,6 +4,9 @@ import connectDB from './src/config/db.js';
 import cors from 'cors';
 import errorHandler from './src/middlewares/errorHandler.js';
 import mainRouter from './src/api/routes/index.router.js';
+import { Server as SocketServer } from 'socket.io';
+import { createServer as createHttpServer } from 'http';
+import { setupSocket } from './src/config/socket/socket.js';
 
 const app = express();
 
@@ -21,6 +24,14 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-app.listen(3000, () => {
+const server = createHttpServer(app);
+
+const io = new SocketServer(server, {
+  cors: { origin: '*' }
+});
+
+setupSocket(io);
+
+server.listen(3000, () => {
   console.log('server connected at http://localhost:3000/');
 });

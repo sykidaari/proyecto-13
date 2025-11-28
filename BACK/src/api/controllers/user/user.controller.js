@@ -45,7 +45,7 @@ export const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(id).select(projection).lean();
 
-    if (!user) return next(userNotFoundError);
+    if (!user) throw userNotFoundError;
 
     return res.status(200).json(user);
   } catch (err) {
@@ -85,7 +85,7 @@ export const registerUser = async (req, res, next) => {
   };
 
   const missingFieldErr = missingFields(fields);
-  if (missingFieldErr) return next(missingFieldErr);
+  if (missingFieldErr) throw missingFieldErr;
 
   try {
     const { user, additionalDocs } = await withTransaction(async (session) => {
@@ -128,10 +128,10 @@ export const loginUser = async (req, res, next) => {
       .select('+password +accountSettings')
       .lean();
 
-    if (!user) return next(userNotFoundError);
+    if (!user) throw userNotFoundError;
 
     const wrongPassword = !(await compareEncryption(password, user.password));
-    if (wrongPassword) return next(customError(401, 'incorrect credentials'));
+    if (wrongPassword) throw customError(401, 'incorrect credentials');
 
     delete user.password;
 
@@ -153,11 +153,11 @@ export const uploadProfilePicture = async (req, res, next) => {
     file
   } = req;
 
-  if (!file) return next(customError(400, 'no file uploaded'));
+  if (!file) throw customError(400, 'no file uploaded');
 
   try {
     const user = await User.findById(id);
-    if (!user) return next(userNotFoundError);
+    if (!user) throw userNotFoundError;
 
     const imgUrl = await uploadToCloudinary(file.buffer, 'movieApp/users');
     if (user.img) await deleteFromCloudinary(user.img);
@@ -178,10 +178,9 @@ export const deleteProfilePicture = async (req, res, next) => {
   const { id } = req.params;
   try {
     const user = await User.findById(id);
-    if (!user) return next(userNotFoundError);
+    if (!user) throw userNotFoundError;
 
-    if (!user.img)
-      return next(customError(400, 'no profile picture to delete'));
+    if (!user.img) throw customError(400, 'no profile picture to delete');
 
     await deleteFromCloudinary(user.img);
 
@@ -220,10 +219,10 @@ export const editUser = async (req, res, next) => {
     // PROJECTION HAS ALL EXCEPT IMG AND ROLE
 
     const user = await User.findById(id);
-    if (!user) return next(userNotFoundError);
+    if (!user) throw userNotFoundError;
 
     const invalid = validateAndApplyUpdates(user, body, allowedEditFields);
-    if (invalid) return next(customError(400, `Invalid field: ${invalid}`));
+    if (invalid) throw customError(400, `Invalid field: ${invalid}`);
 
     await user.save();
     const userObject = user.toObject();
@@ -246,10 +245,10 @@ export const changePassword = async (req, res, next) => {
 
   try {
     const user = await User.findById(id).select('+password');
-    if (!user) return next(userNotFoundError);
+    if (!user) throw userNotFoundError;
 
     const matches = await compareEncryption(currentPassword, user.password);
-    if (!matches) return next(customError(400, 'incorrect password'));
+    if (!matches) throw customError(400, 'incorrect password');
 
     user.password = newPassword;
     await user.save();

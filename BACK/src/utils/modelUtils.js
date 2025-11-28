@@ -21,15 +21,17 @@ export const buildUserChildSchema = (fields, collection, extraOptions = {}) =>
 
 export const requiredString = { type: String, required: true, trim: true };
 
+// can't name isNew, isNew is reserved by mongoose
+export const isNewItem = { type: Boolean, default: true, required: true };
+
 // gets ref
-export const ref = (model, required = false, unique = false) => ({
+export const ref = (model) => ({
   type: Schema.Types.ObjectId,
-  ref: model,
-  required,
-  unique
+  ref: model
 });
 
-export const userRefRequiredUnique = ref('User', true, true);
 export const userRef = ref('User');
+export const userRefRequired = { ...userRef, required: true };
+export const userRefRequiredUnique = { ...userRefRequired, unique: true };
 
 export const mediaRef = ref('Media');

@@ -3,7 +3,8 @@ import { validateBody } from '../../../../middlewares/middlewares.js';
 import {
   acceptFriendRequest,
   getFriends,
-  removeFriend
+  removeFriend,
+  sendFriendRequest
 } from '../../../controllers/user/friends/friends.controller.js';
 
 const friendsRouter = Router();
@@ -11,7 +12,9 @@ const friendsRouter = Router();
 friendsRouter
   .get('/', getFriends)
 
-  .patch('/', validateBody(['friendId']), acceptFriendRequest)
-  .patch('/', validateBody(['friendId']), removeFriend);
+  .patch('/send-request', validateBody(['otherUserId']), sendFriendRequest)
+  .patch('/accept-request', validateBody(['otherUserId']), acceptFriendRequest)
+  .patch('/cancel-request', validateBody(['otherUserId']))
+  .patch('/reject-request', validateBody(['otherUserId']));
 
 export default friendsRouter;
