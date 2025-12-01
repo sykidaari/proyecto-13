@@ -1,4 +1,4 @@
-import { listContainsValue } from '../../../utils/controllerUtils.js';
+import { customError, resolvePath } from '../../../utils/controllerUtils.js';
 
 //* GENERIC CONTROLLERS FOR USER CHILDREN
 
@@ -26,22 +26,30 @@ export const getUserChild =
 //* PATCH
 
 export const addItemToUserChildList =
-  (field, item) => async (req, res, next) => {
+  (field, itemKey) => async (req, res, next) => {
     const { doc, status, body } = req;
-    const list = doc[field];
-    const value = body[item];
+    const list = resolvePath(doc, field);
+    const value = body[itemKey];
 
-    if (listContainsValue(list, value))
-      throw customError(409, `${item}:${value} already in ${field}`);
+    const isObjectList = typeof list[0] === 'object';
 
-    list.push(value);
+    const exists = isObjectList
+      ? list.some((entry) => entry[itemKey]?.toString() === value.toString())
+      : list.some((entry) => entry.toString() === value.toString());
+
+    if (exists)
+      throw customError(409, `${itemKey}:${value} already in ${field}`);
+
+    const item = isObjectList ? { [itemKey]: value } : value;
+
+    list.push(item);
 
     try {
       await doc.save();
 
       return res.status(status).json({
-        message: `${item}:${value} added to ${field}`,
-        [field]: list
+        message: `${itemKey}:${value} added to ${field}`,
+        item: item
       });
     } catch (err) {
       next(err);
@@ -49,27 +57,84 @@ export const addItemToUserChildList =
   };
 
 export const removeItemFromUserChildList =
-  (field, item) => async (req, res, next) => {
+  (field, itemKey) => async (req, res, next) => {
     const { doc, status, body } = req;
-    let list = doc[field];
-    const value = body[item];
+    const list = resolvePath(doc, field);
+    const value = body[itemKey];
 
-    if (!listContainsValue(list, value))
+    const isObjectList = typeof list[0] === 'object';
+
+    const index = isObjectList
+      ? (index = list.findIndex(
+          (entry) => entry[itemKey]?.toString() === value.toString()
+        ))
+      : (index = list.findIndex(
+          (entry) => entry.toString() === value.toString()
+        ));
+
+    const notFound = index === -1;
+    if (notFound)
       throw customError(
         400,
-        `${item}:${value} doesn't exist in ${field},so it can't be removed`
+        `${itemKey}:${value} doesn't exist in ${field}, so it can't be removed`
       );
 
-    list.pull(value);
+    const item = list.splice(index, 1)[0];
 
     try {
       await doc.save();
 
       return res.status(status).json({
-        message: `${item}:${value} removed from ${field}`,
-        [field]: list
+        message: `${itemKey}:${value} removed from ${field}`,
+        item
       });
     } catch (err) {
       next(err);
     }
   };
+
+export const markItemAsSeen = (field, itemIdKey) => async (req, res, next) => {
+  const { doc, status, body } = req;
+  const list = resolvePath(doc, field);
+  const targetId = body[itemIdKey];
+
+  try {
+    const item = list.find(
+      (entry) => entry[itemIdKey].toString() === targetId.toString()
+    );
+    if (!item) throw customError(404, 'item not found');
+
+    const id = item[itemIdKey];
+
+    item.isNewItem = false;
+
+    await doc.save();
+
+    return res.status(status).json({
+      message: `${id} item marked as seen`,
+      item
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const markAllItemsAsSeen = (field) => async (req, res, next) => {
+  const { doc, status } = req;
+  const list = resolvePath(doc, field);
+
+  for (const item of list) {
+    item.isNewItem = false;
+  }
+
+  try {
+    await doc.save();
+
+    return res.status(status).json({
+      message: `all items in ${field} marked as seen`,
+      list
+    });
+  } catch (err) {
+    next(err);
+  }
+};

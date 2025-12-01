@@ -1,13 +1,17 @@
 import SE from '../../../../config/socket/socketEvents.js';
-import requestsService from '../../../../services/internal/requests.service.js';
 import Friends from '../../../models/user/friends/friends.model.js';
-import { getUserChild } from '../userChildren.controller.js';
+import {
+  getUserChild,
+  markAllItemsAsSeen,
+  removeItemFromUserChildList
+} from '../userChildren.controller.js';
 import {
   acceptRequest,
   removeRequest,
   sendRequest
 } from '../requests/requests.controller.js';
 
+//? FOLLOWING AFFECT REQUESTS-MODEL
 //* GET
 export const getFriends = getUserChild({ populateFields: ['friendsList'] });
 
@@ -18,6 +22,7 @@ export const sendFriendRequest = sendRequest({
   emitMessage: SE.friends.requests.received
 });
 
+// This works as an "add friend"
 export const acceptFriendRequest = acceptRequest({
   type: 'friends',
   affectedModel: Friends,
@@ -40,4 +45,8 @@ export const rejectFriendRequest = removeRequest({
   emitMessage: SE.friends.requests.rejected
 });
 
-export const removeFriend = '';
+export const markAllReceivedFriendsRequestsAsSeen =
+  markAllItemsAsSeen('friends.received');
+
+//? FOLLOWING AFFECT FRIENDS-MODEL
+export const removeFriend = removeItemFromUserChildList('friendsList', 'user');

@@ -29,8 +29,20 @@ export const validateAndApplyUpdates = (doc, reqFields, allowed) => {
   }
 };
 
-export const listContainsValue = (list, value) => {
-  list.some((listItem) => listItem.toString() === value.toString());
+// DEPRECATED
+// export const listContainsValue = (list, value) => {
+//   list.some((listItem) => listItem.toString() === value.toString());
+// };
+
+export const resolvePath = (object, path) => {
+  const keys = path.split('.');
+  let current = object;
+
+  for (const key of keys) {
+    current = current[key];
+  }
+
+  return current;
 };
 
 //!   ERRORS
