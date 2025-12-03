@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import requestsService from '../../../../services/internal/requests.service.js';
 import { customError, emit } from '../../../../utils/controllerUtils.js';
 import withTransaction from '../../../../utils/transactionWrapper.js';
@@ -19,10 +20,13 @@ export const sendRequest =
     type,
     resMessage,
     emitMessage,
+
     isUnique = true,
+
     allowMultiple = false,
+
     multipleLimit,
-    beforeSend
+    requestGroupId
   }) =>
   async (req, res, next) => {
     const {
@@ -41,8 +45,15 @@ export const sendRequest =
     const results = [];
     let finalSenderDoc;
 
-    let requestGroupId;
-    if (beforeSend) requestGroupId = beforeSend();
+    if (requestGroupId === 'new')
+      requestGroupId = new mongoose.Types.ObjectId();
+
+    if (requestGroupId === 'existing') {
+      if (!req.body.requestGroupId)
+        throw customError(400, 'missing requestGroupId for existing session');
+
+      requestGroupId = req.body.requestGroupId;
+    }
 
     try {
       for (const recipientId of recipients) {
@@ -94,6 +105,7 @@ export const acceptRequest =
     affectedField,
     resMessage,
     emitMessage,
+
     sideEffect
   }) =>
   async (req, res, next) => {
@@ -163,7 +175,7 @@ export const acceptRequest =
 
 // OPTION CAN ONLY BE "reject" OR "cancel"
 export const removeRequest =
-  ({ type, option, resMessage, emitMessage }) =>
+  ({ type, option, resMessage, emitMessage, allowMultiple = false }) =>
   async (req, res, next) => {
     const {
       params: { id: currentUserId },
@@ -171,31 +183,59 @@ export const removeRequest =
       status
     } = req;
 
-    let senderId;
-    let recipientId;
-    let resultDoc;
+    const recipients = Array.isArray(otherUserId) ? otherUserId : [otherUserId];
 
-    if (option === 'cancel') {
-      senderId = currentUserId;
-      recipientId = otherUserId;
-      resultDoc = 'senderDoc';
-    } else if (option === 'reject') {
-      senderId = otherUserId;
-      recipientId = currentUserId;
-      resultDoc = 'recipientDoc';
-    }
+    if (!allowMultiple && recipients.length > 1)
+      throw customError(400, 'can only remove one request at a time');
+
+    const results = [];
+    let finalDoc;
 
     try {
-      const { [resultDoc]: currentUserDoc } =
-        await requestsService.removeRequest({
-          senderId,
-          recipientId,
-          type
-        });
+      for (const targetId of recipients) {
+        let senderId;
+        let recipientId;
+        let resultDoc;
 
-      emit({ from: currentUserId, to: otherUserId }, emitMessage);
+        if (option === 'cancel') {
+          senderId = currentUserId;
+          recipientId = targetId;
+          resultDoc = 'senderDoc';
+        } else if (option === 'reject') {
+          senderId = targetId;
+          recipientId = currentUserId;
+          resultDoc = 'recipientDoc';
+        }
 
-      return res.status(status).json({ message: resMessage, currentUserDoc });
+        try {
+          const docs = await requestsService.removeRequest({
+            senderId,
+            recipientId,
+            type
+          });
+
+          finalDoc = docs[resultDoc];
+
+          emit({ from: currentUserId, to: targetId }, emitMessage);
+
+          results.push({
+            recipientId: targetId,
+            success: true
+          });
+        } catch (err) {
+          results.push({
+            recipientId: targetId,
+            success: false,
+            error: err.message
+          });
+        }
+      }
+
+      return res.status(status).json({
+        message: resMessage,
+        results,
+        currentUserDoc: finalDoc
+      });
     } catch (err) {
       next(err);
     }

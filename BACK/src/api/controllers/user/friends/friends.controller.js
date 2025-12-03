@@ -25,7 +25,7 @@ export const sendFriendRequest = sendRequest({
 // This works as an "add friend"
 export const acceptFriendRequest = acceptRequest({
   type: 'friends',
-  affectedModel: Friends,
+  AffectedModel: Friends,
   affectedField: 'friendsList',
   resMessage: 'friend request accepted correctly',
   emitMessage: SE.friends.requests.accepted
@@ -35,7 +35,7 @@ export const cancelFriendRequest = removeRequest({
   type: 'friends',
   option: 'cancel',
   resMessage: 'friend request cancelled correctly',
-  emitMessage: SE.friends.requests.canceled
+  emitMessage: SE.friends.requests.cancelled
 });
 
 export const rejectFriendRequest = removeRequest({

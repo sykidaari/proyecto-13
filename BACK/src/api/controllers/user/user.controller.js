@@ -272,7 +272,7 @@ export const deleteUser = async (req, res, next) => {
 
       await deleteAdditionalUserDocs(session, id, childModels);
 
-      await User.deleteOne({ _id: id }).session(session);
+      await user.deleteOne({ session });
 
       return { img };
     });

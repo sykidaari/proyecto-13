@@ -4,9 +4,10 @@ import Session from '../../models/session/session.model.js';
 import SessionsList from '../../models/user/sessionsList/sessionsList.model.js';
 import {
   acceptRequest,
+  removeRequest,
   sendRequest
 } from '../user/requests/requests.controller.js';
-import crypto from 'crypto';
+import { markAllItemsAsSeen } from '../user/userChildren.controller.js';
 
 //* GET
 
@@ -32,19 +33,30 @@ export const getSessionById = async (req, res, next) => {
   }
 };
 
-export const sendSessionRequest = sendRequest({
+export const sendNewSessionRequest = sendRequest({
   type: 'sessions',
   resMessage: 'session invitation sent correctly',
   emitMessage: SE.sessions.requests.received,
   isUnique: false,
   allowMultiple: true,
   multipleLimit: 5,
-  beforeSend: () => crypto.randomUUID()
+  requestGroupId: 'new'
 });
 
-export const acceptSessionRequest = acceptRequest({
+export const sendExistingSessionRequest = sendRequest({
   type: 'sessions',
-  affectedModel: SessionsList,
+  resMessage: 'session invitation sent correctly',
+  emitMessage: SE.sessions.requests.received,
+  isUnique: false,
+  allowMultiple: true,
+  multipleLimit: 5,
+  requestGroupId: 'existing'
+});
+
+// ACCEPTS REQUEST AND EITHER JOINS EXISTING SESSION OR CREATES NEW ONE AND JOINS
+export const acceptSessionRequestAndJoinSession = acceptRequest({
+  type: 'sessions',
+  AffectedModel: SessionsList,
   affectedField: 'sessionsList',
   resMessage: 'session request accepted correctly',
   emitMessage: SE.sessions.requests.accepted,
@@ -107,4 +119,27 @@ export const acceptSessionRequest = acceptRequest({
   }
 });
 
-export const leaveSession = async (req, res, next) => {};
+export const markAllReceivedSessionsRequestsAsSeen =
+  markAllItemsAsSeen('sessions.received');
+
+export const cancelSessionRequest = removeRequest({
+  type: 'sessions',
+  option: 'reject',
+  resMessage: 'session request cancelled correctly',
+  emitMessage: SE.sessions.requests.cancelled,
+  allowMultiple: false
+});
+
+export const rejectSessionRequest = removeRequest({
+  type: 'sessions',
+  option: 'reject',
+  resMessage: 'session request rejected correctly',
+  emitMessage: SE.sessions.requests.rejected
+});
+
+export const leaveSession = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const session = Session.findById(id);
+  } catch (error) {}
+};

@@ -4,7 +4,7 @@ const SOCKET_EVENTS = {
     requests: {
       received: 'friends:request-received',
       accepted: 'friends:new-friend',
-      canceled: 'friends:request-cancelled',
+      cancelled: 'friends:request-cancelled',
       rejected: 'friends:request-rejected'
     }
   },
@@ -12,7 +12,7 @@ const SOCKET_EVENTS = {
     requests: {
       received: 'sessions:request-received',
       accepted: 'sessions:new-session',
-      canceled: 'sessions:request-cancelled',
+      cancelled: 'sessions:request-cancelled',
       rejected: 'sessions:request-rejected'
     }
   }
