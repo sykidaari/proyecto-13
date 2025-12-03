@@ -1,3 +1,4 @@
+import Session from '../api/models/session/session.model.js';
 import User from '../api/models/user/user.model.js';
 import { verifyToken } from '../config/jwt.js';
 import { customError } from '../utils/controllerUtils.js';
@@ -6,6 +7,8 @@ import { customError } from '../utils/controllerUtils.js';
 //* setAccessFlags used to set req.isOwner, but that caused issues. When setAccessFlags runs in userRouter (src/routes/user/user.router.js), Express hasn’t reached the /:id route yet, so req.params.id does not exist. Since req.isOwner depends on req.params.id, the check was moved to a separate middleware (setIsOwner) that runs after the params are available. This ensures req.isOwner is set correctly.
 
 //! So be careful with these middlewares!!! Easy to accidentally break system
+
+//* GENERAL, FULL APP:
 
 export const setAccessFlags = async (req, res, next) => {
   req.user = null;
@@ -28,93 +31,78 @@ export const setAccessFlags = async (req, res, next) => {
 };
 
 export const setIsOwner = (req, res, next) => {
-  req.isOwner = req.user?._id?.toString() === req.params.id;
+  const { user, params } = req;
+
+  req.isOwner = user?._id?.toString() === params.id;
   next();
 };
 
 export const requireGuest = (req, res, next) => {
-  if (req.user) throw customError(403, 'already logged in');
+  const { user } = req;
+
+  if (user) throw customError(403, 'already logged in');
   next();
 };
 
 export const requireUser = (req, res, next) => {
-  if (!req.user) throw customError(401, "you're unauthorized");
+  const { user } = req;
+
+  if (!user) throw customError(401, "you're unauthorized");
   next();
 };
 
 export const requireOwner = (req, res, next) => {
-  if (!req.isOwner) throw customError(401, "you're unauthorized");
+  const { isOwner } = req;
+
+  if (!isOwner) throw customError(403, "you're unauthorized");
   next();
 };
 
 export const requireAdmin = (req, res, next) => {
-  if (!req.isAdmin) throw customError(403, 'admin access required');
+  const { isAdmin } = req;
+
+  if (!isAdmin) throw customError(403, 'admin access required');
   next();
 };
 
 export const requireOwnerOrAdmin = (req, res, next) => {
-  if (!req.isOwner && !req.isAdmin)
-    throw customError(403, "you're unauthorized");
+  const { isOwner, isAdmin } = req;
+
+  if (!isOwner && !isAdmin) throw customError(403, "you're unauthorized");
   next();
 };
 
-//? OLD MIDDLEWARES BELOW, REPLACED BY setAccessFlags and rest
-// const verifiedUser = async (req, projection) => {
-//   const token = req.headers.authorization;
+//* FOR SESSIONS
+export const setIsSessionParticipant = async (req, res, next) => {
+  const {
+    params: { id: sessionId },
+    user
+  } = req;
 
-//   if (!token) throw unauthorizedError;
+  req.isSessionParticipant = null;
 
-//   const parsedToken = token.replace('Bearer ', '');
+  try {
+    const session = await Session.findById(sessionId);
 
-//   const { id } = verifyToken(parsedToken);
+    if (!session) throw customError(404, 'session not found');
 
-//   const user = await User.findById(id).select(projection).lean();
+    req.session = session;
 
-//   return user;
-// };
+    const isParticipant = session.participants.some(
+      (participant) => participant.user.toString() === user.toString()
+    );
 
-// const unauthorizedError = customError(401, 'you are unauthorized');
-// //*
-// //*
-// //*
+    if (isParticipant) req.isSessionParticipant = true;
 
-// // ? AUTH
-// export const isUser = async (req, res, next) => {
-//   try {
-//     const user = await verifiedUser(req);
-//     if (!user) return next(unauthorizedError);
+    next();
+  } catch (error) {
+    next(err);
+  }
+};
 
-//     req.user = user;
-//     next();
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+export const requireSessionParticipantOrAdmin = () => {
+  const { isSessionParticipant, isAdmin } = req;
 
-// export const isCurrentUser = async (req, res, next) => {
-//   try {
-//     const user = await verifiedUser(req);
-//     if (!user || req.user._id.toString() !== user._id.toString())
-//       return next(unauthorizedError);
-
-//     next();
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
-// export const isAdmin = async (req, res, next) => {
-//   try {
-//     const user = await verifiedUser(req, '+role');
-//     if (!user) return next(unauthorizedError);
-
-//     user.role === 'admin'
-//       ? ((req.user = user), next())
-//       : next(unauthorizedError);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-// //?
-// //?
-// //?
+  if (!isSessionParticipant && !isAdmin)
+    throw customError(403, "you're unauthorized");
+};

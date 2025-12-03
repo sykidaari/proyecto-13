@@ -51,10 +51,12 @@ const findRequestsDocsAndFields = async (
   if (!recipientDoc)
     throw customError(404, 'recipient requests-document not found');
 
-  const senderSentField = senderDoc[type].sent;
-  const recipientReceivedField = recipientDoc[type].received;
-
-  return { senderDoc, senderSentField, recipientDoc, recipientReceivedField };
+  return {
+    senderDoc,
+    senderSentField: senderDoc[type].sent,
+    recipientDoc,
+    recipientReceivedField: recipientDoc[type].received
+  };
 };
 
 const findAffectedDocsAndFields = async (
@@ -80,32 +82,46 @@ const findAffectedDocsAndFields = async (
   if (!affectedRecipientDoc)
     throw customError(404, 'affected recipient document not found');
 
-  const affectedSenderField = affectedSenderDoc[affectedField];
-  const affectedRecipientField = affectedRecipientDoc[affectedField];
-
   return {
     affectedSenderDoc,
-    affectedSenderField,
+    affectedSenderField: affectedSenderDoc[affectedField],
     affectedRecipientDoc,
-    affectedRecipientField
+    affectedRecipientField: affectedRecipientDoc[affectedField]
   };
 };
 
 //* SERVICE FUNCTIONS
-const sendRequest = async ({ senderId, recipientId, type }, session) =>
+const sendRequest = async (
+  { senderId, recipientId, type, isUnique = true, requestGroupId },
+  session
+) =>
   withTransaction(async (session) => {
     const { senderDoc, senderSentField, recipientDoc, recipientReceivedField } =
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
     //* If for whatever reason request only exists on one user, it's treated as nonexisting so it can be made again to correct it
-    if (
+    const alreadyExists =
       listContainsUser(senderSentField, recipientId) &&
-      listContainsUser(recipientReceivedField, senderId)
-    )
+      listContainsUser(recipientReceivedField, senderId);
+
+    if (isUnique && alreadyExists)
       throw customError(409, "request already exists, can't send");
 
-    senderSentField.addToSet({ user: recipientId });
-    recipientReceivedField.addToSet({ user: senderId });
+    const senderFieldPayload = { user: recipientId };
+    const recipientFieldPayload = { user: senderId };
+
+    if (requestGroupId) {
+      senderFieldPayload.requestGroupId = requestGroupId;
+      recipientFieldPayload.requestGroupId = requestGroupId;
+    }
+
+    isUnique
+      ? senderSentField.addToSet(senderFieldPayload)
+      : senderSentField.push(senderFieldPayload);
+
+    isUnique
+      ? recipientReceivedField.addToSet(recipientFieldPayload)
+      : recipientReceivedField.push(recipientFieldPayload);
 
     await senderDoc.save({ session });
     await recipientDoc.save({ session });
@@ -117,18 +133,35 @@ const sendRequest = async ({ senderId, recipientId, type }, session) =>
   }, session);
 
 const acceptRequest = async (
-  { senderId, recipientId, type, AffectedModel, affectedField },
+  {
+    senderId,
+    recipientId,
+    type,
+    isComplexOperation = false,
+    AffectedModel,
+    affectedField
+  },
   session
 ) =>
   withTransaction(async (session) => {
     const { senderDoc, senderSentField, recipientDoc, recipientReceivedField } =
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
-    if (
-      !listContainsUser(senderSentField, recipientId) ||
-      !listContainsUser(recipientReceivedField, senderId)
-    )
+    const existsOnBoth =
+      listContainsUser(senderSentField, recipientId) &&
+      listContainsUser(recipientReceivedField, senderId);
+
+    if (!existsOnBoth)
       throw customError(404, "request doesn't exist, can't accept");
+
+    let requestId;
+    if (isComplexOperation) {
+      const requestEntry = senderSentField.find(
+        (item) => item.user.toString() === recipientId.toString()
+      );
+
+      requestId = requestEntry?._id;
+    }
 
     senderSentField.pull({ user: recipientId });
     recipientReceivedField.pull({ user: senderId });
@@ -149,17 +182,29 @@ const acceptRequest = async (
       session
     );
 
-    affectedSenderField.addToSet({ user: recipientId });
-    affectedRecipientField.addToSet({ user: senderId });
+    if (!isComplexOperation) {
+      affectedSenderField.addToSet({ user: recipientId });
+      affectedRecipientField.addToSet({ user: senderId });
 
-    await affectedSenderDoc.save({ session });
-    await affectedRecipientDoc.save({ session });
+      await affectedSenderDoc.save({ session });
+      await affectedRecipientDoc.save({ session });
+    }
 
     return {
       senderDoc: senderDoc.toObject(),
       recipientDoc: recipientDoc.toObject(),
-      affectedSenderDoc: affectedSenderDoc.toObject(),
-      affectedRecipientDoc: affectedRecipientDoc.toObject()
+
+      affectedSenderDoc: isComplexOperation
+        ? affectedSenderDoc
+        : affectedSenderDoc.toObject(),
+      affectedRecipientDoc: isComplexOperation
+        ? affectedRecipientDoc
+        : affectedRecipientDoc.toObject(),
+
+      affectedSenderField,
+      affectedRecipientField,
+
+      ...(isComplexOperation && { requestId })
     };
   }, session);
 
@@ -168,10 +213,11 @@ const removeRequest = async ({ senderId, recipientId, type }, session) =>
     const { senderDoc, senderSentField, recipientDoc, recipientReceivedField } =
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
-    if (
-      !listContainsUser(senderSentField, recipientId) &&
-      !listContainsUser(recipientReceivedField, senderId)
-    )
+    const existsOnEither =
+      listContainsUser(senderSentField, recipientId) ||
+      listContainsUser(recipientReceivedField, senderId);
+
+    if (!existsOnEither)
       throw customError(404, "request doesn't exist, can't remove");
 
     senderSentField.pull({ user: recipientId });

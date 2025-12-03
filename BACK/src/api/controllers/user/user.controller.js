@@ -211,8 +211,7 @@ export const editUser = async (req, res, next) => {
       'country',
       'languageCode',
       'isSharedInfo.watchList',
-      'isSharedInfo.favorites',
-      'isSharedInfo.friends'
+      'isSharedInfo.favorites'
     );
 
   try {

@@ -35,3 +35,4 @@ export const userRefRequired = { ...userRef, required: true };
 export const userRefRequiredUnique = { ...userRefRequired, unique: true };
 
 export const mediaRef = ref('Media');
+export const sessionRef = ref('Session');

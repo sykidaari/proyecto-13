@@ -2,12 +2,12 @@ import { model } from 'mongoose';
 import {
   buildUserChildSchema,
   isNewItem,
-  ref
+  sessionRef
 } from '../../../../utils/modelUtils.js';
 
 const SessionsListSchema = buildUserChildSchema(
   {
-    SessionsList: [{ session: ref('Session'), isNewItem }]
+    sessionsList: [{ session: sessionRef, isNewItem }]
   },
   'sessionsLists'
 );

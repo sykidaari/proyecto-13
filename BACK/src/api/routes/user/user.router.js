@@ -31,10 +31,9 @@ import userChildrenRouter from './userChildren.router.js';
 const userRouter = Router();
 
 userRouter
-  .use('/:id', [setIsOwner])
 
   .get('/', [requireAdmin], getAllUsers)
-  .get('/:id', [requireUser], getUserById)
+
   .get('/search', [requireUser], searchUsers)
 
   .post(
@@ -59,6 +58,10 @@ userRouter
     loginUser
   )
 
+  .use('/:id', [setIsOwner])
+
+  .get('/:id', [requireUser], getUserById)
+
   .patch(
     '/:id/password',
     [requireOwner, validateBody(['currentPassword', 'newPassword'])],
@@ -79,6 +82,6 @@ userRouter
   .delete('/:id/img', [requireOwnerOrAdmin], deleteProfilePicture)
   .delete('/:id', [requireOwnerOrAdmin], deleteUser)
 
-  .use('/:id', userChildrenRouter);
+  .use('/:id', [requireOwnerOrAdmin], userChildrenRouter);
 
 export default userRouter;

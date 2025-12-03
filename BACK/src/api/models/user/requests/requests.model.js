@@ -2,8 +2,10 @@ import { model } from 'mongoose';
 import {
   buildUserChildSchema,
   isNewItem,
+  requiredString,
   userRefRequired
 } from '../../../../utils/modelUtils.js';
+import { sessionParameters } from '../../session/session.model.js';
 
 const sentRequest = { user: userRefRequired };
 const receivedRequest = {
@@ -18,8 +20,20 @@ const RequestsSchema = buildUserChildSchema(
       received: [receivedRequest]
     },
     sessions: {
-      sent: [sentRequest],
-      received: [receivedRequest]
+      sent: [
+        {
+          ...sentRequest,
+          sessionParameters,
+          requestGroupId: requiredString
+        }
+      ],
+      received: [
+        {
+          ...receivedRequest,
+          sessionParameters,
+          requestGroupId: requiredString
+        }
+      ]
     }
   },
   { timestamps: true, collection: 'requests' }

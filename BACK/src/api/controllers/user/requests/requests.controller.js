@@ -1,6 +1,7 @@
 import requestsService from '../../../../services/internal/requests.service.js';
-import { emit } from '../../../../utils/controllerUtils.js';
+import { customError, emit } from '../../../../utils/controllerUtils.js';
 import withTransaction from '../../../../utils/transactionWrapper.js';
+import User from '../../../models/user/user.model.js';
 import { getUserChild } from '../userChildren.controller.js';
 
 //* GET
@@ -12,8 +13,17 @@ export const getRequests = getUserChild;
 
 //* PATCH
 
+// CAN SEND SINGLE OR MULTIPLE REQS AT ONCE, IN "" OR []
 export const sendRequest =
-  ({ type, resMessage, emitMessage }) =>
+  ({
+    type,
+    resMessage,
+    emitMessage,
+    isUnique = true,
+    allowMultiple = false,
+    multipleLimit,
+    beforeSend
+  }) =>
   async (req, res, next) => {
     const {
       params: { id: currentUserId },
@@ -21,16 +31,57 @@ export const sendRequest =
       status
     } = req;
 
+    const recipients = Array.isArray(otherUserId) ? otherUserId : [otherUserId];
+
+    if (allowMultiple && recipients.length > multipleLimit)
+      throw customError(400, `can only send ${multipleLimit} requests at once`);
+    if (!allowMultiple && recipients.length > 1)
+      throw customError(400, 'can only send one request at a time');
+
+    const results = [];
+    let finalSenderDoc;
+
+    let requestGroupId;
+    if (beforeSend) requestGroupId = beforeSend();
+
     try {
-      const { senderDoc: currentUserDoc } = await requestsService.sendRequest({
-        senderId: currentUserId,
-        recipientId: otherUserId,
-        type
+      for (const recipientId of recipients) {
+        try {
+          const { senderDoc } = await requestsService.sendRequest({
+            senderId: currentUserId,
+            recipientId,
+            type,
+            isUnique,
+            requestGroupId
+          });
+
+          finalSenderDoc = senderDoc;
+
+          emit({ from: currentUserId, to: recipientId }, emitMessage);
+
+          results.push({
+            recipientId,
+            success: true
+          });
+        } catch (err) {
+          const failedUser = await User.findById(recipientId)
+            .select('userName')
+            .lean();
+
+          results.push({
+            recipientId,
+            userName: failedUser?.userName,
+            success: false,
+            error: err.message
+          });
+        }
+      }
+
+      return res.status(status).json({
+        message: resMessage,
+        results,
+        currentUserDoc: finalSenderDoc
       });
-
-      emit({ from: currentUserId, to: otherUserId }, emitMessage);
-
-      return res.status(status).json({ message: resMessage, currentUserDoc });
     } catch (err) {
       next(err);
     }
@@ -52,16 +103,25 @@ export const acceptRequest =
       status
     } = req;
 
+    const senderId = otherUserId;
+    const recipientId = currentUserId;
+
+    const isComplexOperation = sideEffect ? true : false;
+
     try {
       const result = await withTransaction(async (session) => {
         const {
-          recipientDoc: currentUserDoc,
-          affectedRecipientDoc: currentUserFriendsDoc
+          recipientDoc,
+          affectedRecipientDoc,
+          affectedRecipientField,
+          affectedSenderField,
+          senderDoc
         } = await requestsService.acceptRequest(
           {
-            senderId: otherUserId,
-            recipientId: currentUserId,
+            senderId,
+            recipientId,
             type,
+            isComplexOperation,
             AffectedModel,
             affectedField
           },
@@ -69,14 +129,24 @@ export const acceptRequest =
         );
 
         let sideEffectResult;
-        if (sideEffect) sideEffectResult = await sideEffect(session);
+        if (sideEffect)
+          sideEffectResult = await sideEffect(
+            {
+              senderDoc,
+              senderId,
+              recipientId,
+              affectedRecipientField,
+              affectedSenderField
+            },
+            session
+          );
 
         return {
-          currentUserDoc,
-          currentUserFriendsDoc,
+          currentUserDoc: recipientDoc,
+          affectedCurrentUserDoc: affectedRecipientDoc,
           sideEffectResult
         };
-      }, session);
+      });
 
       emit({ from: currentUserId, to: otherUserId }, emitMessage);
 
@@ -105,18 +175,13 @@ export const removeRequest =
     let recipientId;
     let resultDoc;
 
-    const isCancellation = option === 'cancel';
-    const isRejection = option === 'reject';
-
-    if (isCancellation) {
+    if (option === 'cancel') {
       senderId = currentUserId;
       recipientId = otherUserId;
-
       resultDoc = 'senderDoc';
-    } else if (isRejection) {
+    } else if (option === 'reject') {
       senderId = otherUserId;
       recipientId = currentUserId;
-
       resultDoc = 'recipientDoc';
     }
 

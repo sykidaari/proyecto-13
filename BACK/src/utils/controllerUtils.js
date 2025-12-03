@@ -3,7 +3,7 @@ import Favorites from '../api/models/user/favorites/favorites.model.js';
 import Friends from '../api/models/user/friends/friends.model.js';
 import Requests from '../api/models/user/requests/requests.model.js';
 import SessionsList from '../api/models/user/sessionsList/sessionsList.model.js';
-import WatchLists from '../api/models/user/watchList/watchList.model.js';
+import WatchList from '../api/models/user/watchList/watchList.model.js';
 import { io } from '../config/socket/socket.js';
 
 //* GENERAL
@@ -86,7 +86,7 @@ export const childModels = [
   Friends,
   Requests,
   SessionsList,
-  WatchLists
+  WatchList
 ];
 
 export const deleteAdditionalUserDocs = async (session, id, modelsArray) => {

@@ -7,7 +7,14 @@ const SOCKET_EVENTS = {
       canceled: 'friends:request-cancelled',
       rejected: 'friends:request-rejected'
     }
+  },
+  sessions: {
+    requests: {
+      received: 'sessions:request-received',
+      accepted: 'sessions:new-session',
+      canceled: 'sessions:request-cancelled',
+      rejected: 'sessions:request-rejected'
+    }
   }
 };
-
 export default SOCKET_EVENTS;
