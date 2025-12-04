@@ -39,6 +39,9 @@ export const resolvePath = (object, path) => {
   let current = object;
 
   for (const key of keys) {
+    if (current == null || typeof current !== 'object') {
+      return undefined; // Path does not exist
+    }
     current = current[key];
   }
 

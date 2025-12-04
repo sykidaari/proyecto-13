@@ -4,17 +4,21 @@ import {
   getWatchList,
   removeMediaFromWatchList
 } from '../../../controllers/user/watchList/watchList.controller.js';
-import { validateBody } from '../../../../middlewares/middlewares.js';
+import { requireAndValidateReqBody } from '../../../../middlewares/middlewares.js';
 
 const watchListRouter = Router();
 
 watchListRouter
   .get('/', getWatchList)
 
-  .patch('/media/add', [validateBody(['mediaId'])], addMediaToWatchList)
+  .patch(
+    '/media/add',
+    [requireAndValidateReqBody({ required: ['mediaId'] })],
+    addMediaToWatchList
+  )
   .patch(
     '/media/remove',
-    [validateBody(['mediaId'])],
+    [requireAndValidateReqBody({ required: ['mediaId'] })],
     removeMediaFromWatchList
   );
 

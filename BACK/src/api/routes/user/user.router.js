@@ -23,7 +23,7 @@ import { Router } from 'express';
 import {
   checkDuplicateUser,
   requireReqBody,
-  validateBody
+  requireAndValidateReqBody
 } from '../../../middlewares/middlewares.js';
 import userChildrenRouter from './userChildren.router.js';
 
@@ -39,21 +39,29 @@ userRouter
     '/register',
     [
       requireGuest,
-      validateBody([
-        'userName',
-        'emailAddress',
-        'nickName',
-        'password',
-        'country',
-        'languageCode'
-      ]),
+      requireAndValidateReqBody({
+        required: [
+          'userName',
+          'emailAddress',
+          'nickName',
+          'password',
+          'country',
+          'languageCode'
+        ]
+      }),
       checkDuplicateUser
     ],
     registerUser
   )
   .post(
     '/login',
-    [requireGuest, validateBody(['userName', 'emailAddress', 'password'])],
+    [
+      requireGuest,
+      requireAndValidateReqBody({
+        required: 'password',
+        optional: ['userName', 'emailAddress']
+      })
+    ],
     loginUser
   )
 
@@ -63,7 +71,12 @@ userRouter
 
   .patch(
     '/:userId/password',
-    [requireSelf, validateBody(['currentPassword', 'newPassword'])],
+    [
+      requireSelf,
+      requireAndValidateReqBody({
+        required: ['currentPassword', 'newPassword']
+      })
+    ],
     changePassword
   )
   .patch(

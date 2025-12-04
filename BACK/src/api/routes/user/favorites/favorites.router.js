@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateBody } from '../../../../middlewares/middlewares.js';
+import { requireAndValidateReqBody } from '../../../../middlewares/middlewares.js';
 import {
   addGenreToFavorites,
   addMediaToFavorites,
@@ -13,12 +13,24 @@ const favoritesRouter = Router();
 favoritesRouter
   .get('/', getFavorites)
 
-  .patch('/genre', [validateBody(['genre'])], addGenreToFavorites)
-  .patch('/genre/remove', [validateBody(['genre'])], removeGenreFromFavorites)
-  .patch('/media', [validateBody(['mediaId'])], addMediaToFavorites)
+  .patch(
+    '/genre',
+    [requireAndValidateReqBody({ required: ['genre'] })],
+    addGenreToFavorites
+  )
+  .patch(
+    '/genre/remove',
+    [requireAndValidateReqBody({ required: ['genre'] })],
+    removeGenreFromFavorites
+  )
+  .patch(
+    '/media',
+    [requireAndValidateReqBody({ required: ['mediaId'] })],
+    addMediaToFavorites
+  )
   .patch(
     '/media/remove',
-    [validateBody(['mediaId'])],
+    [requireAndValidateReqBody({ required: ['mediaId'] })],
     removeMediaFromFavorites
   );
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateBody } from '../../../../middlewares/middlewares.js';
+import { requireAndValidateReqBody } from '../../../../middlewares/middlewares.js';
 import {
   acceptFriendRequest,
   cancelFriendRequest,
@@ -16,15 +16,35 @@ const friendsRouter = Router();
 friendsRouter
   .get('/', getFriends)
 
-  .patch('/request/send', validateBody(['otherUserId']), sendFriendRequest)
-  .patch('/request/accept', validateBody(['otherUserId']), acceptFriendRequest)
-  .patch('/request/cancel', validateBody(['otherUserId']), cancelFriendRequest)
-  .patch('/request/reject', validateBody(['otherUserId']), rejectFriendRequest)
+  .patch(
+    '/request/send',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    sendFriendRequest
+  )
+  .patch(
+    '/request/accept',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    acceptFriendRequest
+  )
+  .patch(
+    '/request/cancel',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    cancelFriendRequest
+  )
+  .patch(
+    '/request/reject',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    rejectFriendRequest
+  )
   .patch(
     '/request/mark-all-seen',
     [requireSelf],
     markAllReceivedFriendsRequestsAsSeen
   )
-  .patch('/remove', validateBody(['userId']), removeFriend);
+  .patch(
+    '/remove',
+    requireAndValidateReqBody({ required: ['user'] }),
+    removeFriend
+  );
 
 export default friendsRouter;

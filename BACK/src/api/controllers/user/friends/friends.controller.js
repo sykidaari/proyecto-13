@@ -49,7 +49,4 @@ export const markAllReceivedFriendsRequestsAsSeen =
   markAllItemsAsSeen('friends.received');
 
 //? FOLLOWING AFFECT FRIENDS-MODEL
-export const removeFriend = removeItemFromUserChildList(
-  'friendsList',
-  'userId'
-);
+export const removeFriend = removeItemFromUserChildList('friendsList', 'user');

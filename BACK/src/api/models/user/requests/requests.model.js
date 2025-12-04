@@ -24,14 +24,20 @@ const RequestsSchema = buildUserChildSchema(
         {
           ...sentRequest,
           sessionParameters,
-          requestGroupId: requiredString
+          requestGroupId: requiredString,
+
+          // since session reqs aren't unique in any way, they can accumulate, that's why there's ttl
+          createdAt: { type: Date, default: Date.now, expires: '3d' }
         }
       ],
       received: [
         {
           ...receivedRequest,
           sessionParameters,
-          requestGroupId: requiredString
+          requestGroupId: requiredString,
+
+          // since session reqs aren't unique in any way, they can accumulate, that's why there's ttl
+          createdAt: { type: Date, default: Date.now, expires: '3d' }
         }
       ]
     }

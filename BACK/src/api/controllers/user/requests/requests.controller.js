@@ -26,7 +26,7 @@ export const sendRequest =
     allowMultiple = false,
 
     multipleLimit,
-    requestGroupId
+    useRequestGroupId = false
   }) =>
   async (req, res, next) => {
     const {
@@ -45,15 +45,9 @@ export const sendRequest =
     const results = [];
     let finalSenderDoc;
 
-    if (requestGroupId === 'new')
-      requestGroupId = new mongoose.Types.ObjectId();
-
-    if (requestGroupId === 'existing') {
-      if (!req.body.requestGroupId)
-        throw customError(400, 'missing requestGroupId for existing session');
-
-      requestGroupId = req.body.requestGroupId;
-    }
+    const requestGroupId = useRequestGroupId
+      ? req.body.requestGroupId || new mongoose.Types.ObjectId()
+      : undefined;
 
     try {
       for (const recipientId of recipients) {

@@ -9,13 +9,17 @@ const SOCKET_EVENTS = {
     }
   },
   sessions: {
+    created: 'sessions:new',
     requests: {
       received: 'sessions:request-received',
       accepted: 'sessions:new-session',
       cancelled: 'sessions:request-cancelled',
       rejected: 'sessions:request-rejected'
     },
-    participantsChanges: { participantLeft: 'sessions:participant-left' }
+    participantsChanges: {
+      participantJoined: 'sessions:new-participant',
+      participantLeft: 'sessions:participant-left'
+    }
   }
 };
 export default SOCKET_EVENTS;

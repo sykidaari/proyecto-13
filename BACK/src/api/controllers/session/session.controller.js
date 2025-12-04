@@ -38,24 +38,15 @@ export const getSessionById = async (req, res, next) => {
 
 //* PATCH
 
-export const sendNewSessionRequest = sendRequest({
+// WORKS BOTH FOR NEW (NOT CREATED) AND EXISTING SESSIONS (ALREADY CREATED), DEPENDS ON ROUTE + ITS MIDDLEWARE
+export const sendSessionRequest = sendRequest({
   type: 'sessions',
   resMessage: 'session invitation sent correctly',
   emitMessage: SE.sessions.requests.received,
   isUnique: false,
   allowMultiple: true,
   multipleLimit: 5,
-  requestGroupId: 'new'
-});
-
-export const sendExistingSessionRequest = sendRequest({
-  type: 'sessions',
-  resMessage: 'session invitation sent correctly',
-  emitMessage: SE.sessions.requests.received,
-  isUnique: false,
-  allowMultiple: true,
-  multipleLimit: 5,
-  requestGroupId: 'existing'
+  useRequestGroupId: true
 });
 
 // ACCEPTS REQUEST AND EITHER JOINS EXISTING SESSION OR CREATES NEW ONE AND JOINS
@@ -87,6 +78,9 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
 
     let sessionDoc = await Session.findOne({ requestGroupId }).session(session);
 
+    let isNewSession = false;
+    let isNewParticipant = false;
+
     if (!sessionDoc) {
       const [newSession] = await Session.create(
         [
@@ -101,6 +95,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
       );
 
       sessionDoc = newSession;
+      isNewSession = true;
     } else {
       const alreadyParticipant = sessionDoc.participants.some(
         (p) => p.user.toString() === recipientId.toString()
@@ -109,6 +104,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
       if (!alreadyParticipant) {
         sessionDoc.participants.push({ user: recipientId });
         await sessionDoc.save({ session });
+        isNewParticipant = true;
       }
     }
 
@@ -119,6 +115,27 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
 
     await affectedSenderDoc.save({ session });
     await affectedRecipientDoc.save({ session });
+
+    const participantIds = sessionDoc.participants.map((p) =>
+      p.user.toString()
+    );
+    if (isNewSession) {
+      for (const id of participantIds) {
+        emit({ from: recipientId, to: id }, SE.sessions.created);
+      }
+    } else if (isNewParticipant) {
+      for (const id of participantIds) {
+        if (id === recipientId.toString()) continue;
+
+        emit(
+          {
+            from: recipientId,
+            to: id
+          },
+          SE.sessions.participantsChanges.participantJoined
+        );
+      }
+    }
 
     return sessionDoc.toObject();
   }

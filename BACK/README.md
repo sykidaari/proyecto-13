@@ -56,7 +56,7 @@
 
 - setAccessFlags
 - requireGuest
-- validateBody([userName, emailAddress, nickName, password, country, languageCode])
+- requireAndValidateReqBody([userName, emailAddress, nickName, password, country, languageCode])
 - checkDuplicateUser
 
 **req state:**
@@ -70,7 +70,7 @@
 
 - setAccessFlags
 - requireGuest
-- validateBody([userName, emailAddress, password])
+- requireAndValidateReqBody([userName, emailAddress, password])
 
 **req state:**
 
@@ -83,7 +83,7 @@
 - setAccessFlags
 - setisSelf
 - requireSelf
-- validateBody([currentPassword, newPassword])
+- requireAndValidateReqBody([currentPassword, newPassword])
 
 **req state:**
 
@@ -188,7 +188,7 @@ Paths:
 
 Common middlewares inside each child router:
 
-- validateBody(...)
+- requireAndValidateReqBody(...)
 - requireUser / requireSelfOrAdmin / requireSelf
 - uploadMemory (if used)
 

@@ -1,47 +1,59 @@
 import Session from '../api/models/session/session.model.js';
-import { customError } from '../utils/controllerUtils.js';
+import { customError, resolvePath } from '../utils/controllerUtils.js';
 
 // HELPER
 const isEmpty = (body) => {
-  if (Object.keys(body).length === 0) {
+  if (!body || Object.keys(body).length === 0) {
     return true;
   }
 };
 const isEmptyError = customError(400, 'request body required');
 
 //* GENERAL
-export const validateBody = (allowed) => (req, res, next) => {
-  const { body } = req;
-
-  if (isEmpty(body)) {
-    throw isEmptyError;
-  }
-
-  for (const [key, value] of Object.entries(body)) {
-    if (allowed.includes(key)) continue;
-
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      for (const nestedKey of Object.keys(value)) {
-        const path = `${key}.${nestedKey}`;
-
-        if (!allowed.includes(path)) {
-          throw customError(400, `Invalid field: ${path}`);
-        }
-      }
-      continue;
-    }
-
-    throw customError(400, `Invalid field: ${key}`);
-  }
-
-  next();
-};
 
 // FOR CASES WHERE VALIDATION MUST BE DONE IN CONTROLLER
 export const requireReqBody = (req, res, next) => {
   if (isEmpty(req.body)) {
     throw isEmptyError;
   }
+};
+
+// ACCEPTS BOTH STRINGS AND ARRAYS
+export const requireAndValidateReqBody = ({ required = [], optional = [] }) => {
+  if (typeof required === 'string') required = [required];
+  if (typeof optional === 'string') optional = [optional];
+
+  const allowed = [...required, ...optional];
+
+  return (req, res, next) => {
+    const { body } = req;
+
+    requireReqBody(req);
+
+    for (const field of required) {
+      if (!resolvePath(body, field)) {
+        throw customError(400, `Missing required field: ${field}`);
+      }
+    }
+
+    for (const [key, value] of Object.entries(body)) {
+      if (allowed.includes(key)) continue;
+
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        for (const nestedKey of Object.keys(value)) {
+          const full = `${key}.${nestedKey}`;
+          if (!allowed.includes(full)) {
+            throw customError(400, `Invalid field: ${full}`);
+          }
+        }
+        continue;
+      }
+
+      throw customError(400, `Invalid field: ${key}`);
+    }
+
+    next();
+  };
 };
 
 //* USER

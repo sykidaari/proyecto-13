@@ -72,24 +72,11 @@ export const searchUsers = async (req, res, next) => {
 // * POST
 
 export const registerUser = async (req, res, next) => {
-  const { userName, emailAddress, nickName, password, country, languageCode } =
-    req.body;
-
-  const fields = {
-    userName,
-    emailAddress,
-    nickName,
-    password,
-    country,
-    languageCode
-  };
-
-  const missingFieldErr = missingFields(fields);
-  if (missingFieldErr) throw missingFieldErr;
+  const { body: registerFields } = req;
 
   try {
     const { user, additionalDocs } = await withTransaction(async (session) => {
-      const [user] = await User.create([{ ...fields, role: 'user' }], {
+      const [user] = await User.create([{ ...registerFields, role: 'user' }], {
         session
       });
 
@@ -120,6 +107,10 @@ export const registerUser = async (req, res, next) => {
 
 export const loginUser = async (req, res, next) => {
   const { userName, emailAddress, password } = req.body;
+
+  if (!userName && !emailAddress) {
+    throw customError(400, 'userName or emailAddress is required');
+  }
 
   try {
     const user = await User.findOne({
