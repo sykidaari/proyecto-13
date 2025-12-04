@@ -1,12 +1,11 @@
 import uploadMemory from '../../../middlewares/uploadMemory.js';
 import {
-  setAccessFlags,
-  setIsOwner,
   requireAdmin,
   requireUser,
   requireGuest,
-  requireOwner,
-  requireOwnerOrAdmin
+  requireSelf,
+  requireSelfOrAdmin,
+  setIsSelf
 } from '../../../middlewares/access.js';
 import {
   changePassword,
@@ -58,30 +57,30 @@ userRouter
     loginUser
   )
 
-  .use('/:id', [setIsOwner])
+  .use('/:userId', [setIsSelf])
 
-  .get('/:id', [requireUser], getUserById)
+  .get('/:userId', [requireUser], getUserById)
 
   .patch(
-    '/:id/password',
-    [requireOwner, validateBody(['currentPassword', 'newPassword'])],
+    '/:userId/password',
+    [requireSelf, validateBody(['currentPassword', 'newPassword'])],
     changePassword
   )
   .patch(
-    '/:id/img',
-    [requireOwner, uploadMemory.single('img')],
+    '/:userId/img',
+    [requireSelf, uploadMemory.single('img')],
     uploadProfilePicture
   )
   .patch(
     // BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC
-    '/:id',
-    [requireOwnerOrAdmin, requireReqBody, checkDuplicateUser],
+    '/:userId',
+    [requireSelfOrAdmin, requireReqBody, checkDuplicateUser],
     editUser
   )
 
-  .delete('/:id/img', [requireOwnerOrAdmin], deleteProfilePicture)
-  .delete('/:id', [requireOwnerOrAdmin], deleteUser)
+  .delete('/:userId/img', [requireSelfOrAdmin], deleteProfilePicture)
+  .delete('/:userId', [requireSelfOrAdmin], deleteUser)
 
-  .use('/:id', [requireOwnerOrAdmin], userChildrenRouter);
+  .use('/:userId', [requireSelfOrAdmin], userChildrenRouter);
 
 export default userRouter;

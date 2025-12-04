@@ -11,8 +11,6 @@ export const getUserChild =
     try {
       for (const field of populateFields) {
         await doc.populate(field);
-        // each field can be either a string or an object, mongoose populate allows it
-        // https://mongoosejs.com/docs/populate.html
       }
 
       const docObject = doc.toObject();
@@ -93,6 +91,7 @@ export const removeItemFromUserChildList =
     }
   };
 
+//! NEEDS [requireSelf] SO EVEN IF ADMIN CHECKS REQS, THIS DOESN'T FIRE EVEN IF FRONT TRIES TO
 export const markItemAsSeen = (field, itemIdKey) => async (req, res, next) => {
   const { doc, status, body } = req;
   const list = resolvePath(doc, field);
@@ -119,6 +118,7 @@ export const markItemAsSeen = (field, itemIdKey) => async (req, res, next) => {
   }
 };
 
+//! NEEDS [requireSelf] SO EVEN IF ADMIN CHECKS REQS, THIS DOESN'T FIRE EVEN IF FRONT TRIES TO
 export const markAllItemsAsSeen = (field) => async (req, res, next) => {
   const { doc, status } = req;
   const list = resolvePath(doc, field);

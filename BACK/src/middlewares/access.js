@@ -4,7 +4,7 @@ import { verifyToken } from '../config/jwt.js';
 import { customError } from '../utils/controllerUtils.js';
 
 //! IMPORTANT NOTE ABOUT MIDDLEWARES
-//* setAccessFlags used to set req.isOwner, but that caused issues. When setAccessFlags runs in userRouter (src/routes/user/user.router.js), Express hasn’t reached the /:id route yet, so req.params.id does not exist. Since req.isOwner depends on req.params.id, the check was moved to a separate middleware (setIsOwner) that runs after the params are available. This ensures req.isOwner is set correctly.
+//* setAccessFlags used to set req.isSelf, but that caused issues. When setAccessFlags runs in userRouter (src/routes/user/user.router.js), Express hasn’t reached the /:userId route yet, so req.params.id does not exist. Since req.isSelf depends on req.params.id, the check was moved to a separate middleware (setIsSelf) that runs after the params are available. This ensures req.isSelf is set correctly.
 
 //! So be careful with these middlewares!!! Easy to accidentally break system
 
@@ -18,8 +18,8 @@ export const setAccessFlags = async (req, res, next) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token) return next();
 
-    const { id } = verifyToken(token);
-    const user = await User.findById(id).select('+role').lean();
+    const { userId } = verifyToken(token);
+    const user = await User.findById(userId).select('+role').lean();
     if (!user) return next();
 
     req.user = user;
@@ -30,10 +30,10 @@ export const setAccessFlags = async (req, res, next) => {
   next();
 };
 
-export const setIsOwner = (req, res, next) => {
+export const setIsSelf = (req, res, next) => {
   const { user, params } = req;
 
-  req.isOwner = user?._id?.toString() === params.id;
+  req.isSelf = user?._id?.toString() === params.userId;
   next();
 };
 
@@ -51,10 +51,10 @@ export const requireUser = (req, res, next) => {
   next();
 };
 
-export const requireOwner = (req, res, next) => {
-  const { isOwner } = req;
+export const requireSelf = (req, res, next) => {
+  const { isSelf } = req;
 
-  if (!isOwner) throw customError(403, "you're unauthorized");
+  if (!isSelf) throw customError(403, "you're unauthorized");
   next();
 };
 
@@ -65,29 +65,20 @@ export const requireAdmin = (req, res, next) => {
   next();
 };
 
-export const requireOwnerOrAdmin = (req, res, next) => {
-  const { isOwner, isAdmin } = req;
+export const requireSelfOrAdmin = (req, res, next) => {
+  const { isSelf, isAdmin } = req;
 
-  if (!isOwner && !isAdmin) throw customError(403, "you're unauthorized");
+  if (!isSelf && !isAdmin) throw customError(403, "you're unauthorized");
   next();
 };
 
 //* FOR SESSIONS
 export const setIsSessionParticipant = async (req, res, next) => {
-  const {
-    params: { id: sessionId },
-    user
-  } = req;
+  const { user, session } = req;
 
   req.isSessionParticipant = null;
 
   try {
-    const session = await Session.findById(sessionId);
-
-    if (!session) throw customError(404, 'session not found');
-
-    req.session = session;
-
     const isParticipant = session.participants.some(
       (participant) => participant.user.toString() === user.toString()
     );

@@ -1,3 +1,4 @@
+import Session from '../api/models/session/session.model.js';
 import { customError } from '../utils/controllerUtils.js';
 
 // HELPER
@@ -62,18 +63,18 @@ export const checkDuplicateUser = async (req, res, next) => {
 
 //* USER CHILDREN
 export const findOrCreateByUser = (Model) => async (req, res, next) => {
-  const { id } = req.params;
+  const { userId } = req.params;
 
   let doc;
   let status = 200;
 
   try {
     doc = await Model.findOne({
-      user: id
+      user: userId
     });
 
     if (!doc) {
-      const created = await Model.create({ user: id });
+      const created = await Model.create({ user: userId });
       doc = created;
 
       // ONLY GET GIVES 201 if created
@@ -83,6 +84,24 @@ export const findOrCreateByUser = (Model) => async (req, res, next) => {
     req.doc = doc;
     req.status = status;
     next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+//* SESSION
+
+export const findSessionById = async (req, res, next) => {
+  const {
+    params: { sessionId }
+  } = req;
+
+  try {
+    const session = await Session.findById(sessionId);
+
+    if (!session) throw customError(404, 'session not found');
+
+    req.session = session;
   } catch (err) {
     next(err);
   }

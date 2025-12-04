@@ -11,7 +11,7 @@ const watchListRouter = Router();
 watchListRouter
   .get('/', getWatchList)
 
-  .patch('/media', [validateBody(['mediaId'])], addMediaToWatchList)
+  .patch('/media/add', [validateBody(['mediaId'])], addMediaToWatchList)
   .patch(
     '/media/remove',
     [validateBody(['mediaId'])],

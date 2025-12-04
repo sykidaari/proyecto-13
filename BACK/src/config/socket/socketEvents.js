@@ -14,7 +14,8 @@ const SOCKET_EVENTS = {
       accepted: 'sessions:new-session',
       cancelled: 'sessions:request-cancelled',
       rejected: 'sessions:request-rejected'
-    }
+    },
+    participantsChanges: { participantLeft: 'sessions:participant-left' }
   }
 };
 export default SOCKET_EVENTS;

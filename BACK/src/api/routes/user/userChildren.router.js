@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { requireOwnerOrAdmin } from '../../../middlewares/access.js';
 import appSettingsRouter from './appSettings/appSettings.router.js';
 import favoritesRouter from './favorites/favorites.router.js';
 import { findOrCreateByUser } from '../../../middlewares/middlewares.js';

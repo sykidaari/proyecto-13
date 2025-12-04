@@ -63,11 +63,15 @@ export const missingFields = (requiredKeys) => {
 //* USERS
 export const userNotFoundError = customError(404, 'user not found');
 
-export const createAdditionalUserDocs = async (session, id, modelsArray) => {
+export const createAdditionalUserDocs = async (
+  session,
+  userId,
+  modelsArray
+) => {
   const docs = [];
 
   for (const Model of modelsArray) {
-    const [created] = await Model.create([{ user: id }], { session });
+    const [created] = await Model.create([{ user: userId }], { session });
 
     const modelObject = created.toObject();
     modelObject.modelName = Model.modelName;
@@ -89,9 +93,13 @@ export const childModels = [
   WatchList
 ];
 
-export const deleteAdditionalUserDocs = async (session, id, modelsArray) => {
+export const deleteAdditionalUserDocs = async (
+  session,
+  userId,
+  modelsArray
+) => {
   for (const Model of modelsArray) {
-    await Model.deleteOne({ user: id }).session(session);
+    await Model.deleteOne({ user: userId }).session(session);
   }
 };
 

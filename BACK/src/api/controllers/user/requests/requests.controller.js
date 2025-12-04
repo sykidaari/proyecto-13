@@ -30,7 +30,7 @@ export const sendRequest =
   }) =>
   async (req, res, next) => {
     const {
-      params: { id: currentUserId },
+      params: { userId: currentUserId },
       body: { otherUserId },
       status
     } = req;
@@ -110,7 +110,7 @@ export const acceptRequest =
   }) =>
   async (req, res, next) => {
     const {
-      params: { id: currentUserId },
+      params: { userId: currentUserId },
       body: { otherUserId },
       status
     } = req;
@@ -178,7 +178,7 @@ export const removeRequest =
   ({ type, option, resMessage, emitMessage, allowMultiple = false }) =>
   async (req, res, next) => {
     const {
-      params: { id: currentUserId },
+      params: { userId: currentUserId },
       body: { otherUserId },
       status
     } = req;

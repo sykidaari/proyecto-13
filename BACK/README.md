@@ -22,7 +22,7 @@
 
 - req.user = authenticated admin
 - req.isAdmin = true
-- req.isOwner = undefined
+- req.isSelf = undefined
 
 ## GET /user/search
 
@@ -36,19 +36,19 @@
 - req.user = authenticated user
 - req.isAdmin = boolean
 
-## GET /user/:id
+## GET /user/:userId
 
 **Middleware chain:**
 
 - setAccessFlags
-- setIsOwner
+- setisSelf
 - requireUser
 
 **req state:**
 
 - req.user = authenticated user
 - req.isAdmin = boolean
-- req.isOwner = (req.user.\_id === params.id)
+- req.isSelf = (req.user.\_id === params.id)
 
 ## POST /user/register
 
@@ -76,95 +76,95 @@
 
 - req.user = null
 
-## PATCH /user/:id/password
+## PATCH /user/:userId/password
 
 **Middleware chain:**
 
 - setAccessFlags
-- setIsOwner
-- requireOwner
+- setisSelf
+- requireSelf
 - validateBody([currentPassword, newPassword])
 
 **req state:**
 
 - req.user = authenticated user
-- req.isOwner = true
+- req.isSelf = true
 
-## PATCH /user/:id/img
+## PATCH /user/:userId/img
 
 **Middleware chain:**
 
 - setAccessFlags
-- setIsOwner
-- requireOwner
+- setisSelf
+- requireSelf
 - uploadMemory.single("img")
 
 **req state:**
 
 - req.user = authenticated user
-- req.isOwner = true
+- req.isSelf = true
 - req.file = uploaded file
 
-## PATCH /user/:id
+## PATCH /user/:userId
 
 **Middleware chain:**
 
 - setAccessFlags
-- setIsOwner
-- requireOwnerOrAdmin
+- setisSelf
+- requireSelfOrAdmin
 - requireReqBody
 - checkDuplicateUser
 
 **req state:**
 
 - req.user = authenticated user
-- req.isOwner = boolean
+- req.isSelf = boolean
 - req.isAdmin = boolean
 - req.body = dynamic validated body
 
-## DELETE /user/:id/img
+## DELETE /user/:userId/img
 
 **Middleware chain:**
 
 - setAccessFlags
-- setIsOwner
-- requireOwnerOrAdmin
+- setisSelf
+- requireSelfOrAdmin
 
 **req state:**
 
-- req.user, req.isOwner, req.isAdmin available
+- req.user, req.isSelf, req.isAdmin available
 
-## DELETE /user/:id
+## DELETE /user/:userId
 
 **Middleware chain:**
 
 - setAccessFlags
-- setIsOwner
-- requireOwnerOrAdmin
+- setisSelf
+- requireSelfOrAdmin
 
 **req state:**
 
-- req.user, req.isOwner, req.isAdmin available
+- req.user, req.isSelf, req.isAdmin available
 
 # CHILD ROUTES (userChildrenRouter)
 
 # --------------------------------------------------
 
-Mounted at: `/user/:id/*`  
+Mounted at: `/user/:userId/*`  
 (mergeParams: true)
 
 Runs AFTER:
 
 - setAccessFlags
-- setIsOwner
+- setisSelf
 
 Then:
 
-**Middleware:** `requireOwnerOrAdmin`
+**Middleware:** `requireSelfOrAdmin`
 
 **Effect:**
 
-- req.user must be owner or admin
+- req.user must be Self or admin
 
 ## findOrCreateByUser(Model)
 
@@ -181,22 +181,22 @@ Creates or fetches the user's subdocument.
 
 Paths:
 
-- `/user/:id/appSettings`
-- `/user/:id/favorites`
-- `/user/:id/friends`
-- `/user/:id/requests`
+- `/user/:userId/appSettings`
+- `/user/:userId/favorites`
+- `/user/:userId/friends`
+- `/user/:userId/requests`
 
 Common middlewares inside each child router:
 
 - validateBody(...)
-- requireUser / requireOwnerOrAdmin / requireOwner
+- requireUser / requireSelfOrAdmin / requireSelf
 - uploadMemory (if used)
 
 **req state always includes:**
 
 - req.user
 - req.isAdmin
-- req.isOwner
+- req.isSelf
 - req.doc
 - req.status
 

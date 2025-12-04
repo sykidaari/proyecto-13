@@ -31,19 +31,19 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getUserById = async (req, res, next) => {
   const {
-    params: { id },
+    params: { userId },
     isAdmin,
-    isCurrentUser
+    isSelf
   } = req;
 
   const projection = isAdmin
     ? '+role'
-    : isCurrentUser
+    : isSelf
     ? '+accountSettings +languageCode'
     : null;
 
   try {
-    const user = await User.findById(id).select(projection).lean();
+    const user = await User.findById(userId).select(projection).lean();
 
     if (!user) throw userNotFoundError;
 
@@ -149,14 +149,14 @@ export const loginUser = async (req, res, next) => {
 
 export const uploadProfilePicture = async (req, res, next) => {
   const {
-    params: { id },
+    params: { userId },
     file
   } = req;
 
   if (!file) throw customError(400, 'no file uploaded');
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(userId);
     if (!user) throw userNotFoundError;
 
     const imgUrl = await uploadToCloudinary(file.buffer, 'movieApp/users');
@@ -175,9 +175,9 @@ export const uploadProfilePicture = async (req, res, next) => {
 };
 
 export const deleteProfilePicture = async (req, res, next) => {
-  const { id } = req.params;
+  const { userId } = req.params;
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(userId);
     if (!user) throw userNotFoundError;
 
     if (!user.img) throw customError(400, 'no profile picture to delete');
@@ -198,14 +198,14 @@ export const deleteProfilePicture = async (req, res, next) => {
 // DOES NOT HANDLE IMG!
 export const editUser = async (req, res, next) => {
   const {
-    params: { id },
-    isCurrentUser,
+    params: { userId },
+    isSelf,
     body
   } = req;
 
   const allowedEditFields = ['userName', 'nickName'];
 
-  if (isCurrentUser)
+  if (isSelf)
     allowedEditFields.push(
       'emailAddress',
       'country',
@@ -217,7 +217,7 @@ export const editUser = async (req, res, next) => {
   try {
     // PROJECTION HAS ALL EXCEPT IMG AND ROLE
 
-    const user = await User.findById(id);
+    const user = await User.findById(userId);
     if (!user) throw userNotFoundError;
 
     const invalid = validateAndApplyUpdates(user, body, allowedEditFields);
@@ -238,12 +238,12 @@ export const editUser = async (req, res, next) => {
 
 export const changePassword = async (req, res, next) => {
   const {
-    params: { id },
+    params: { userId },
     body: { currentPassword, newPassword }
   } = req;
 
   try {
-    const user = await User.findById(id).select('+password');
+    const user = await User.findById(userId).select('+password');
     if (!user) throw userNotFoundError;
 
     const matches = await compareEncryption(currentPassword, user.password);
@@ -261,16 +261,16 @@ export const changePassword = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-  const { id } = req.params;
+  const { userId } = req.params;
 
   try {
     const { img } = await withTransaction(async (session) => {
-      const user = await User.findById(id).session(session);
+      const user = await User.findById(userId).session(session);
       if (!user) throw userNotFoundError;
 
       const img = user.img;
 
-      await deleteAdditionalUserDocs(session, id, childModels);
+      await deleteAdditionalUserDocs(session, userId, childModels);
 
       await user.deleteOne({ session });
 

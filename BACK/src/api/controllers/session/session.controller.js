@@ -1,5 +1,6 @@
 import SE from '../../../config/socket/socketEvents.js';
-import { customError } from '../../../utils/controllerUtils.js';
+import { customError, emit } from '../../../utils/controllerUtils.js';
+import withTransaction from '../../../utils/transactionWrapper.js';
 import Session from '../../models/session/session.model.js';
 import SessionsList from '../../models/user/sessionsList/sessionsList.model.js';
 import {
@@ -14,9 +15,9 @@ import { markAllItemsAsSeen } from '../user/userChildren.controller.js';
 //? ADMIN ONLY
 export const getAllSessions = async (req, res, next) => {
   try {
-    const sessions = await Session.find().lean();
+    const sessions = await Session.find().populate('participants.user').lean();
 
-    return res.status(200).json(sessions);
+    return res.status(200).json(sessions.toObject());
   } catch (err) {
     next(err);
   }
@@ -27,11 +28,15 @@ export const getSessionById = async (req, res, next) => {
   const { session } = req;
 
   try {
-    return res.status(200).json(session);
+    await session.populate(['participants.user', 'matchedMedias']);
+
+    return res.status(200).json(session.toObject());
   } catch (err) {
     next(err);
   }
 };
+
+//* PATCH
 
 export const sendNewSessionRequest = sendRequest({
   type: 'sessions',
@@ -138,8 +143,56 @@ export const rejectSessionRequest = removeRequest({
 });
 
 export const leaveSession = async (req, res, next) => {
-  const { id } = req.params;
+  const {
+    params: { userId: currentUserId },
+    session
+  } = req;
+
   try {
-    const session = Session.findById(id);
-  } catch (error) {}
+    const { sessionsListDoc, remainingParticipantIds, wasLastUser } =
+      await withTransaction(async (ses) => {
+        session.participants.pull({ user: currentUserId });
+
+        const sessionsListDoc = await SessionsList.findOne({
+          user: currentUserId
+        });
+
+        if (sessionsListDoc) {
+          // Does not give error if sessionsListDoc isn't found, because the doc should exist, if doesn't exist, it's a bug, and user should be able to leave the current session anyways.
+          sessionsListDoc.sessionsList.pull({ session: session._id });
+          await sessionsListDoc.save({ session: ses });
+        }
+
+        let remainingParticipantIds = [];
+
+        const wasLastUser = session.participants.length === 0;
+        if (wasLastUser) await session.deleteOne({ session: ses });
+        else {
+          await session.save({ session: ses });
+
+          remainingParticipantIds = session.participants.map((participant) =>
+            participant.user.toString()
+          );
+        }
+        return { sessionsListDoc, remainingParticipantIds, wasLastUser };
+      });
+
+    for (const participantId of remainingParticipantIds) {
+      emit(
+        { from: currentUserId, to: participantId },
+        SE.sessions.participantsChanges.participantLeft
+      );
+    }
+
+    return res.status(200).json({
+      message: wasLastUser
+        ? 'left session correctly and deleted it'
+        : 'left session correctly',
+      sessionsListDoc
+    });
+  } catch (err) {
+    next(err);
+  }
 };
+
+// edit session missing baby
