@@ -1,4 +1,4 @@
-import SE from '../../../../config/socket/socketEvents.js';
+import SE from '../../../../constants/socketEvents.js';
 import Friends from '../../../models/user/friends/friends.model.js';
 import {
   getUserChild,
@@ -10,6 +10,7 @@ import {
   removeRequest,
   sendRequest
 } from '../requests/requests.controller.js';
+import OK from '../../../../constants/successCodes.js';
 
 //? FOLLOWING AFFECT REQUESTS-MODEL
 //* GET
@@ -18,7 +19,7 @@ export const getFriends = getUserChild({ populateFields: ['friendsList'] });
 //* PATCH
 export const sendFriendRequest = sendRequest({
   type: 'friends',
-  resMessage: 'friend request sent correctly',
+  resMessage: OK.friends.requests.sent,
   emitMessage: SE.friends.requests.received
 });
 
@@ -27,21 +28,21 @@ export const acceptFriendRequest = acceptRequest({
   type: 'friends',
   AffectedModel: Friends,
   affectedField: 'friendsList',
-  resMessage: 'friend request accepted correctly',
+  resMessage: OK.friends.requests.accepted,
   emitMessage: SE.friends.requests.accepted
 });
 
 export const cancelFriendRequest = removeRequest({
   type: 'friends',
   option: 'cancel',
-  resMessage: 'friend request cancelled correctly',
+  resMessage: OK.friends.requests.cancelled,
   emitMessage: SE.friends.requests.cancelled
 });
 
 export const rejectFriendRequest = removeRequest({
   type: 'friends',
   option: 'reject',
-  resMessage: 'friend request rejected correctly',
+  resMessage: OK.friends.requests.rejected,
   emitMessage: SE.friends.requests.rejected
 });
 

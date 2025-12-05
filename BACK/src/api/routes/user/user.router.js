@@ -21,7 +21,6 @@ import {
 } from '../../controllers/user/user.controller.js';
 import { Router } from 'express';
 import {
-  checkDuplicateUser,
   requireReqBody,
   requireAndValidateReqBody
 } from '../../../middlewares/middlewares.js';
@@ -48,8 +47,7 @@ userRouter
           'country',
           'languageCode'
         ]
-      }),
-      checkDuplicateUser
+      })
     ],
     registerUser
   )
@@ -87,7 +85,7 @@ userRouter
   .patch(
     // BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC
     '/:userId',
-    [requireSelfOrAdmin, requireReqBody, checkDuplicateUser],
+    [requireSelfOrAdmin, requireReqBody],
     editUser
   )
 

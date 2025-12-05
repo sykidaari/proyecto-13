@@ -1,6 +1,6 @@
-import Session from '../api/models/session/session.model.js';
 import User from '../api/models/user/user.model.js';
 import { verifyToken } from '../config/jwt.js';
+import ERR from '../constants/errorCodes.js';
 import { customError } from '../utils/controllerUtils.js';
 
 //! IMPORTANT NOTE ABOUT MIDDLEWARES
@@ -40,35 +40,35 @@ export const setIsSelf = (req, res, next) => {
 export const requireGuest = (req, res, next) => {
   const { user } = req;
 
-  if (user) throw customError(403, 'already logged in');
+  if (user) throw customError(403, ERR.access.alreadyLoggedIn);
   next();
 };
 
 export const requireUser = (req, res, next) => {
   const { user } = req;
 
-  if (!user) throw customError(401, "you're unauthorized");
+  if (!user) throw customError(401, ERR.access.unauthorized);
   next();
 };
 
 export const requireSelf = (req, res, next) => {
   const { isSelf } = req;
 
-  if (!isSelf) throw customError(403, "you're unauthorized");
+  if (!isSelf) throw customError(403, ERR.access.notSelf);
   next();
 };
 
 export const requireAdmin = (req, res, next) => {
   const { isAdmin } = req;
 
-  if (!isAdmin) throw customError(403, 'admin access required');
+  if (!isAdmin) throw customError(403, ERR.access.adminRequired);
   next();
 };
 
 export const requireSelfOrAdmin = (req, res, next) => {
   const { isSelf, isAdmin } = req;
 
-  if (!isSelf && !isAdmin) throw customError(403, "you're unauthorized");
+  if (!isSelf && !isAdmin) throw customError(403, ERR.access.notSelfOrAdmin);
   next();
 };
 
@@ -76,24 +76,20 @@ export const requireSelfOrAdmin = (req, res, next) => {
 export const setIsSessionParticipant = async (req, res, next) => {
   const { user, session } = req;
 
-  req.isSessionParticipant = null;
+  req.isSessionParticipant = false;
 
-  try {
-    const isParticipant = session.participants.some(
-      (participant) => participant.user.toString() === user.toString()
-    );
+  const isParticipant = session.participants.some(
+    (participant) => participant.user.toString() === user.toString()
+  );
 
-    if (isParticipant) req.isSessionParticipant = true;
+  if (isParticipant) req.isSessionParticipant = true;
 
-    next();
-  } catch (error) {
-    next(err);
-  }
+  next();
 };
 
 export const requireSessionParticipantOrAdmin = () => {
   const { isSessionParticipant, isAdmin } = req;
 
   if (!isSessionParticipant && !isAdmin)
-    throw customError(403, "you're unauthorized");
+    throw customError(403, ERR.access.notParticipantOrAdmin);
 };

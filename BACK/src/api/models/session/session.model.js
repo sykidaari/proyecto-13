@@ -5,6 +5,7 @@ import {
   requiredString,
   userRefRequiredUnique
 } from '../../../utils/modelUtils.js';
+import ERR from '../../../constants/errorCodes.js';
 
 export const sessionParameters = {
   sessionName: { type: String, minlength: 3, maxlength: 30 },
@@ -40,7 +41,7 @@ const SessionSchema = buildSchema(
       ],
       validate: {
         validator: (array) => array.length <= 6,
-        message: 'Maximum 6 participants allowed'
+        message: ERR.session.validation.tooManyParticipants
       }
     },
 

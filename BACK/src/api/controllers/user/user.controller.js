@@ -8,13 +8,14 @@ import {
   createAdditionalUserDocs,
   customError,
   deleteAdditionalUserDocs,
-  missingFields,
   userNotFoundError,
   validateAndApplyUpdates
 } from '../../../utils/controllerUtils.js';
 import User from '../../models/user/user.model.js';
 import { compare as compareEncryption } from 'bcrypt';
 import withTransaction from '../../../utils/transactionWrapper.js';
+import ERR from '../../../constants/errorCodes.js';
+import OK from '../../../constants/successCodes.js';
 
 // * GET
 
@@ -95,7 +96,7 @@ export const registerUser = async (req, res, next) => {
     const token = generateToken(userObject._id);
 
     return res.status(201).json({
-      message: 'user registered successfully',
+      message: OK.user.registered,
       user: userObject,
       token,
       additionalDocs
@@ -109,7 +110,9 @@ export const loginUser = async (req, res, next) => {
   const { userName, emailAddress, password } = req.body;
 
   if (!userName && !emailAddress) {
-    throw customError(400, 'userName or emailAddress is required');
+    throw customError(400, ERR.user.validation.missingCredentials, {
+      fields: 'userName, emailAddress'
+    });
   }
 
   try {
@@ -122,15 +125,14 @@ export const loginUser = async (req, res, next) => {
     if (!user) throw userNotFoundError;
 
     const wrongPassword = !(await compareEncryption(password, user.password));
-    if (wrongPassword) throw customError(401, 'incorrect credentials');
+    if (wrongPassword)
+      throw customError(401, ERR.user.auth.incorrectCredentials);
 
     delete user.password;
 
     const token = generateToken(user._id);
 
-    return res
-      .status(200)
-      .json({ message: 'user logged in successfully', user, token });
+    return res.status(200).json({ message: OK.user.loggedIn, user, token });
   } catch (err) {
     next(err);
   }
@@ -144,7 +146,7 @@ export const uploadProfilePicture = async (req, res, next) => {
     file
   } = req;
 
-  if (!file) throw customError(400, 'no file uploaded');
+  if (!file) throw customError(400, ERR.user.img.noneUploaded);
 
   try {
     const user = await User.findById(userId);
@@ -157,7 +159,7 @@ export const uploadProfilePicture = async (req, res, next) => {
     await user.save();
 
     return res.status(200).json({
-      message: 'profile picture updated successfully',
+      message: OK.user.profilePictureUpdated,
       img: imgUrl
     });
   } catch (err) {
@@ -171,7 +173,7 @@ export const deleteProfilePicture = async (req, res, next) => {
     const user = await User.findById(userId);
     if (!user) throw userNotFoundError;
 
-    if (!user.img) throw customError(400, 'no profile picture to delete');
+    if (!user.img) throw customError(400, ERR.user.img.noneToDelete);
 
     await deleteFromCloudinary(user.img);
 
@@ -179,7 +181,7 @@ export const deleteProfilePicture = async (req, res, next) => {
     await user.save();
 
     return res.status(200).json({
-      message: 'profile picture deleted successfully'
+      message: OK.user.profilePictureDeleted
     });
   } catch (err) {
     next(err);
@@ -212,14 +214,17 @@ export const editUser = async (req, res, next) => {
     if (!user) throw userNotFoundError;
 
     const invalid = validateAndApplyUpdates(user, body, allowedEditFields);
-    if (invalid) throw customError(400, `Invalid field: ${invalid}`);
+    if (invalid)
+      throw customError(400, ERR.body.invalidField, {
+        field: invalid
+      });
 
     await user.save();
     const userObject = user.toObject();
     delete userObject.password;
 
     return res.status(200).json({
-      message: 'user updated successfully',
+      message: OK.user.updated,
       user: userObject
     });
   } catch (err) {
@@ -238,13 +243,13 @@ export const changePassword = async (req, res, next) => {
     if (!user) throw userNotFoundError;
 
     const matches = await compareEncryption(currentPassword, user.password);
-    if (!matches) throw customError(400, 'incorrect password');
+    if (!matches) throw customError(400, ERR.user.auth.incorrectPassword);
 
     user.password = newPassword;
     await user.save();
 
     return res.status(200).json({
-      message: 'password updated successfully'
+      message: OK.user.passwordChanged
     });
   } catch (err) {
     next(err);
@@ -271,7 +276,7 @@ export const deleteUser = async (req, res, next) => {
     if (img) await deleteFromCloudinary(img);
 
     return res.status(200).json({
-      message: 'user deleted successfully'
+      message: OK.user.deleted
     });
   } catch (err) {
     next(err);

@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 import { hash } from 'bcrypt';
+import ERR from '../../../constants/errorCodes.js';
 
 // PUBLIC FIELDS HAVE SELECT:TRUE(DEFAULT, NOT WRITTEN) WHILE FIELDS THAT ARE MEANT FOR CURRENT-USER/ADMIN HAVE SELECT:FALSE AND ARE SELECTED IN CONTROLLERS WHEN NEEDED
 
@@ -19,7 +20,8 @@ const UserSchema = buildSchema(
       lowercase: true,
       match: [
         /^(?![.])[a-z0-9._]+$/,
-        'Invalid username format. Username can contain only lowercase letters, numbers, dots (.), and underscores (_).'
+        ERR.user.validation.wrongUserNameFormat
+        // username can contain only lowercase letters, numbers, dots (.), and underscores (_)
       ],
       minlength: 3,
       maxlength: 30
@@ -30,7 +32,10 @@ const UserSchema = buildSchema(
       unique: true,
       lowercase: true,
       minlength: 3,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format']
+      match: [
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        ERR.user.validation.wrongEmailFormat
+      ]
     },
 
     nickName: { ...requiredString, minlength: 3, maxlength: 30 },
@@ -41,7 +46,8 @@ const UserSchema = buildSchema(
       maxlength: 100,
       match: [
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-        'invalid password format. Password must contain at least one uppercase letter, one lowwercase letter and one number'
+        ERR.user.validation.wrongPasswordFormat
+        // password must contain at least one uppercase letter, one lowwercase letter and one number
       ],
       select: false
     },

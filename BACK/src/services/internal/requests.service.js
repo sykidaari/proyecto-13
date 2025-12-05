@@ -1,4 +1,5 @@
 import Requests from '../../api/models/user/requests/requests.model.js';
+import ERR from '../../constants/errorCodes.js';
 import { customError } from '../../utils/controllerUtils.js';
 import withTransaction from '../../utils/transactionWrapper.js';
 
@@ -42,14 +43,13 @@ const findRequestsDocsAndFields = async (
     .select(`${type}.sent`)
     .session(session);
 
-  if (!senderDoc) throw customError(404, 'sender requests-document not found');
+  if (!senderDoc) throw customError(404, ERR.request.notFound.senderDoc);
 
   const recipientDoc = await Requests.findOne({ user: recipientId })
     .select(`${type}.received`)
     .session(session);
 
-  if (!recipientDoc)
-    throw customError(404, 'recipient requests-document not found');
+  if (!recipientDoc) throw customError(404, ERR.request.notFound.recipientDoc);
 
   return {
     senderDoc,
@@ -71,7 +71,9 @@ const findAffectedDocsAndFields = async (
     .session(session);
 
   if (!affectedSenderDoc)
-    throw customError(404, 'affected sender document not found');
+    throw customError(404, ERR.request.notFound.affectedSenderDoc, {
+      model: AffectedModel.modelName
+    });
 
   const affectedRecipientDoc = await AffectedModel.findOne({
     user: recipientId
@@ -80,7 +82,9 @@ const findAffectedDocsAndFields = async (
     .session(session);
 
   if (!affectedRecipientDoc)
-    throw customError(404, 'affected recipient document not found');
+    throw customError(404, ERR.request.notFound.affectedRecipientDoc, {
+      model: AffectedModel.modelName
+    });
 
   return {
     affectedSenderDoc,
@@ -92,20 +96,36 @@ const findAffectedDocsAndFields = async (
 
 //* SERVICE FUNCTIONS
 const sendRequest = async (
-  { senderId, recipientId, type, isUnique = true, requestGroupId },
+  {
+    senderId,
+    recipientId,
+    type,
+    requireUniqueConnection = true,
+    requestGroupId
+  },
   session
 ) =>
   withTransaction(async (session) => {
     const { senderDoc, senderSentField, recipientDoc, recipientReceivedField } =
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
+    if (requestGroupId) {
+      const recipientAlreadyInvited = recipientReceivedField.some(
+        (item) => item.requestGroupId?.toString() === requestGroupId.toString()
+      );
+
+      // user can only be invited once, if is invited already front is informed with error
+      if (recipientAlreadyInvited)
+        throw customError(409, ERR.request.conflict.recipientAlreadyInvited);
+    }
+
     //* If for whatever reason request only exists on one user, it's treated as nonexisting so it can be made again to correct it
     const alreadyExists =
       listContainsUser(senderSentField, recipientId) &&
       listContainsUser(recipientReceivedField, senderId);
 
-    if (isUnique && alreadyExists)
-      throw customError(409, "request already exists, can't send");
+    if (requireUniqueConnection && alreadyExists)
+      throw customError(409, ERR.request.conflict.alreadyExists);
 
     const senderFieldPayload = { user: recipientId };
     const recipientFieldPayload = { user: senderId };
@@ -115,11 +135,11 @@ const sendRequest = async (
       recipientFieldPayload.requestGroupId = requestGroupId;
     }
 
-    isUnique
+    requireUniqueConnection
       ? senderSentField.addToSet(senderFieldPayload)
       : senderSentField.push(senderFieldPayload);
 
-    isUnique
+    requireUniqueConnection
       ? recipientReceivedField.addToSet(recipientFieldPayload)
       : recipientReceivedField.push(recipientFieldPayload);
 
@@ -151,8 +171,7 @@ const acceptRequest = async (
       listContainsUser(senderSentField, recipientId) &&
       listContainsUser(recipientReceivedField, senderId);
 
-    if (!existsOnBoth)
-      throw customError(404, "request doesn't exist, can't accept");
+    if (!existsOnBoth) throw customError(404, ERR.request.notFound.request);
 
     let requestId;
     if (isComplexOperation) {
@@ -217,8 +236,7 @@ const removeRequest = async ({ senderId, recipientId, type }, session) =>
       listContainsUser(senderSentField, recipientId) ||
       listContainsUser(recipientReceivedField, senderId);
 
-    if (!existsOnEither)
-      throw customError(404, "request doesn't exist, can't remove");
+    if (!existsOnEither) throw customError(404, ERR.request.notFound.request);
 
     senderSentField.pull({ user: recipientId });
     recipientReceivedField.pull({ user: senderId });

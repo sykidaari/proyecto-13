@@ -1,4 +1,6 @@
+import { data } from 'react-router-dom';
 import Session from '../api/models/session/session.model.js';
+import ERR from '../constants/errorCodes.js';
 import { customError, resolvePath } from '../utils/controllerUtils.js';
 
 // HELPER
@@ -7,7 +9,7 @@ const isEmpty = (body) => {
     return true;
   }
 };
-const isEmptyError = customError(400, 'request body required');
+const isEmptyError = customError(400, ERR.body.missingBody);
 
 //* GENERAL
 
@@ -32,7 +34,7 @@ export const requireAndValidateReqBody = ({ required = [], optional = [] }) => {
 
     for (const field of required) {
       if (!resolvePath(body, field)) {
-        throw customError(400, `Missing required field: ${field}`);
+        throw customError(400, ERR.body.missingField, { field });
       }
     }
 
@@ -43,34 +45,17 @@ export const requireAndValidateReqBody = ({ required = [], optional = [] }) => {
         for (const nestedKey of Object.keys(value)) {
           const full = `${key}.${nestedKey}`;
           if (!allowed.includes(full)) {
-            throw customError(400, `Invalid field: ${full}`);
+            throw customError(400, ERR.body.invalidField, { full });
           }
         }
         continue;
       }
 
-      throw customError(400, `Invalid field: ${key}`);
+      throw customError(400, ERR.body.invalidField, { key });
     }
 
     next();
   };
-};
-
-//* USER
-export const checkDuplicateUser = async (req, res, next) => {
-  const { userName, emailAddress } = req.body;
-
-  try {
-    const duplicateUser = await User.findOne({
-      $or: [{ userName }, { emailAddress }]
-    }).lean();
-    if (duplicateUser)
-      throw customError(409, 'username or email already exists');
-
-    next();
-  } catch (err) {
-    next(err);
-  }
 };
 
 //* USER CHILDREN
@@ -111,7 +96,7 @@ export const findSessionById = async (req, res, next) => {
   try {
     const session = await Session.findById(sessionId);
 
-    if (!session) throw customError(404, 'session not found');
+    if (!session) throw customError(404, ERR.session.notFound);
 
     req.session = session;
   } catch (err) {

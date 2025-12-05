@@ -57,7 +57,6 @@
 - setAccessFlags
 - requireGuest
 - requireAndValidateReqBody([userName, emailAddress, nickName, password, country, languageCode])
-- checkDuplicateUser
 
 **req state:**
 
@@ -113,7 +112,6 @@
 - setisSelf
 - requireSelfOrAdmin
 - requireReqBody
-- checkDuplicateUser
 
 **req state:**
 

@@ -1,4 +1,6 @@
-import SE from '../../../config/socket/socketEvents.js';
+import ERR from '../../../constants/errorCodes.js';
+import SE from '../../../constants/socketEvents.js';
+import OK from '../../../constants/successCodes.js';
 import { customError, emit } from '../../../utils/controllerUtils.js';
 import withTransaction from '../../../utils/transactionWrapper.js';
 import Session from '../../models/session/session.model.js';
@@ -41,12 +43,14 @@ export const getSessionById = async (req, res, next) => {
 // WORKS BOTH FOR NEW (NOT CREATED) AND EXISTING SESSIONS (ALREADY CREATED), DEPENDS ON ROUTE + ITS MIDDLEWARE
 export const sendSessionRequest = sendRequest({
   type: 'sessions',
-  resMessage: 'session invitation sent correctly',
+  resMessage: OK.sessions.requests.sent,
   emitMessage: SE.sessions.requests.received,
-  isUnique: false,
+
+  requireUniqueConnection: false,
   allowMultiple: true,
   multipleLimit: 5,
-  useRequestGroupId: true
+  useRequestGroupId: true,
+  onlyFriends: true
 });
 
 // ACCEPTS REQUEST AND EITHER JOINS EXISTING SESSION OR CREATES NEW ONE AND JOINS
@@ -54,7 +58,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
   type: 'sessions',
   AffectedModel: SessionsList,
   affectedField: 'sessionsList',
-  resMessage: 'session request accepted correctly',
+  resMessage: OK.sessions.requests.accepted,
   emitMessage: SE.sessions.requests.accepted,
 
   sideEffect: async (
@@ -71,8 +75,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
     session
   ) => {
     const request = senderDoc.sessions.sent.id(requestId);
-    if (!request)
-      throw customError(404, 'session request not found during acceptance');
+    if (!request) throw customError(404, ERR.session.notFound);
 
     const { sessionParameters, requestGroupId } = request;
 
@@ -147,7 +150,7 @@ export const markAllReceivedSessionsRequestsAsSeen =
 export const cancelSessionRequest = removeRequest({
   type: 'sessions',
   option: 'reject',
-  resMessage: 'session request cancelled correctly',
+  resMessage: OK.sessions.requests.cancelled,
   emitMessage: SE.sessions.requests.cancelled,
   allowMultiple: false
 });
@@ -155,7 +158,7 @@ export const cancelSessionRequest = removeRequest({
 export const rejectSessionRequest = removeRequest({
   type: 'sessions',
   option: 'reject',
-  resMessage: 'session request rejected correctly',
+  resMessage: OK.sessions.requests.rejected,
   emitMessage: SE.sessions.requests.rejected
 });
 
@@ -203,8 +206,8 @@ export const leaveSession = async (req, res, next) => {
 
     return res.status(200).json({
       message: wasLastUser
-        ? 'left session correctly and deleted it'
-        : 'left session correctly',
+        ? OK.sessions.general.deleted
+        : OK.sessions.general.left,
       sessionsListDoc
     });
   } catch (err) {

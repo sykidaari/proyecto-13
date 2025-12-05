@@ -45,6 +45,8 @@ const RequestsSchema = buildUserChildSchema(
   { timestamps: true, collection: 'requests' }
 );
 
-const Requests = model('Requests', RequestsSchema);
+const Requests = model('Requests', RequestsSchema, 'requests');
+//! DO NOT REMOVE THE COLLECTION NAME HERE!!! IT CAUSES AN ERROR IN MONGODB
+// Error occurs only in this model, adding the collection name in the model definition fixes it
 
 export default Requests;

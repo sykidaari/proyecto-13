@@ -4,6 +4,8 @@ import { customError, emit } from '../../../../utils/controllerUtils.js';
 import withTransaction from '../../../../utils/transactionWrapper.js';
 import User from '../../../models/user/user.model.js';
 import { getUserChild } from '../userChildren.controller.js';
+import Friends from '../../../models/user/friends/friends.model.js';
+import ERR from '../../../../constants/errorCodes.js';
 
 //* GET
 export const getRequests = getUserChild;
@@ -21,12 +23,14 @@ export const sendRequest =
     resMessage,
     emitMessage,
 
-    isUnique = true,
+    requireUniqueConnection = true,
 
     allowMultiple = false,
 
     multipleLimit,
-    useRequestGroupId = false
+    useRequestGroupId = false,
+
+    onlyFriends = false
   }) =>
   async (req, res, next) => {
     const {
@@ -38,9 +42,21 @@ export const sendRequest =
     const recipients = Array.isArray(otherUserId) ? otherUserId : [otherUserId];
 
     if (allowMultiple && recipients.length > multipleLimit)
-      throw customError(400, `can only send ${multipleLimit} requests at once`);
+      throw customError(400, ERR.request.invalid.tooManyRecipients, {
+        limit: multipleLimit
+      });
     if (!allowMultiple && recipients.length > 1)
-      throw customError(400, 'can only send one request at a time');
+      throw customError(400, ERR.request.invalid.multiNotAllowed);
+
+    if (onlyFriends) {
+      const senderFriends = await Friends.findOne({ user: currentUserId });
+
+      const isFriend = senderFriends?.friendsList.some(
+        (friend) => friend.user.toString() === otherUserId
+      );
+
+      if (!isFriend) throw customError(403, ERR.request.invalid.notFriend);
+    }
 
     const results = [];
     let finalSenderDoc;
@@ -56,7 +72,7 @@ export const sendRequest =
             senderId: currentUserId,
             recipientId,
             type,
-            isUnique,
+            requireUniqueConnection,
             requestGroupId
           });
 
@@ -180,7 +196,7 @@ export const removeRequest =
     const recipients = Array.isArray(otherUserId) ? otherUserId : [otherUserId];
 
     if (!allowMultiple && recipients.length > 1)
-      throw customError(400, 'can only remove one request at a time');
+      throw customError(400, ERR.request.invalid.multiNotAllowed);
 
     const results = [];
     let finalDoc;

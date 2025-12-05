@@ -5,6 +5,7 @@ import Requests from '../api/models/user/requests/requests.model.js';
 import SessionsList from '../api/models/user/sessionsList/sessionsList.model.js';
 import WatchList from '../api/models/user/watchList/watchList.model.js';
 import { io } from '../config/socket/socket.js';
+import ERR from '../constants/errorCodes.js';
 
 //* GENERAL
 export const validateAndApplyUpdates = (doc, reqFields, allowed) => {
@@ -29,11 +30,6 @@ export const validateAndApplyUpdates = (doc, reqFields, allowed) => {
   }
 };
 
-// DEPRECATED
-// export const listContainsValue = (list, value) => {
-//   list.some((listItem) => listItem.toString() === value.toString());
-// };
-
 export const resolvePath = (object, path) => {
   const keys = path.split('.');
   let current = object;
@@ -49,22 +45,16 @@ export const resolvePath = (object, path) => {
 };
 
 //!   ERRORS
-export const customError = (status, message) => {
+export const customError = (status, message, data = {}) => {
   const err = new Error(message);
   err.status = status;
+
+  Object.assign(err, data);
   return err;
 };
 
-export const missingFields = (requiredKeys) => {
-  for (const [i, [key, value]] of Object.entries(requiredKeys).entries()) {
-    if (!value) {
-      return customError(400, `${key} missing at index ${i}`);
-    }
-  }
-};
-
 //* USERS
-export const userNotFoundError = customError(404, 'user not found');
+export const userNotFoundError = customError(404, ERR.user.notFound);
 
 export const createAdditionalUserDocs = async (
   session,

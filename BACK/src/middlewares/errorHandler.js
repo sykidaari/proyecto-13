@@ -1,17 +1,22 @@
+import ERR from '../constants/errorCodes.js';
+
 const errorHandler = (err, req, res, next) => {
   let status = err.status || 500;
   let message = err.message;
   // Duplicate key
+
+  let field = err.field || null;
+
   if (err.code === 11000) {
-    const field = Object.keys(err.keyValue)[0];
+    field = Object.keys(err.keyValue)[0];
     status = 409;
-    message = `${field} already exists`;
+    message = ERR.system.duplicateValue;
   }
 
   // Invalid ObjectId
   if (err.name === 'CastError') {
     status = 400;
-    message = 'Invalid ID format';
+    message = ERR.system.invalidIdFormat;
   }
 
   // Mongoose validation errors
@@ -23,18 +28,18 @@ const errorHandler = (err, req, res, next) => {
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
     status = 401;
-    message = 'Invalid token';
+    message = ERR.system.jwtInvalid;
   }
 
   if (err.name === 'TokenExpiredError') {
     status = 401;
-    message = 'Token expired';
+    message = ERR.system.jwtExpired;
   }
 
   // Multer (file upload)
   if (err.code === 'LIMIT_FILE_SIZE') {
     status = 400;
-    message = 'File too large';
+    message = ERR.system.fileTooLarge;
   }
 
   console.error('Method:', req.method);
@@ -44,12 +49,24 @@ const errorHandler = (err, req, res, next) => {
   console.error('Message:', message);
   console.error(err);
 
-  res.status(status).json({
+  const response = {
+    ok: false,
     error: message,
     status,
     path: req.originalUrl,
     method: req.method
-  });
+  };
+
+  // custom error data
+  for (const [key, value] of Object.entries(err)) {
+    if (!['message', 'status', 'stack'].includes(key)) {
+      response[key] = value;
+    }
+  }
+
+  if (field) response.field = field;
+
+  res.status(status).json(response);
 };
 
 export default errorHandler;

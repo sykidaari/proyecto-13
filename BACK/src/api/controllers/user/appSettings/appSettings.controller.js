@@ -1,3 +1,4 @@
+import ERR from '../../../../constants/errorCodes.js';
 import { getUserChild } from '../userChildren.controller.js';
 
 //*
@@ -13,7 +14,8 @@ export const editAppSettings = async (req, res, next) => {
 
   const allowed = ['reset', 'syncedAcrossDevices', 'settings'];
   for (const key of Object.keys(req.body)) {
-    if (!allowed.includes(key)) throw customError(400, `Invalid field: ${key}`);
+    if (!allowed.includes(key))
+      throw customError(400, ERR.body.invalidField, { field: key });
   }
 
   const { syncedAcrossDevices, ...settings } = updates;

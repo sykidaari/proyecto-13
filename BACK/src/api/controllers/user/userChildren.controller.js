@@ -1,3 +1,5 @@
+import ERR from '../../../constants/errorCodes.js';
+import OK from '../../../constants/successCodes.js';
 import { customError, resolvePath } from '../../../utils/controllerUtils.js';
 
 //* GENERIC CONTROLLERS FOR USER CHILDREN
@@ -36,7 +38,10 @@ export const addItemToUserChildList =
       : list.some((entry) => entry.toString() === value.toString());
 
     if (exists)
-      throw customError(409, `${itemKey}:${value} already in ${field}`);
+      throw customError(409, ERR.userChild.conflict.alreadyExists, {
+        field,
+        [itemKey]: value
+      });
 
     const item = isObjectList ? { [itemKey]: value } : value;
 
@@ -46,8 +51,10 @@ export const addItemToUserChildList =
       await doc.save();
 
       return res.status(status).json({
-        message: `${itemKey}:${value} added to ${field}`,
-        item: item
+        message: OK.userChild.itemAdded,
+        [itemKey]: value,
+        field,
+        item
       });
     } catch (err) {
       next(err);
@@ -72,10 +79,10 @@ export const removeItemFromUserChildList =
 
     const notFound = index === -1;
     if (notFound)
-      throw customError(
-        400,
-        `${itemKey}:${value} doesn't exist in ${field}, so it can't be removed`
-      );
+      throw customError(400, ERR.userChild.invalid.notInList, {
+        field,
+        [itemKey]: value
+      });
 
     const item = list.splice(index, 1)[0];
 
@@ -83,7 +90,9 @@ export const removeItemFromUserChildList =
       await doc.save();
 
       return res.status(status).json({
-        message: `${itemKey}:${value} removed from ${field}`,
+        message: OK.userChild.itemRemoved,
+        [itemKey]: value,
+        field,
         item
       });
     } catch (err) {
@@ -101,7 +110,7 @@ export const markItemAsSeen = (field, itemIdKey) => async (req, res, next) => {
     const item = list.find(
       (entry) => entry[itemIdKey].toString() === targetId.toString()
     );
-    if (!item) throw customError(404, 'item not found');
+    if (!item) throw customError(404, ERR.userChild.notFound.item);
 
     const id = item[itemIdKey];
 
@@ -110,7 +119,8 @@ export const markItemAsSeen = (field, itemIdKey) => async (req, res, next) => {
     await doc.save();
 
     return res.status(status).json({
-      message: `${id} item marked as seen`,
+      message: OK.userChild.itemMarkedSeen,
+      id,
       item
     });
   } catch (err) {
@@ -131,7 +141,8 @@ export const markAllItemsAsSeen = (field) => async (req, res, next) => {
     await doc.save();
 
     return res.status(status).json({
-      message: `all items in ${field} marked as seen`,
+      message: OK.userChild.allMarkedSeen,
+      field,
       list
     });
   } catch (err) {
