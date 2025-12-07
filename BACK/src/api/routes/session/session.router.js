@@ -4,6 +4,7 @@ import {
   cancelSessionRequest,
   getAllSessions,
   getSessionById,
+  getSharedSessions,
   leaveSession,
   markAllReceivedSessionsRequestsAsSeen,
   rejectSessionRequest,
@@ -20,52 +21,68 @@ import {
 } from '../../../middlewares/middlewares.js';
 
 const sessionRouter = Router({ mergeParams: true });
+const requestRouter = Router({ mergeParams: true });
 
-//! MISSING BODY VALIDATIONS
+const existingSessionRouter = Router({ mergeParams: true });
+const existingSessionRequestRouter = Router({ mergeParams: true });
+const interactRouter = Router({ mergeParams: true });
+
+sessionRouter
+  .use('/requestRouter', requestRouter)
+  .use(
+    '/:sessionId',
+    [
+      findSessionById,
+      setIsSessionParticipant,
+      requireSessionParticipantOrAdmin
+    ],
+    existingSessionRouter
+  );
+existingSessionRouter
+  .use('/interactRouter', interactRouter)
+  .use('/requestRouter', existingSessionRequestRouter);
+
 sessionRouter
   .get('/', [requireAdmin], getAllSessions)
+  .get('/shared/:otherUserId', getSharedSessions);
 
-  // FOR NEW SESSION (NOT CREATED YET)
+requestRouter
+  .patch('/mark-all-seen', markAllReceivedSessionsRequestsAsSeen)
   .patch(
-    '/request/send',
+    '/send',
     [requireAndValidateReqBody({ required: 'otherUserId' })],
     sendSessionRequest
   )
   .patch(
-    '/request/accept',
+    '/accept',
     [requireAndValidateReqBody({ required: 'otherUserId' })],
     acceptSessionRequestAndJoinSession
   )
   .patch(
-    '/request/cancel',
+    '/cancel',
     [requireAndValidateReqBody({ required: 'otherUserId' })],
     cancelSessionRequest
   )
   .patch(
-    '/request/reject',
+    '/reject',
     [requireAndValidateReqBody({ required: 'otherUserId' })],
     rejectSessionRequest
-  )
+  );
 
-  .patch('/request/mark-all-seen', markAllReceivedSessionsRequestsAsSeen)
+existingSessionRouter.get('/', getSessionById).patch('/leave', leaveSession);
 
-  .use('/:sessionId', [
-    findSessionById,
-    setIsSessionParticipant,
-    requireSessionParticipantOrAdmin
-  ])
-  .get('/:sessionId', getSessionById)
+interactRouter
+  .patch('/proposeMatch', requireAndValidateReqBody({ required: 'mediaId' }))
+  .patch('/discardMedia', requireAndValidateReqBody({ required: 'mediaId' }));
 
-  // FOR ALREADY EXISTING SESSION
-  .patch(
-    '/:sessionId/request/send',
-    [
-      requireAndValidateReqBody({
-        required: ['otherUserId', 'requestGroupId']
-      })
-    ],
-    sendSessionRequest
-  )
-  .patch('/:sessionId/leave', leaveSession);
+existingSessionRequestRouter.patch(
+  '/send',
+  [
+    requireAndValidateReqBody({
+      required: ['otherUserId', 'requestGroupId']
+    })
+  ],
+  sendSessionRequest
+);
 
 export default sessionRouter;

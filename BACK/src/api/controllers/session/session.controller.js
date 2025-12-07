@@ -17,7 +17,9 @@ import { markAllItemsAsSeen } from '../user/userChildren.controller.js';
 //? ADMIN ONLY
 export const getAllSessions = async (req, res, next) => {
   try {
-    const sessions = await Session.find().populate('participants.user').lean();
+    const sessions = await Session.find()
+      .populate({ path: 'participants.user', select: 'userName' })
+      .lean();
 
     return res.status(200).json(sessions.toObject());
   } catch (err) {
@@ -33,6 +35,23 @@ export const getSessionById = async (req, res, next) => {
     await session.populate(['participants.user', 'matchedMedias']);
 
     return res.status(200).json(session.toObject());
+  } catch (err) {
+    next(err);
+  }
+};
+
+// See sessions you share with another user. So if you go to the user's profile you can see which sessions you're both in, like shared chat's in whatsapp
+export const getSharedSessions = async (req, res, next) => {
+  const { userId: currentUserId, otherUserId } = req.params;
+
+  try {
+    const sharedSessions = await Session.find({
+      'participants.user': { $all: [currentUserId, otherUserId] }
+    })
+      .populate({ path: 'participants.user', select: 'userName' })
+      .lean();
+
+    return res.status(200).json(sharedSessions);
   } catch (err) {
     next(err);
   }
@@ -89,6 +108,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
         [
           {
             sessionName: sessionParameters.sessionName,
+
             includedMedia: sessionParameters.includedMedia,
             participants: [{ user: senderId }, { user: recipientId }],
             requestGroupId
@@ -215,4 +235,14 @@ export const leaveSession = async (req, res, next) => {
   }
 };
 
-// edit session missing baby
+// "swipe right"
+export const proposeMatch = '';
+
+// "swipe left"
+export const discardMedia = '';
+
+// "flag for other participants"
+export const markMediaAsWatched = '';
+
+// "flag for other participants"
+export const likeMedia = '';

@@ -17,10 +17,11 @@ import sessionsListRouter from './sessionsList/sessionsList.router.js';
 const userChildrenRouter = Router({ mergeParams: true });
 
 userChildrenRouter
+  .use('/requests', [findOrCreateByUser(Requests)], requestsRouter)
+
   .use('/appSettings', [findOrCreateByUser(AppSettings)], appSettingsRouter)
   .use('/favorites', [findOrCreateByUser(Favorites)], favoritesRouter)
   .use('/friends', [findOrCreateByUser(Friends)], friendsRouter)
-  .use('/requests', [findOrCreateByUser(Requests)], requestsRouter)
   .use('/sessionsList', [findOrCreateByUser(SessionsList), sessionsListRouter])
   .use('/watchList'[findOrCreateByUser(WatchList)], watchListRouter);
 export default userChildrenRouter;

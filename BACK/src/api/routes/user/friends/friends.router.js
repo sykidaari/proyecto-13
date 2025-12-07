@@ -12,39 +12,40 @@ import {
 import { requireSelf } from '../../../../middlewares/access.js';
 
 const friendsRouter = Router();
+const requestRouter = Router();
+
+friendsRouter.use('/request', requestRouter);
 
 friendsRouter
   .get('/', getFriends)
-
-  .patch(
-    '/request/send',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    sendFriendRequest
-  )
-  .patch(
-    '/request/accept',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    acceptFriendRequest
-  )
-  .patch(
-    '/request/cancel',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    cancelFriendRequest
-  )
-  .patch(
-    '/request/reject',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    rejectFriendRequest
-  )
-  .patch(
-    '/request/mark-all-seen',
-    [requireSelf],
-    markAllReceivedFriendsRequestsAsSeen
-  )
   .patch(
     '/remove',
     requireAndValidateReqBody({ required: ['user'] }),
     removeFriend
   );
+
+// REQUESTS
+requestRouter
+  .patch(
+    '/send',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    sendFriendRequest
+  )
+  .patch(
+    '/accept',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    acceptFriendRequest
+  )
+  .patch(
+    '/cancel',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    cancelFriendRequest
+  )
+  .patch(
+    '/reject',
+    requireAndValidateReqBody({ required: ['otherUserId'] }),
+    rejectFriendRequest
+  )
+  .patch('/mark-all-seen', [requireSelf], markAllReceivedFriendsRequestsAsSeen);
 
 export default friendsRouter;

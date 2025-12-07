@@ -11,15 +11,17 @@ export const sessionParameters = {
   sessionName: { type: String, minlength: 3, maxlength: 30 },
 
   includedMedia: {
-    type: {
-      mediaType: {
-        ...requiredString,
-        enum: ['movies', 'series', 'all'],
-        default: 'all'
-      },
-      genres: [String]
+    mediaType: {
+      ...requiredString,
+      enum: ['movies', 'series', 'all'],
+      default: 'all'
     },
-    required: true
+    genres: [String],
+
+    availability: {
+      services: { type: [String], required: true },
+      region: { type: String, required: true }
+    }
   }
 };
 
@@ -32,11 +34,10 @@ const SessionSchema = buildSchema(
         {
           user: userRefRequiredUnique,
 
-          hearts: [mediaRef],
+          matchProposals: [mediaRef],
 
           hasWatched: [mediaRef],
-          ratesGood: [mediaRef],
-          ratesBad: [mediaRef]
+          likes: [mediaRef]
         }
       ],
       validate: {

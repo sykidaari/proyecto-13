@@ -54,6 +54,23 @@ export const getUserById = async (req, res, next) => {
   }
 };
 
+// PRE-REGISTER/PRE-UPDATE, for a modular front-end register experience!
+const checkAvailability = (key) => {
+  return async (req, res, next) => {
+    const value = req.body[key];
+
+    try {
+      const exists = await User.findOne({ [key]: value });
+
+      res.json({ available: !exists, key, value });
+    } catch (err) {
+      next(err);
+    }
+  };
+};
+export const checkUserNameAvailability = checkAvailability('userName');
+export const checkEmailAvailability = checkAvailability('emailAddress');
+
 // https://www.youtube.com/watch?v=HsS0z3eOCSQ
 // ! WILL MAKE WITH ATLAS SEARCH; NEED MODEL AND SOME USERS FIRST
 export const searchUsers = async (req, res, next) => {
