@@ -40,10 +40,14 @@ const splitParticipants = (session, currentUserId) => {
 export const getAllSessions = async (req, res, next) => {
   try {
     const sessions = await Session.find()
-      .populate({ path: 'participants.user', select: 'userName' })
+      .populate([
+        { path: 'participants.user', select: 'userName' },
+        'discardedMedias',
+        'matchedMedias'
+      ])
       .lean();
 
-    return res.status(200).json(sessions.toObject());
+    return res.status(200).json(sessions);
   } catch (err) {
     next(err);
   }
@@ -54,7 +58,10 @@ export const getSessionById = async (req, res, next) => {
   const { session } = req;
 
   try {
-    await session.populate(['participants.user', 'matchedMedias']);
+    await session.populate([
+      { path: 'participants.user', select: 'userName' },
+      'matchedMedias'
+    ]);
 
     return res.status(200).json(session.toObject());
   } catch (err) {
@@ -261,22 +268,76 @@ export const leaveSession = async (req, res, next) => {
 export const proposeMatch = async (req, res, next) => {
   const {
     session,
-    params: { id: currentUserId }
+    params: { userId: currentUserId },
+    body: { mediaId }
   } = req;
 
-  const { currentParticipant, otherParticipants } = sortParticipants(
+  const isDiscarded = session.discardedMedias.some(
+    (media) => media.toString() === mediaId.toString()
+  );
+
+  if (isDiscarded)
+    throw customError(403, ERR.session.conflict.mediaIsDiscarded);
+
+  const { currentParticipant, otherParticipants } = splitParticipants(
     session,
     currentUserId
   );
 
+  addMediaToField(mediaId, currentParticipant.matchProposals);
+
+  const isMatch = session.participants.every((participant) =>
+    participant.matchProposals.includes(mediaId)
+  );
+
+  if (isMatch) addMediaToField(mediaId, session.matchedMedias);
+
   try {
-  } catch (error) {}
+    await session.save();
+
+    for (const otherParticipant of otherParticipants) {
+      emit(
+        { from: currentUserId, to: otherParticipant.user.toString() },
+        isMatch ? SE.sessions.newMatch : SE.sessions.newInteraction
+      );
+    }
+
+    return res.status(200).json({ mediaId, isMatch });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // "swipe left"
 export const discardMedia = async (req, res, next) => {
-  const { session } = req;
+  const {
+    session,
+    params: { userId: currentUserId },
+    body: { mediaId }
+  } = req;
+
+  const isMatched = session.matchedMedias.some(
+    (media) => media.toString() === mediaId.toString()
+  );
+
+  if (isMatched) throw customError(403, ERR.session.conflict.mediaIsMatched);
+
+  addMediaToField(mediaId, session.discardedMedias);
 
   try {
-  } catch (error) {}
+    await session.save();
+
+    const { otherParticipants } = splitParticipants(session, currentUserId);
+
+    for (const otherParticipant of otherParticipants) {
+      emit(
+        { from: currentUserId, to: otherParticipant.user.toString() },
+        SE.sessions.newInteraction
+      );
+    }
+
+    return res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
 };

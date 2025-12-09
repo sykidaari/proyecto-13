@@ -59,7 +59,11 @@ const ERROR_CODES = {
   session: {
     notFound: 'SESSION_NOT_FOUND',
     validation: { tooManyParticipants: 'SESSION_TOO_MANY_PARTICIPANTS' },
-    conflict: { mediaAlreadyExists: 'SESSION_MEDIA_ALREADY_EXISTS_IN_FIELD' }
+    conflict: {
+      mediaAlreadyExists: 'SESSION_MEDIA_ALREADY_EXISTS_IN_FIELD',
+      mediaIsDiscarded: 'SESSION_MEDIA_DISCARDED',
+      mediaIsMatched: 'SESSION_MEDIA_MATCHED'
+    }
   },
 
   userChild: {

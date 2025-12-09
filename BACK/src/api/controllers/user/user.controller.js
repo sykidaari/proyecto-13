@@ -22,7 +22,7 @@ import OK from '../../../constants/successCodes.js';
 // ? ADMIN ONLY
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select('+role').lean();
+    const users = await User.find().select('+role +emailAddress').lean();
 
     return res.status(200).json(users);
   } catch (err) {
@@ -38,9 +38,9 @@ export const getUserById = async (req, res, next) => {
   } = req;
 
   const projection = isAdmin
-    ? '+role'
+    ? '+role +emailAddress'
     : isSelf
-    ? '+accountSettings +languageCode'
+    ? '+accountSettings +languageCode +emailAddress'
     : null;
 
   try {
@@ -136,7 +136,7 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({
       $or: [{ userName }, { emailAddress }]
     })
-      .select('+password +accountSettings')
+      .select('+password +accountSettings +emailAddress')
       .lean();
 
     if (!user) throw userNotFoundError;

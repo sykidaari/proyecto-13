@@ -35,7 +35,8 @@ const UserSchema = buildSchema(
       match: [
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         ERR.user.validation.wrongEmailFormat
-      ]
+      ],
+      select: false
     },
 
     nickName: { ...requiredString, minlength: 3, maxlength: 30 },
