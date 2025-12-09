@@ -34,10 +34,7 @@ const SessionSchema = buildSchema(
         {
           user: userRefRequiredUnique,
 
-          matchProposals: [mediaRef],
-
-          hasWatched: [mediaRef],
-          likes: [mediaRef]
+          matchProposals: [mediaRef]
         }
       ],
       validate: {

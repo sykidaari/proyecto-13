@@ -5,7 +5,11 @@ const ERROR_CODES = {
     adminRequired: 'ACCESS_ADMIN_REQUIRED',
     notParticipantOrAdmin: 'ACCESS_NOT_PARTICIPANT_OR_ADMIN',
     notSelf: 'ACCESS_NOT_SELF',
-    notSelfOrAdmin: 'ACCESS_NOT_SELF_OR_ADMIN'
+    notSelfOrAdmin: 'ACCESS_NOT_SELF_OR_ADMIN',
+
+    privacyDisabled: 'ACCESS_USER_PRIVACY_DISABLED',
+    notFriend: 'ACCESS_USER_NOT_FRIEND',
+    notFriendOrParticipant: 'ACCESS_USER_NOT_FRIEND_OR_PARTICIPANT'
   },
 
   body: {
@@ -54,7 +58,8 @@ const ERROR_CODES = {
   },
   session: {
     notFound: 'SESSION_NOT_FOUND',
-    validation: { tooManyParticipants: 'SESSION_TOO_MANY_PARTICIPANTS' }
+    validation: { tooManyParticipants: 'SESSION_TOO_MANY_PARTICIPANTS' },
+    conflict: { mediaAlreadyExists: 'SESSION_MEDIA_ALREADY_EXISTS_IN_FIELD' }
   },
 
   userChild: {

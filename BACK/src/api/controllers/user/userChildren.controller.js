@@ -26,7 +26,7 @@ export const getUserChild =
 //* PATCH
 
 export const addItemToUserChildList =
-  (field, itemKey) => async (req, res, next) => {
+  (field, itemKey, emitFn) => async (req, res, next) => {
     const { doc, status, body } = req;
     const list = resolvePath(doc, field);
     const value = body[itemKey];
@@ -50,6 +50,8 @@ export const addItemToUserChildList =
     try {
       await doc.save();
 
+      if (emitFn) await emitFn(req);
+
       return res.status(status).json({
         message: OK.userChild.itemAdded,
         [itemKey]: value,
@@ -62,7 +64,7 @@ export const addItemToUserChildList =
   };
 
 export const removeItemFromUserChildList =
-  (field, itemKey) => async (req, res, next) => {
+  (field, itemKey, emitFn) => async (req, res, next) => {
     const { doc, status, body } = req;
     const list = resolvePath(doc, field);
     const value = body[itemKey];
@@ -88,6 +90,8 @@ export const removeItemFromUserChildList =
 
     try {
       await doc.save();
+
+      if (emitFn) await emitFn(req);
 
       return res.status(status).json({
         message: OK.userChild.itemRemoved,

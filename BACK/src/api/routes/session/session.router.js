@@ -2,16 +2,19 @@ import { Router } from 'express';
 import {
   acceptSessionRequestAndJoinSession,
   cancelSessionRequest,
+  discardMedia,
   getAllSessions,
   getSessionById,
   getSharedSessions,
   leaveSession,
   markAllReceivedSessionsRequestsAsSeen,
+  proposeMatch,
   rejectSessionRequest,
   sendSessionRequest
 } from '../../controllers/session/session.controller.js';
 import {
   requireAdmin,
+  requireSelf,
   requireSessionParticipantOrAdmin,
   setIsSessionParticipant
 } from '../../../middlewares/access.js';
@@ -19,6 +22,13 @@ import {
   findSessionById,
   requireAndValidateReqBody
 } from '../../../middlewares/middlewares.js';
+
+//* COMMON MIDDLEWARES
+const validateOtherUserId = requireAndValidateReqBody({
+  required: 'otherUserId'
+});
+const validateMediaId = requireAndValidateReqBody({ required: 'mediaId' });
+//*
 
 const sessionRouter = Router({ mergeParams: true });
 const requestRouter = Router({ mergeParams: true });
@@ -28,7 +38,7 @@ const existingSessionRequestRouter = Router({ mergeParams: true });
 const interactRouter = Router({ mergeParams: true });
 
 sessionRouter
-  .use('/requestRouter', requestRouter)
+  .use('/request', requestRouter)
   .use(
     '/:sessionId',
     [
@@ -39,8 +49,8 @@ sessionRouter
     existingSessionRouter
   );
 existingSessionRouter
-  .use('/interactRouter', interactRouter)
-  .use('/requestRouter', existingSessionRequestRouter);
+  .use('/interact', [requireSelf], interactRouter)
+  .use('/request', existingSessionRequestRouter);
 
 sessionRouter
   .get('/', [requireAdmin], getAllSessions)
@@ -48,32 +58,16 @@ sessionRouter
 
 requestRouter
   .patch('/mark-all-seen', markAllReceivedSessionsRequestsAsSeen)
-  .patch(
-    '/send',
-    [requireAndValidateReqBody({ required: 'otherUserId' })],
-    sendSessionRequest
-  )
-  .patch(
-    '/accept',
-    [requireAndValidateReqBody({ required: 'otherUserId' })],
-    acceptSessionRequestAndJoinSession
-  )
-  .patch(
-    '/cancel',
-    [requireAndValidateReqBody({ required: 'otherUserId' })],
-    cancelSessionRequest
-  )
-  .patch(
-    '/reject',
-    [requireAndValidateReqBody({ required: 'otherUserId' })],
-    rejectSessionRequest
-  );
+  .patch('/send', [validateOtherUserId], sendSessionRequest)
+  .patch('/accept', [validateOtherUserId], acceptSessionRequestAndJoinSession)
+  .patch('/cancel', [validateOtherUserId], cancelSessionRequest)
+  .patch('/reject', [validateOtherUserId], rejectSessionRequest);
 
 existingSessionRouter.get('/', getSessionById).patch('/leave', leaveSession);
 
 interactRouter
-  .patch('/proposeMatch', requireAndValidateReqBody({ required: 'mediaId' }))
-  .patch('/discardMedia', requireAndValidateReqBody({ required: 'mediaId' }));
+  .patch('/propose-match', [validateMediaId], proposeMatch)
+  .patch('/discard', [validateMediaId], discardMedia);
 
 existingSessionRequestRouter.patch(
   '/send',

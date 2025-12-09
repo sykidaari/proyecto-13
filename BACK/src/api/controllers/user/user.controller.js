@@ -220,8 +220,9 @@ export const editUser = async (req, res, next) => {
       'emailAddress',
       'country',
       'languageCode',
-      'isSharedInfo.watchList',
-      'isSharedInfo.favorites'
+      'accountSettings.isSharedInfo.watchList',
+      'accountSettings.isSharedInfo.favorites',
+      'accountSettings.tutorialCompleted'
     );
 
   try {

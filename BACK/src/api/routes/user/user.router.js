@@ -109,6 +109,6 @@ existingUserRouter
   .delete('/', [requireSelfOrAdmin], deleteUser)
 
   // CHILD ROUTES
-  .use('/', [requireSelfOrAdmin], userChildrenRouter);
+  .use('/', userChildrenRouter);
 
 export default userRouter;

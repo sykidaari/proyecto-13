@@ -69,7 +69,8 @@ const UserSchema = buildSchema(
           isSharedInfo: {
             watchList: { type: Boolean, default: true },
             favorites: { type: Boolean, default: true }
-          }
+          },
+          tutorialCompleted: { type: Boolean, default: true }
         },
         { _id: false }
       ),

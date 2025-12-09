@@ -18,8 +18,11 @@ const SOCKET_EVENTS = {
     },
     participantsChanges: {
       participantJoined: 'sessions:new-participant',
-      participantLeft: 'sessions:participant-left'
-    }
+      participantLeft: 'sessions:participant-left',
+      mediaLikeUpdated: 'sessions:participant-media-liked-updated',
+      mediaWatchedUpdated: 'sessions:participant-media-watched-updated'
+    },
+    newInteraction: 'sessions:new-interaction'
   }
 };
 export default SOCKET_EVENTS;

@@ -1,27 +1,41 @@
+import Session from '../api/models/session/session.model.js';
 import AppSettings from '../api/models/user/appSettings/appsettings.model.js';
 import Favorites from '../api/models/user/favorites/favorites.model.js';
 import Friends from '../api/models/user/friends/friends.model.js';
+import LikedMedias from '../api/models/user/likedMedias/likedMedias.model.js';
 import Requests from '../api/models/user/requests/requests.model.js';
 import SessionsList from '../api/models/user/sessionsList/sessionsList.model.js';
+import WatchedMedias from '../api/models/user/watchedMedias/watchedMedias.model.js';
 import WatchList from '../api/models/user/watchList/watchList.model.js';
 import { io } from '../config/socket/socket.js';
 import ERR from '../constants/errorCodes.js';
 
 //* GENERAL
+const setNestedValue = (obj, path, value) => {
+  const keys = path.split('.');
+  let current = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    current = current[keys[i]];
+  }
+  current[keys[keys.length - 1]] = value;
+};
+
 export const validateAndApplyUpdates = (doc, reqFields, allowed) => {
   for (const [key, value] of Object.entries(reqFields)) {
     if (allowed.includes(key)) {
-      doc[key] = value;
+      setNestedValue(doc, key, value);
       continue;
     }
 
-    if (value && typeof value === 'object') {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
       for (const nestedKey of Object.keys(value)) {
         const path = `${key}.${nestedKey}`;
-        if (!allowed.includes(path)) return path;
 
-        doc[key] ||= {};
-        doc[key][nestedKey] = value[nestedKey];
+        if (!allowed.includes(path)) {
+          return path;
+        }
+
+        setNestedValue(doc, path, value[nestedKey]);
       }
       continue;
     }
@@ -83,7 +97,9 @@ export const childModels = [
   Friends,
   Requests,
   SessionsList,
-  WatchList
+  WatchList,
+  LikedMedias,
+  WatchedMedias
 ];
 
 export const deleteAdditionalUserDocs = async (
@@ -98,3 +114,26 @@ export const deleteAdditionalUserDocs = async (
 
 //* SOCKET-UTILS
 export const emit = ({ from, to }, event) => io.to(to).emit(event, { from });
+
+export const emitUserMediaUpdate = (event) => {
+  return async (req) => {
+    const { userId } = req.params;
+
+    const sessions = await Session.find({
+      'participants.user': userId
+    }).select('participants.user');
+
+    const recipients = new Set();
+
+    for (const session of sessions) {
+      for (const participant of session.participants) {
+        const id = participant.user.toString();
+        if (id !== userId) recipients.add(id);
+      }
+    }
+
+    for (const targetId of recipients) {
+      emit({ from: userId, to: targetId }, event);
+    }
+  };
+};

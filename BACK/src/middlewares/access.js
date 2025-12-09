@@ -10,7 +10,7 @@ import { customError } from '../utils/controllerUtils.js';
 
 //* GENERAL, FULL APP:
 
-export const setAccessFlags = async (req, res, next) => {
+export const setBasicAccessFlags = async (req, res, next) => {
   req.user = null;
   req.isAdmin = false;
 
@@ -72,6 +72,63 @@ export const requireSelfOrAdmin = (req, res, next) => {
   next();
 };
 
+export const requireSelfOrAdminOrFriendWithPrivacy =
+  (field) => async (req, res, next) => {
+    const {
+      user: { _id: currentUserId },
+      params: { userId: targetUserId },
+      isSelf,
+      isAdmin
+    } = req;
+
+    if (isSelf || isAdmin) return next();
+
+    const targetUser = await User.findById(targetUserId).select(
+      `accountSettings.isSharedInfo.${field}`
+    );
+
+    const isShared = targetUser?.accountSettings?.isSharedInfo?.[field];
+
+    if (!isShared) throw customError(403, ERR.access.privacyDisabled);
+
+    const isFriend = await Friends.findOne({
+      user: targetUserId,
+      'friendsList.user': currentUserId
+    });
+
+    if (!isFriend) throw customError(403, ERR.access.notFriend);
+
+    next();
+  };
+
+export const requireSelfOrAdminOrFriendOrSessionParticipant = async (
+  req,
+  res,
+  next
+) => {
+  const {
+    user: { _id: currentUserId },
+    params: { userId: targetUserId },
+    isSelf,
+    isAdmin
+  } = req;
+
+  if (isSelf || isAdmin) return next();
+
+  const isFriend = await Friends.findOne({
+    user: targetUserId,
+    'friendsList.user': currentUserId
+  });
+  if (isFriend) return next();
+
+  const sharedSession = await Session.findOne({
+    'participants.user': { $all: [currentUserId, targetUserId] }
+  });
+  if (sharedSession) return next();
+
+  throw customError(403, ERR.access.notFriendOrParticipant);
+};
+
 //* FOR SESSIONS
 export const setIsSessionParticipant = async (req, res, next) => {
   const { user, session } = req;
@@ -87,7 +144,7 @@ export const setIsSessionParticipant = async (req, res, next) => {
   next();
 };
 
-export const requireSessionParticipantOrAdmin = () => {
+export const requireSessionParticipantOrAdmin = (req, res, next) => {
   const { isSessionParticipant, isAdmin } = req;
 
   if (!isSessionParticipant && !isAdmin)

@@ -12,16 +12,57 @@ import WatchList from '../../models/user/watchList/watchList.model.js';
 import watchListRouter from './watchList/watchList.router.js';
 import SessionsList from '../../models/user/sessionsList/sessionsList.model.js';
 import sessionsListRouter from './sessionsList/sessionsList.router.js';
+import WatchedMedias from '../../models/user/watchedMedias/watchedMedias.model.js';
+import watchedMediasRouter from './watchedMedias/watchedMedias.router.js';
+import LikedMedias from '../../models/user/likedMedias/likedMedias.model.js';
+import likedMediasRouter from './likedMedias/likedMedias.router.js';
+import {
+  requireSelfOrAdmin,
+  requireSelfOrAdminOrFriendOrSessionParticipant,
+  requireSelfOrAdminOrFriendWithPrivacy
+} from '../../../middlewares/access.js';
 
-// THIS ROUTER IS ONLY A SUB-INDEX
 const userChildrenRouter = Router({ mergeParams: true });
+const privateRouter = Router({ mergeParams: true });
+
+userChildrenRouter.use('/private', [requireSelfOrAdmin], privateRouter);
 
 userChildrenRouter
-  .use('/requests', [findOrCreateByUser(Requests)], requestsRouter)
+  .use(
+    '/favorites',
+    [requireSelfOrAdminOrFriendWithPrivacy, findOrCreateByUser(Favorites)],
+    favoritesRouter
+  )
+  .use(
+    '/watch-list',
+    [requireSelfOrAdminOrFriendWithPrivacy, findOrCreateByUser(WatchList)],
+    watchListRouter
+  )
 
+  .use(
+    '/watched-medias',
+    [
+      requireSelfOrAdminOrFriendOrSessionParticipant,
+      findOrCreateByUser(WatchedMedias)
+    ],
+    watchedMediasRouter
+  )
+  .use(
+    '/liked-medias',
+    [
+      requireSelfOrAdminOrFriendOrSessionParticipant,
+      findOrCreateByUser(LikedMedias)
+    ],
+    likedMediasRouter
+  );
+
+privateRouter
+  .use('/requests', [findOrCreateByUser(Requests)], requestsRouter)
   .use('/appSettings', [findOrCreateByUser(AppSettings)], appSettingsRouter)
-  .use('/favorites', [findOrCreateByUser(Favorites)], favoritesRouter)
   .use('/friends', [findOrCreateByUser(Friends)], friendsRouter)
-  .use('/sessionsList', [findOrCreateByUser(SessionsList), sessionsListRouter])
-  .use('/watchList'[findOrCreateByUser(WatchList)], watchListRouter);
+  .use('/sessions-list', [
+    findOrCreateByUser(SessionsList),
+    sessionsListRouter
+  ]);
+
 export default userChildrenRouter;

@@ -12,6 +12,28 @@ import {
 } from '../user/requests/requests.controller.js';
 import { markAllItemsAsSeen } from '../user/userChildren.controller.js';
 
+//* HELPERS EXCLUSIVE TO SESSIONS
+const addMediaToField = (mediaId, field) => {
+  const exists = field.some((entry) => entry.toString() === mediaId.toString());
+
+  if (exists) throw customError(404, ERR.session.conflict.mediaAlreadyExists);
+
+  field.addToSet(mediaId);
+};
+
+const splitParticipants = (session, currentUserId) => {
+  const currentParticipant = session.participants.find(
+    (participant) => participant.user.toString() === currentUserId
+  );
+
+  const otherParticipants = session.participants.filter(
+    (participant) => participant.user.toString() !== currentUserId
+  );
+
+  return { currentParticipant, otherParticipants };
+};
+//*
+
 //* GET
 
 //? ADMIN ONLY
@@ -236,13 +258,25 @@ export const leaveSession = async (req, res, next) => {
 };
 
 // "swipe right"
-export const proposeMatch = '';
+export const proposeMatch = async (req, res, next) => {
+  const {
+    session,
+    params: { id: currentUserId }
+  } = req;
+
+  const { currentParticipant, otherParticipants } = sortParticipants(
+    session,
+    currentUserId
+  );
+
+  try {
+  } catch (error) {}
+};
 
 // "swipe left"
-export const discardMedia = '';
+export const discardMedia = async (req, res, next) => {
+  const { session } = req;
 
-// "flag for other participants"
-export const markMediaAsWatched = '';
-
-// "flag for other participants"
-export const likeMedia = '';
+  try {
+  } catch (error) {}
+};

@@ -4,13 +4,13 @@ import {
   mediaRef
 } from '../../../../utils/modelUtils.js';
 
-const WatchListSchema = buildUserChildSchema(
+const LikedMediasSchema = buildUserChildSchema(
   {
     medias: [mediaRef]
   },
-  'watchLists'
+  'likedMedias'
 );
 
-const WatchList = model('WatchList', WatchListSchema);
+const LikedMedias = model('LikedMedias', LikedMediasSchema);
 
-export default WatchList;
+export default LikedMedias;

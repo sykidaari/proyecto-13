@@ -11,7 +11,7 @@ const sessionsListRouter = Router();
 sessionsListRouter
   .get('/', getSessionsList)
   .patch(
-    '/mark-all-seen',
+    '/mark-seen',
     [requireSelf, requireAndValidateReqBody({ required: 'session' })],
     markSessionInListAsSeen
   );
