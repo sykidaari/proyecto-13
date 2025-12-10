@@ -6,7 +6,7 @@ import errorHandler from './src/middlewares/errorHandler.js';
 import mainRouter from './src/api/routes/index.router.js';
 import { Server as SocketServer } from 'socket.io';
 import { createServer as createHttpServer } from 'http';
-import { setupSocket } from './src/config/socket/socket.js';
+import { setupSocket } from './src/config/socket.js';
 
 const app = express();
 

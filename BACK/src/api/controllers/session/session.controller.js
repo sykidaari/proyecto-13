@@ -125,7 +125,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
     const request = senderDoc.sessions.sent.id(requestId);
     if (!request) throw customError(404, ERR.session.notFound);
 
-    const { sessionParameters, requestGroupId } = request;
+    const { additionalPayload: sessionParameters, requestGroupId } = request;
 
     let sessionDoc = await Session.findOne({ requestGroupId }).session(session);
 

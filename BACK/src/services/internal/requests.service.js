@@ -101,7 +101,8 @@ const sendRequest = async (
     recipientId,
     type,
     requireUniqueConnection = true,
-    requestGroupId
+    requestGroupId,
+    additionalPayload
   },
   session
 ) =>
@@ -133,6 +134,11 @@ const sendRequest = async (
     if (requestGroupId) {
       senderFieldPayload.requestGroupId = requestGroupId;
       recipientFieldPayload.requestGroupId = requestGroupId;
+    }
+
+    if (additionalPayload) {
+      senderFieldPayload.additionalPayload = additionalPayload;
+      recipientFieldPayload.additionalPayload = additionalPayload;
     }
 
     requireUniqueConnection

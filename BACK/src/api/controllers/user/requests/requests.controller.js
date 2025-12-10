@@ -35,7 +35,7 @@ export const sendRequest =
   async (req, res, next) => {
     const {
       params: { userId: currentUserId },
-      body: { otherUserId },
+      body: { otherUserId, additionalPayload },
       status
     } = req;
 
@@ -73,7 +73,8 @@ export const sendRequest =
             recipientId,
             type,
             requireUniqueConnection,
-            requestGroupId
+            requestGroupId,
+            additionalPayload
           });
 
           finalSenderDoc = senderDoc;

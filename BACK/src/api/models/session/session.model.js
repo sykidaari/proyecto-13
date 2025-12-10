@@ -13,10 +13,11 @@ export const sessionParameters = {
   includedMedia: {
     mediaType: {
       ...requiredString,
-      enum: ['movies', 'series', 'all'],
+      enum: ['movie', 'series', 'all'],
       default: 'all'
     },
     genres: [String],
+    keyWords: [String],
 
     availability: {
       services: { type: [String], required: true },

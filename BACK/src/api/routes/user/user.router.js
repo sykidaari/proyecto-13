@@ -60,7 +60,7 @@ userRouter
           'emailAddress',
           'nickName',
           'password',
-          'country',
+          'countryCode',
           'languageCode'
         ]
       })
@@ -90,6 +90,7 @@ existingUserRouter
   )
 
   .patch(
+    // TIER (PRO OR BASIC)
     '/tier',
     [
       requireSelfOrAdmin,

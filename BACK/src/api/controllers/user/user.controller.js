@@ -210,6 +210,7 @@ export const editUser = async (req, res, next) => {
   const {
     params: { userId },
     isSelf,
+    isAdmin,
     body
   } = req;
 
@@ -218,12 +219,14 @@ export const editUser = async (req, res, next) => {
   if (isSelf)
     allowedEditFields.push(
       'emailAddress',
-      'country',
+      'countryCode',
       'languageCode',
       'accountSettings.isSharedInfo.watchList',
       'accountSettings.isSharedInfo.favorites',
       'accountSettings.tutorialCompleted'
     );
+
+  if (isAdmin) allowedEditFields.push('role');
 
   try {
     // PROJECTION HAS ALL EXCEPT IMG AND ROLE

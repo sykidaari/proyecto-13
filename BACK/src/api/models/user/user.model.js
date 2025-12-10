@@ -2,6 +2,8 @@ import { model, Schema } from 'mongoose';
 import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 import { hash } from 'bcrypt';
 import ERR from '../../../constants/errorCodes.js';
+import COUNTRY_CODES from '../../../constants/countryCodes.js';
+import { LANGUAGE_CODES } from '../../../constants/languageCodes.js';
 
 // PUBLIC FIELDS HAVE SELECT:TRUE(DEFAULT, NOT WRITTEN) WHILE FIELDS THAT ARE MEANT FOR CURRENT-USER/ADMIN HAVE SELECT:FALSE AND ARE SELECTED IN CONTROLLERS WHEN NEEDED
 
@@ -60,13 +62,16 @@ const UserSchema = buildSchema(
       select: false
     },
 
-    country: { ...requiredString },
+    countryCode: {
+      ...requiredString,
+      enum: COUNTRY_CODES,
+      select: false
+    },
 
     languageCode: {
       preferred: {
         ...requiredString,
-        minlength: 2,
-        maxlength: 2,
+        enum: LANGUAGE_CODES,
         select: false
       }
     },
