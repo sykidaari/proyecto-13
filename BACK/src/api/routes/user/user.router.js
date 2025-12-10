@@ -9,6 +9,7 @@ import {
 } from '../../../middlewares/access.js';
 import {
   changePassword,
+  changeTier,
   checkEmailAvailability,
   checkUserNameAvailability,
   deleteProfilePicture,
@@ -86,6 +87,15 @@ existingUserRouter
     '/',
     [requireSelfOrAdmin, requireReqBody],
     editUser
+  )
+
+  .patch(
+    '/tier',
+    [
+      requireSelfOrAdmin,
+      requireAndValidateReqBody({ required: 'tier', optional: 'proCode' })
+    ],
+    changeTier
   )
 
   .patch(

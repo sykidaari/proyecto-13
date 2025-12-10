@@ -14,6 +14,13 @@ const UserSchema = buildSchema(
       select: false
     },
 
+    tier: {
+      ...requiredString,
+      enum: ['basic', 'pro'],
+      default: 'basic',
+      select: false
+    },
+
     userName: {
       ...requiredString,
       unique: true,
@@ -56,10 +63,12 @@ const UserSchema = buildSchema(
     country: { ...requiredString },
 
     languageCode: {
-      ...requiredString,
-      minlength: 2,
-      maxlength: 2,
-      select: false
+      preferred: {
+        ...requiredString,
+        minlength: 2,
+        maxlength: 2,
+        select: false
+      }
     },
 
     img: { type: String, trim: true },

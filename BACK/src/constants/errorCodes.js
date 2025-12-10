@@ -3,6 +3,7 @@ const ERROR_CODES = {
     alreadyLoggedIn: 'ACCESS_ALREADY_LOGGED_IN',
     unauthorized: 'ACCESS_UNAUTHORIZED',
     adminRequired: 'ACCESS_ADMIN_REQUIRED',
+    proRequired: 'ACCESS_PRO_REQUIRED',
     notParticipantOrAdmin: 'ACCESS_NOT_PARTICIPANT_OR_ADMIN',
     notSelf: 'ACCESS_NOT_SELF',
     notSelfOrAdmin: 'ACCESS_NOT_SELF_OR_ADMIN',

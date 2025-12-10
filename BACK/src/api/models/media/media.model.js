@@ -3,7 +3,7 @@ import { buildSchema, requiredString } from '../../../utils/modelUtils';
 
 const MediaSchema = buildSchema(
   {
-    _id: String,
+    _id: { type: String, required: true },
 
     showType: requiredString,
 

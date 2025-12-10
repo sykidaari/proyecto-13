@@ -19,11 +19,12 @@ export const setBasicAccessFlags = async (req, res, next) => {
     if (!token) return next();
 
     const { userId } = verifyToken(token);
-    const user = await User.findById(userId).select('+role').lean();
+    const user = await User.findById(userId).select('+role +tier').lean();
     if (!user) return next();
 
     req.user = user;
     req.isAdmin = user.role === 'admin';
+    req.isPro = user.tier === 'pro';
   } catch (err) {
     // ignores errors, continues, just keeps initial values
   }
@@ -69,6 +70,13 @@ export const requireSelfOrAdmin = (req, res, next) => {
   const { isSelf, isAdmin } = req;
 
   if (!isSelf && !isAdmin) throw customError(403, ERR.access.notSelfOrAdmin);
+  next();
+};
+
+export const requireProUser = (req, res, next) => {
+  const { isPro } = req;
+
+  if (!isPro) throw customError(403, ERR.access.proRequired);
   next();
 };
 

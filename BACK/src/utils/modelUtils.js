@@ -25,8 +25,8 @@ export const requiredString = { type: String, required: true, trim: true };
 export const isNewItem = { type: Boolean, default: true, required: true };
 
 // gets ref
-export const ref = (model) => ({
-  type: Schema.Types.ObjectId,
+export const ref = (model, type = Schema.Types.ObjectId) => ({
+  type,
   ref: model
 });
 
@@ -34,5 +34,5 @@ export const userRef = ref('User');
 export const userRefRequired = { ...userRef, required: true };
 export const userRefRequiredUnique = { ...userRefRequired, unique: true };
 
-export const mediaRef = ref('Media');
+export const mediaRef = ref('Media', String);
 export const sessionRef = ref('Session');
