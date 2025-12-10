@@ -58,7 +58,25 @@ sessionRouter
 
 requestRouter
   .patch('/mark-all-seen', markAllReceivedSessionsRequestsAsSeen)
-  .patch('/send', [validateOtherUserId], sendSessionRequest)
+  .patch(
+    '/send',
+    [
+      requireAndValidateReqBody({
+        required: 'otherUserId',
+        optional: [
+          'additionalPayload.sessionParameters.sessionName',
+
+          'additionalPayload.sessionParameters.includedMedia.mediaType',
+          'additionalPayload.sessionParameters.includedMedia.genres',
+          'additionalPayload.sessionParameters.includedMedia.keyWords',
+
+          'additionalPayload.sessionParameters.includedMedia.availability.services',
+          'additionalPayload.sessionParameters.includedMedia.availability.region'
+        ]
+      })
+    ],
+    sendSessionRequest
+  )
   .patch('/accept', [validateOtherUserId], acceptSessionRequestAndJoinSession)
   .patch('/cancel', [validateOtherUserId], cancelSessionRequest)
   .patch('/reject', [validateOtherUserId], rejectSessionRequest);
