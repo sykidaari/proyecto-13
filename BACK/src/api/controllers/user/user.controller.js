@@ -22,7 +22,7 @@ import OK from '../../../constants/successCodes.js';
 // ? ADMIN ONLY
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select('+role +emailAddress +tier').lean();
+    const users = await User.find().select('+role +emailAddress').lean();
 
     return res.status(200).json(users);
   } catch (err) {
@@ -272,33 +272,6 @@ export const changePassword = async (req, res, next) => {
     return res.status(200).json({
       message: OK.user.passwordChanged
     });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const changeTier = async (req, res, next) => {
-  const {
-    params: { userId },
-    body: { tier, proCode },
-    isAdmin
-  } = req;
-
-  const isRequestingProTier = tier === 'pro';
-  const isCorrectProCode = proCode === process.env.PRO_TIER_CODE;
-  const canSetPro = isCorrectProCode || isAdmin;
-
-  if (isRequestingProTier && !canSetPro)
-    throw customError(403, ERR.access.unauthorized);
-
-  try {
-    const user = await User.findById(userId);
-
-    user.tier = tier;
-
-    await user.save();
-
-    return res.status(200).json(tier);
   } catch (err) {
     next(err);
   }

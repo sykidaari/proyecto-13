@@ -1,4 +1,6 @@
 import { Client, Configuration } from 'streaming-availability';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const streamingAvailabilityClient = new Client(
   new Configuration({

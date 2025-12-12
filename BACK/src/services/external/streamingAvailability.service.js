@@ -1,13 +1,13 @@
-import client from '../../config/streamingAvailability';
+import client from '../../config/streamingAvailability.js';
 
 //ONLY USED FOR APP STARTPAGE IN FRONT, FRONT WILL CHOOSE SERVICE, SIMPLE FOR VISUAL ONLY, SEE CONTROLLER IMPLEMENTATION FOR FULL USE
 const getTopShowsImgsAndIds = async (service, country) => {
-  const data = await client.showsApi.getTopShows({
+  const shows = await client.showsApi.getTopShows({
     country,
     service
   });
 
-  return data.map((show) => ({
+  return shows.map((show) => ({
     id: show.id,
     imageSet: {
       verticalPoster: show.imageSet.verticalPoster?.w720,
@@ -18,10 +18,33 @@ const getTopShowsImgsAndIds = async (service, country) => {
   }));
 };
 
-getShows = ({ countryCode, languageCode, showType, genres, catalogs }) => {
-  // popularity 1week
+const getShows = async ({
+  countryCode,
+  languageCode,
+  showType,
+  genres,
+  services: catalogs,
+  keyWord,
+  cursor
+}) => {
+  const { shows, ...paginationData } =
+    await client.showsApi.searchShowsByFilters({
+      country: countryCode,
+      outputLanguage: languageCode,
+      orderBy: 'popularity_1week',
+      ...(showType && { showType }),
+      ...(genres && { genres }),
+      ...(catalogs && { catalogs }),
+      ...(keyWord && { keyWord }),
+      ...(cursor && { cursor })
+    });
+
+  return {
+    shows: shows.map((show) => ({ id: show.id, showType: show.showType })),
+    ...paginationData
+  };
 };
 
-const streamingAvailabilityService = { getTopShowsImgsAndIds };
+const streamingAvailabilityService = { getTopShowsImgsAndIds, getShows };
 
 export default streamingAvailabilityService;

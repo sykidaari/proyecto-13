@@ -16,13 +16,6 @@ const UserSchema = buildSchema(
       select: false
     },
 
-    tier: {
-      ...requiredString,
-      enum: ['basic', 'pro'],
-      default: 'basic',
-      select: false
-    },
-
     userName: {
       ...requiredString,
       unique: true,

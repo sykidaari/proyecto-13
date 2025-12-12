@@ -64,14 +64,14 @@ requestRouter
       requireAndValidateReqBody({
         required: 'otherUserId',
         optional: [
-          'additionalPayload.sessionParameters.sessionName',
+          'additionalPayload.sessionName',
 
-          'additionalPayload.sessionParameters.includedMedia.mediaType',
-          'additionalPayload.sessionParameters.includedMedia.genres',
-          'additionalPayload.sessionParameters.includedMedia.keyWords',
+          'additionalPayload.includedMedia.mediaType',
+          'additionalPayload.includedMedia.genres',
+          'additionalPayload.sessionParameters.includedMedia.keyWord',
 
-          'additionalPayload.sessionParameters.includedMedia.availability.services',
-          'additionalPayload.sessionParameters.includedMedia.availability.region'
+          'additionalPayload.includedMedia.availability.services',
+          'additionalPayload.includedMedia.availability.country'
         ]
       })
     ],

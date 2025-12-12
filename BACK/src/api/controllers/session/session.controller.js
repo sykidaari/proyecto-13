@@ -136,9 +136,7 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
       const [newSession] = await Session.create(
         [
           {
-            sessionName: sessionParameters.sessionName,
-
-            includedMedia: sessionParameters.includedMedia,
+            ...sessionParameters,
             participants: [{ user: senderId }, { user: recipientId }],
             requestGroupId
           }

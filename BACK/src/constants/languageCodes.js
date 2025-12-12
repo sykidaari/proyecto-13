@@ -1,1 +1,1 @@
-export const LANGUAGE_CODES = ['ES', 'EN'];
+export const LANGUAGE_CODES = ['es', 'en'];
