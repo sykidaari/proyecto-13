@@ -38,9 +38,9 @@ export const getUserById = async (req, res, next) => {
   } = req;
 
   const projection = isAdmin
-    ? '+role +emailAddress'
+    ? '+role +emailAddress +countryCode +countryCode'
     : isSelf
-    ? '+accountSettings +languageCode +emailAddress'
+    ? '+accountSettings +languageCode +countryCode +emailAddress'
     : null;
 
   try {

@@ -10,10 +10,31 @@ const MediaSchema = buildSchema(
     title: { languageCode: requiredString, text: requiredString },
 
     imageSet: {
+      // all in w720
       verticalPoster: String,
       horizontalPoster: String,
       verticalBackdrop: String,
       horizontalBackdrop: String
+    },
+
+    details: {
+      releaseYear: requiredString,
+      overview: requiredString,
+      genres: [String],
+      rating: String,
+
+      directors: [String],
+      creators: [String],
+      cast: [String],
+      runtime: String,
+      seasonCount: String,
+
+      streamingOptions: [
+        {
+          country: requiredString,
+          services: [requiredString]
+        }
+      ]
     }
   },
   'medias'
