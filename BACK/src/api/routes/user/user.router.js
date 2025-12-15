@@ -27,11 +27,10 @@ import {
   requireAndValidateReqBody
 } from '../../../middlewares/middlewares.js';
 import userChildrenRouter from './userChildren.router.js';
+import rateLimit from '../../../middlewares/rateLimit.js';
 
 const userRouter = Router();
 const existingUserRouter = Router({ mergeParams: true });
-
-userRouter.use('/:userId', [setIsSelf], existingUserRouter);
 
 userRouter
   .get('/', [requireAdmin], getAllUsers)
@@ -52,6 +51,7 @@ userRouter
   .post(
     '/register',
     [
+      rateLimit.strict,
       requireGuest,
       requireAndValidateReqBody({
         required: [
@@ -69,6 +69,7 @@ userRouter
   .post(
     '/login',
     [
+      rateLimit.strict,
       requireGuest,
       requireAndValidateReqBody({
         required: 'password',
@@ -77,6 +78,8 @@ userRouter
     ],
     loginUser
   );
+
+userRouter.use('/:userId', [setIsSelf], existingUserRouter);
 
 existingUserRouter
   .get('/', [requireUser], getUserById)

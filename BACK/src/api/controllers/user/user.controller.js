@@ -71,15 +71,15 @@ const checkAvailability = (key) => {
 export const checkUserNameAvailability = checkAvailability('userName');
 export const checkEmailAvailability = checkAvailability('emailAddress');
 
-// https://www.youtube.com/watch?v=HsS0z3eOCSQ
-// ! WILL MAKE WITH ATLAS SEARCH; NEED MODEL AND SOME USERS FIRST
 export const searchUsers = async (req, res, next) => {
   const { query } = req.query;
 
   try {
+    if (!query) return res.status(200).json([]);
+
     const users = await User.find({
-      userName: ''
-    });
+      userName: { $regex: `^${query}`, $options: 'i' }
+    }).limit(20);
 
     return res.json(users);
   } catch (err) {

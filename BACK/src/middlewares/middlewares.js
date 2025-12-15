@@ -111,16 +111,13 @@ export const findOrCreateMedia = async (req, res, next) => {
   } = req;
 
   try {
-    let mediaDoc = await Media.findById(mediaId);
+    const mediaDoc = await Media.findById(mediaId);
 
-    if (!mediaDoc)
-      mediaDoc = await Media.create({ _id: mediaId, ...mediaData });
+    if (!mediaDoc) await Media.create({ _id: mediaId, ...mediaData });
     else {
       Object.assign(mediaDoc, mediaData);
       await mediaDoc.save();
     }
-
-    req.media = mediaDoc.toObject();
 
     next();
   } catch (err) {
