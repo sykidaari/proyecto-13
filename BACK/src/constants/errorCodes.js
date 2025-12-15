@@ -19,6 +19,8 @@ const ERROR_CODES = {
     invalidField: 'BODY_INVALID_FIELD'
   },
 
+  media: { notFound: 'MEDIA_NOT_FOUND', missingQuery: 'MEDIA_MISSING_QUERY' },
+
   user: {
     notFound: 'USER_NOT_FOUND',
     validation: {

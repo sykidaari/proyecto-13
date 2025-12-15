@@ -58,6 +58,8 @@ export const resolvePath = (object, path) => {
   return current;
 };
 
+export const oneWeekAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
 //!   ERRORS
 export const customError = (status, message, data = {}) => {
   const err = new Error(message);

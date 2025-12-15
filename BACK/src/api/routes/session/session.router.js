@@ -19,16 +19,15 @@ import {
   setIsSessionParticipant
 } from '../../../middlewares/access.js';
 import {
+  findOrCreateMedia,
   findSessionById,
   requireAndValidateReqBody
 } from '../../../middlewares/middlewares.js';
-
-//* COMMON MIDDLEWARES
-const validateOtherUserId = requireAndValidateReqBody({
-  required: 'otherUserId'
-});
-const validateMediaId = requireAndValidateReqBody({ required: 'mediaId' });
-//*
+import {
+  validateFullMediaData,
+  validateMediaId,
+  validateOtherUserId
+} from '../../../middlewares/validation.js';
 
 const sessionRouter = Router({ mergeParams: true });
 const requestRouter = Router({ mergeParams: true });
@@ -84,7 +83,11 @@ requestRouter
 existingSessionRouter.get('/', getSessionById).patch('/leave', leaveSession);
 
 interactRouter
-  .patch('/propose-match', [validateMediaId], proposeMatch)
+  .patch(
+    '/propose-match',
+    [validateFullMediaData, findOrCreateMedia],
+    proposeMatch
+  )
   .patch('/discard', [validateMediaId], discardMedia);
 
 existingSessionRequestRouter.patch(

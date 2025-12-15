@@ -10,6 +10,7 @@ import {
   sendFriendRequest
 } from '../../../controllers/user/friends/friends.controller.js';
 import { requireSelf } from '../../../../middlewares/access.js';
+import { validateOtherUserId } from '../../../../middlewares/validation.js';
 
 const friendsRouter = Router();
 const requestRouter = Router();
@@ -26,26 +27,11 @@ friendsRouter
 
 // REQUESTS
 requestRouter
-  .patch(
-    '/send',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    sendFriendRequest
-  )
-  .patch(
-    '/accept',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    acceptFriendRequest
-  )
-  .patch(
-    '/cancel',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    cancelFriendRequest
-  )
-  .patch(
-    '/reject',
-    requireAndValidateReqBody({ required: ['otherUserId'] }),
-    rejectFriendRequest
-  )
+  .patch('/send', [validateOtherUserId], sendFriendRequest)
+  .patch('/accept', [validateOtherUserId], acceptFriendRequest)
+  .patch('/cancel', [validateOtherUserId], cancelFriendRequest)
+  .patch('/reject', [validateOtherUserId], rejectFriendRequest)
+
   .patch('/mark-all-seen', [requireSelf], markAllReceivedFriendsRequestsAsSeen);
 
 export default friendsRouter;

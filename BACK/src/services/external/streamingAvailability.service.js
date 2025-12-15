@@ -1,8 +1,7 @@
-import { StreamingOptionToJSON } from 'streaming-availability';
 import client from '../../config/streamingAvailability.js';
 
 //ONLY USED FOR APP STARTPAGE IN FRONT, FRONT WILL CHOOSE SERVICE, SIMPLE FOR VISUAL ONLY, SEE CONTROLLER IMPLEMENTATION FOR FULL USE
-const getTopShowsImgs = async (service, country) => {
+const getTopShowsImgs = async (country, service) => {
   const shows = await client.showsApi.getTopShows({
     country,
     service
@@ -24,7 +23,7 @@ const getShows = async ({
   showType,
   genres,
   services: catalogs,
-  keyWord,
+  keyword,
   cursor
 }) => {
   const { shows, ...paginationData } =
@@ -35,7 +34,7 @@ const getShows = async ({
       ...(showType && { showType }),
       ...(genres && { genres }),
       ...(catalogs && { catalogs }),
-      ...(keyWord && { keyWord }),
+      ...(keyword && { keyword }),
       ...(cursor && { cursor })
     });
 

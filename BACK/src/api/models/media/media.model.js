@@ -1,11 +1,11 @@
 import { model } from 'mongoose';
-import { buildSchema, requiredString } from '../../../utils/modelUtils';
+import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 
 const MediaSchema = buildSchema(
   {
     _id: { type: String, required: true },
 
-    showType: requiredString,
+    showType: { type: String, enum: ['movie', 'series'] },
 
     title: { languageCode: requiredString, text: requiredString },
 
@@ -18,8 +18,8 @@ const MediaSchema = buildSchema(
     },
 
     details: {
-      releaseYear: requiredString,
-      overview: requiredString,
+      releaseYear: String,
+      overview: String,
       genres: [String],
       rating: String,
 
@@ -40,6 +40,6 @@ const MediaSchema = buildSchema(
   'medias'
 );
 
-export const Media = model('Media', MediaSchema);
+const Media = model('Media', MediaSchema);
 
 export default Media;

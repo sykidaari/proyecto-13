@@ -1,7 +1,7 @@
-import { data } from 'react-router-dom';
 import Session from '../api/models/session/session.model.js';
 import ERR from '../constants/errorCodes.js';
 import { customError, resolvePath } from '../utils/controllerUtils.js';
+import Media from '../api/models/media/media.model.js';
 
 // HELPER
 const isEmpty = (body) => {
@@ -66,7 +66,7 @@ export const findOrCreateByUser = (Model) => async (req, res, next) => {
   let status = 200;
 
   try {
-    doc = await Model.findOne({
+    let doc = await Model.findOne({
       user: userId
     });
 
@@ -99,6 +99,30 @@ export const findSessionById = async (req, res, next) => {
     if (!session) throw customError(404, ERR.session.notFound);
 
     req.session = session;
+  } catch (err) {
+    next(err);
+  }
+};
+
+//* MEDIA
+export const findOrCreateMedia = async (req, res, next) => {
+  const {
+    body: { mediaId, mediaData }
+  } = req;
+
+  try {
+    let mediaDoc = await Media.findById(mediaId);
+
+    if (!mediaDoc)
+      mediaDoc = await Media.create({ _id: mediaId, ...mediaData });
+    else {
+      Object.assign(mediaDoc, mediaData);
+      await mediaDoc.save();
+    }
+
+    req.media = mediaDoc.toObject();
+
+    next();
   } catch (err) {
     next(err);
   }

@@ -6,21 +6,17 @@ import {
   unlikeMedia
 } from '../../../controllers/user/likedMedias/likedMedias.controller.js';
 import { requireSelf } from '../../../../middlewares/access.js';
+import {
+  validateFullMediaData,
+  validateMediaId
+} from '../../../../middlewares/validation.js';
 
 const likedMediasRouter = Router();
 
 likedMediasRouter
   .get('/', getLikedMedias)
 
-  .patch(
-    '/like',
-    [requireSelf, requireAndValidateReqBody({ required: ['mediaId'] })],
-    likeMedia
-  )
-  .patch(
-    '/unlike',
-    [requireSelf, requireAndValidateReqBody({ required: ['mediaId'] })],
-    unlikeMedia
-  );
+  .patch('/like', [requireSelf, validateFullMediaData], likeMedia)
+  .patch('/unlike', [requireSelf, validateMediaId], unlikeMedia);
 
 export default likedMediasRouter;

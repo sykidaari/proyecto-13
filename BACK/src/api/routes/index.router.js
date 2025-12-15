@@ -7,6 +7,7 @@ import {
 } from '../../middlewares/access.js';
 import sessionRouter from './session/session.router.js';
 import mediaRouter from './media/media.router.js';
+import topShowsImgsRouter from './topShowsImgs/topShowsImgs.router.js';
 
 const mainRouter = Router();
 mainRouter
@@ -14,6 +15,7 @@ mainRouter
 
   .use('/user', userRouter)
   .use('/:userId/session', [setIsSelf, requireSelfOrAdmin], sessionRouter)
-  .use('/media', mediaRouter);
+  .use('/media', mediaRouter)
+  .use('top', topShowsImgsRouter);
 
 export default mainRouter;

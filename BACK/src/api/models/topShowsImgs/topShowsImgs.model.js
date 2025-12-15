@@ -1,25 +1,26 @@
 import { model } from 'mongoose';
-import COUNTRY_CODES from '../../../constants/countryCodes';
-import { buildSchema, requiredString } from '../../../utils/modelUtils';
+import COUNTRY_CODES from '../../../constants/countryCodes.js';
+import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 
 const TopShowsImgsSchema = buildSchema(
   {
-    country: { requiredString, enum: COUNTRY_CODES },
+    country: { ...requiredString, enum: COUNTRY_CODES },
 
     service: requiredString,
 
     shows: [
       {
-        verticalPoster,
-        horizontalPoster,
-        verticalBackdrop,
-        horizontalBackdrop
+        // all in w720
+        verticalPoster: String,
+        horizontalPoster: String,
+        verticalBackdrop: String,
+        horizontalBackdrop: String
       }
     ]
   },
   'topShowImgs'
 );
 
-const TopShowImgs = model('TopShowImgs', TopShowsImgsSchema);
+const TopShowsImgs = model('TopShowsImgs', TopShowsImgsSchema);
 
-export default TopShowImgs;
+export default TopShowsImgs;

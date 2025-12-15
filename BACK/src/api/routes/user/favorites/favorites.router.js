@@ -7,6 +7,10 @@ import {
   removeGenreFromFavorites,
   removeMediaFromFavorites
 } from '../../../controllers/user/favorites/favorites.controller.js';
+import {
+  validateFullMediaData,
+  validateMediaId
+} from '../../../../middlewares/validation.js';
 
 const favoritesRouter = Router();
 
@@ -23,15 +27,7 @@ favoritesRouter
     [requireAndValidateReqBody({ required: ['genre'] })],
     removeGenreFromFavorites
   )
-  .patch(
-    '/media',
-    [requireAndValidateReqBody({ required: ['mediaId'] })],
-    addMediaToFavorites
-  )
-  .patch(
-    '/media/remove',
-    [requireAndValidateReqBody({ required: ['mediaId'] })],
-    removeMediaFromFavorites
-  );
+  .patch('/media', [validateFullMediaData], addMediaToFavorites)
+  .patch('/media/remove', [validateMediaId], removeMediaFromFavorites);
 
 export default favoritesRouter;
