@@ -5,9 +5,9 @@
 - **[API Reference](#api-reference)**
   - [Routes](#routes)
     - [Base Route](#base-route)
-    - [User Routes](#user-routes)
-    - [Favorites Routes](#favorites-routes)
-    - [Watchlist Routes](#watchlist-routes)
+    - [User](#user)
+    - [Favorites](#favorites)
+    - [Watchlist](#watchlist)
     - [Watched Medias](#watched-medias)
     - [Liked Medias](#liked-medias)
     - [App Settings](#app-settings)
@@ -43,7 +43,7 @@ Information will be minimal, only as necessary. If for example no body is specif
   - `rateLimit.general`: sets basic rate limit for whole app
   - `setBasicAccessFlags`: sets basic access flags for whole app (depending on the logged in user, if any), used in other access middlewares
 
-#### User Routes
+#### User
 
 Note: Some responses include additional fields depending on access level (self vs admin).
 
@@ -199,7 +199,7 @@ Note: Some responses include additional fields depending on access level (self v
   - Description : deletes profile picture
     <br>
 
-#### Favorites Routes
+#### Favorites
 
 `/api/v1/user/:userId/favorites`
 
@@ -270,7 +270,7 @@ Note: Some responses include additional fields depending on access level (self v
   - Description : removes media from favorites
     <br>
 
-#### Watchlist Routes
+#### Watchlist
 
 `/api/v1/user/:userId/watch-list`
 

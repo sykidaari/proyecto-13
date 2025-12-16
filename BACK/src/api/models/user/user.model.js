@@ -50,7 +50,7 @@ const UserSchema = buildSchema(
       match: [
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
         ERR.user.validation.wrongPasswordFormat
-        // password must contain at least one uppercase letter, one lowwercase letter and one number
+        // password must contain at least one uppercase letter, one lowercase letter and one number
       ],
       select: false
     },
