@@ -57,7 +57,11 @@ export const getUserById = async (req, res, next) => {
 // PRE-REGISTER/PRE-UPDATE, for a modular front-end register experience!
 const checkAvailability = (key) => {
   return async (req, res, next) => {
-    const value = req.body[key];
+    const value = req.query[key];
+
+    if (!value) {
+      return res.json({ available: null });
+    }
 
     try {
       const exists = await User.findOne({ [key]: value });
@@ -72,13 +76,13 @@ export const checkUserNameAvailability = checkAvailability('userName');
 export const checkEmailAvailability = checkAvailability('emailAddress');
 
 export const searchUsers = async (req, res, next) => {
-  const { query } = req.query;
+  const { userName } = req.query;
 
   try {
-    if (!query) return res.status(200).json([]);
+    if (!userName) return res.status(200).json([]);
 
     const users = await User.find({
-      userName: { $regex: `^${query}`, $options: 'i' }
+      userName: { $regex: `^${userName}`, $options: 'i' }
     }).limit(20);
 
     return res.json(users);

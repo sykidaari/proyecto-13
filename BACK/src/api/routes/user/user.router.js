@@ -37,16 +37,8 @@ userRouter
 
   .get('/search', [requireUser], searchUsers)
 
-  .get(
-    '/check-userName',
-    requireAndValidateReqBody({ required: 'userName' }),
-    checkUserNameAvailability
-  )
-  .get(
-    '/check-email',
-    requireAndValidateReqBody({ required: 'emailAddress' }),
-    checkEmailAvailability
-  )
+  .get('/check-username', checkUserNameAvailability)
+  .get('/check-email', checkEmailAvailability)
 
   .post(
     '/register',

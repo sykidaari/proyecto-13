@@ -8,9 +8,10 @@ import { requireReqBody } from '../../../../middlewares/middlewares.js';
 
 const appSettingsRouter = Router();
 
-appSettingsRouter.get('/', getAppSettings);
+appSettingsRouter
+  .get('/', getAppSettings)
 
-// BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC
-appSettingsRouter.patch('/', [requireSelf, requireReqBody], editAppSettings);
+  // BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC
+  .patch('/', [requireSelf, requireReqBody], editAppSettings);
 
 export default appSettingsRouter;
