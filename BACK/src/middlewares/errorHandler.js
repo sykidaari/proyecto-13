@@ -3,10 +3,10 @@ import ERR from '../constants/errorCodes.js';
 const errorHandler = (err, req, res, next) => {
   let status = err.status || 500;
   let message = err.message;
-  // Duplicate key
 
   let field = err.field || null;
 
+  // Duplicate value
   if (err.code === 11000) {
     field = Object.keys(err.keyValue)[0];
     status = 409;
@@ -40,6 +40,11 @@ const errorHandler = (err, req, res, next) => {
   if (err.code === 'LIMIT_FILE_SIZE') {
     status = 400;
     message = ERR.system.fileTooLarge;
+  }
+
+  if (err.status === 429) {
+    status = 429;
+    message = ERR.system.tooManyRequests;
   }
 
   console.error('Method:', req.method);

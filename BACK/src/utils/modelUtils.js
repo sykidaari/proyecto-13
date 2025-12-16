@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-// SCHEMA-BUILDERS
+//* --- SCHEMA BUILDERS ------------------------------------
 
 export const buildSchema = (fields, collection, extraOptions = {}) =>
   new Schema(fields, {
@@ -19,6 +19,10 @@ export const buildUserChildSchema = (fields, collection, extraOptions = {}) =>
     extraOptions
   );
 
+//* ---------------------------------------
+
+//* --- CONSTANTS ------------------------------------
+
 export const requiredString = { type: String, required: true, trim: true };
 
 // can't name isNew, isNew is reserved by mongoose
@@ -34,5 +38,9 @@ export const userRef = ref('User');
 export const userRefRequired = { ...userRef, required: true };
 export const userRefRequiredUnique = { ...userRefRequired, unique: true };
 
+// mediaId is String because it comes from external API
 export const mediaRef = ref('Media', String);
+
 export const sessionRef = ref('Session');
+
+//* ---------------------------------------

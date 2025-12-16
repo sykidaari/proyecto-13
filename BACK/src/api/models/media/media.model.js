@@ -1,4 +1,4 @@
-import { model } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 
 const MediaSchema = buildSchema(
@@ -7,7 +7,11 @@ const MediaSchema = buildSchema(
 
     showType: { type: String, enum: ['movie', 'series'] },
 
-    title: { languageCode: requiredString, text: requiredString },
+    titles: {
+      // key is languageCode
+      type: Map,
+      of: requiredString
+    },
 
     imageSet: {
       // all in w720
@@ -19,7 +23,13 @@ const MediaSchema = buildSchema(
 
     details: {
       releaseYear: String,
-      overview: String,
+
+      overview: {
+        // key is languageCode
+        type: Map,
+        of: String
+      },
+
       genres: [String],
       rating: String,
 
@@ -32,7 +42,13 @@ const MediaSchema = buildSchema(
       streamingOptions: [
         {
           country: requiredString,
-          services: [requiredString]
+          services: {
+            // key is service.id
+            type: Map,
+            of: new Schema({
+              mediaLink: String
+            })
+          }
         }
       ]
     }

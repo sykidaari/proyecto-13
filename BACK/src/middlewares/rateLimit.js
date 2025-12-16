@@ -1,5 +1,7 @@
 import limit from 'express-rate-limit';
 
+// https://express-rate-limit.mintlify.app/quickstart/usage
+
 const rateLimiter = (amount) =>
   limit({
     windowMs: 15 * 60 * 1000, // 15 minutes

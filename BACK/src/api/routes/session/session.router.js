@@ -19,9 +19,9 @@ import {
   setIsSessionParticipant
 } from '../../../middlewares/access.js';
 import {
-  findOrCreateMedia,
   findSessionById,
-  requireAndValidateReqBody
+  requireAndValidateReqBody,
+  saveMedia
 } from '../../../middlewares/middlewares.js';
 import {
   validateFullMediaData,
@@ -83,11 +83,7 @@ requestRouter
 existingSessionRouter.get('/', getSessionById).patch('/leave', leaveSession);
 
 interactRouter
-  .patch(
-    '/propose-match',
-    [validateFullMediaData, findOrCreateMedia],
-    proposeMatch
-  )
+  .patch('/propose-match', [validateFullMediaData, saveMedia], proposeMatch)
   .patch('/discard', [validateMediaId], discardMedia);
 
 existingSessionRequestRouter.patch(

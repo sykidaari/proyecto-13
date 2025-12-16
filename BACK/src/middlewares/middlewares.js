@@ -3,7 +3,7 @@ import ERR from '../constants/errorCodes.js';
 import { customError, resolvePath } from '../utils/controllerUtils.js';
 import Media from '../api/models/media/media.model.js';
 
-// HELPER
+// --- HELPER ------------------------------------
 const isEmpty = (body) => {
   if (!body || Object.keys(body).length === 0) {
     return true;
@@ -11,7 +11,9 @@ const isEmpty = (body) => {
 };
 const isEmptyError = customError(400, ERR.body.missingBody);
 
-//* GENERAL
+// ---------------------------------------
+
+//* --- GENERAL ------------------------------------
 
 // FOR CASES WHERE VALIDATION MUST BE DONE IN CONTROLLER
 export const requireReqBody = (req, res, next) => {
@@ -58,7 +60,10 @@ export const requireAndValidateReqBody = ({ required = [], optional = [] }) => {
   };
 };
 
-//* USER CHILDREN
+//* ---------------------------------------
+
+//* --- USER CHILDREN ------------------------------------
+
 export const findOrCreateByUser = (Model) => async (req, res, next) => {
   const { userId } = req.params;
 
@@ -86,7 +91,9 @@ export const findOrCreateByUser = (Model) => async (req, res, next) => {
   }
 };
 
-//* SESSION
+//* ---------------------------------------
+
+//* --- SESSION ------------------------------------
 
 export const findSessionById = async (req, res, next) => {
   const {
@@ -104,23 +111,55 @@ export const findSessionById = async (req, res, next) => {
   }
 };
 
-//* MEDIA
-export const findOrCreateMedia = async (req, res, next) => {
+//* ---------------------------------------
+
+//* --- MEDIA ------------------------------------
+
+export const saveMedia = async (req, res, next) => {
   const {
-    body: { mediaId, mediaData }
+    body: { mediaId, media: mediaData, languageCode }
   } = req;
 
   try {
-    const mediaDoc = await Media.findById(mediaId);
+    let media = await Media.findById(mediaId);
+    if (!media) media = new Media({ _id: mediaId });
 
-    if (!mediaDoc) await Media.create({ _id: mediaId, ...mediaData });
-    else {
-      Object.assign(mediaDoc, mediaData);
-      await mediaDoc.save();
+    const existingTitles = media.titles;
+    const existingOverview = media.details?.overview;
+
+    media.showType = mediaData.showType;
+    media.imageSet = mediaData.imageSet;
+    media.details = mediaData.details || {};
+
+    media.titles = existingTitles || new Map();
+    media.titles.set(languageCode, mediaData.title);
+
+    if (mediaData.details?.overview || existingOverview) {
+      media.details.overview = existingOverview || new Map();
+      if (mediaData.details?.overview) {
+        media.details.overview.set(languageCode, mediaData.details.overview);
+      }
     }
 
+    if (mediaData.details?.streamingOptions?.length) {
+      media.details.streamingOptions = mediaData.details.streamingOptions.map(
+        (incoming) => ({
+          country: incoming.country,
+          services: new Map(
+            incoming.services.map((service) => [
+              service.id,
+              { mediaLink: service.mediaLink }
+            ])
+          )
+        })
+      );
+    }
+
+    await media.save();
     next();
   } catch (err) {
     next(err);
   }
 };
+
+//* ---------------------------------------

@@ -10,11 +10,17 @@ import { setupSocket } from './src/config/socket.js';
 
 const app = express();
 
+// necessary for rate limiting to work correctly in build (deploy)
 app.set('trust proxy', 1);
 
 app.use(express.json());
 
-app.use(cors());
+// Once front is deployed, add it to deployed backs process.env, and only front will be able to access
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || true
+  })
+);
 
 connectDB();
 
@@ -24,7 +30,9 @@ app.use((req, res) => {
   return res.status(404).json('route not found');
 });
 
-app.use(errorHandler);
+// error middleware
+// https://expressjs.com/en/guide/error-handling.html
+app.use([errorHandler]);
 
 const server = createHttpServer(app);
 
@@ -36,5 +44,5 @@ setupSocket(io);
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
-  console.log(`server connected on port ${port}`);
+  console.log(`server connected on port ${port} http://localhost:${port}/`);
 });

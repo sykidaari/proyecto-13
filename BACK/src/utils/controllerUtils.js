@@ -10,7 +10,8 @@ import WatchList from '../api/models/user/watchList/watchList.model.js';
 import { io } from '../config/socket.js';
 import ERR from '../constants/errorCodes.js';
 
-//* GENERAL
+//* --- GENERAL ------------------------------------
+
 const setNestedValue = (obj, path, value) => {
   const keys = path.split('.');
   let current = obj;
@@ -60,7 +61,10 @@ export const resolvePath = (object, path) => {
 
 export const oneWeekAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-//!   ERRORS
+//* ---------------------------------------
+
+//! --- ERRORS ------------------------------------
+
 export const customError = (status, message, data = {}) => {
   const err = new Error(message);
   err.status = status;
@@ -69,7 +73,10 @@ export const customError = (status, message, data = {}) => {
   return err;
 };
 
-//* USERS
+//! ---------------------------------------
+
+//* --- USERS ------------------------------------
+
 export const userNotFoundError = customError(404, ERR.user.notFound);
 
 export const createAdditionalUserDocs = async (
@@ -89,8 +96,9 @@ export const createAdditionalUserDocs = async (
 
   return docs;
 };
+//* ---------------------------------------
 
-//* USER CHILDMODELS
+//* ---  USER CHILDMODELS ------------------------------------
 
 // ALL MODELS DEPENDENT ON USER
 export const childModels = [
@@ -114,7 +122,10 @@ export const deleteAdditionalUserDocs = async (
   }
 };
 
-//* SOCKET-UTILS
+//* ---------------------------------------
+
+//* --- SOCKET-UTILS ------------------------------------
+
 export const emit = ({ from, to }, event) => io.to(to).emit(event, { from });
 
 export const emitUserMediaUpdate = (event) => {
@@ -139,3 +150,5 @@ export const emitUserMediaUpdate = (event) => {
     }
   };
 };
+
+//* ---------------------------------------

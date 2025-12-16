@@ -91,6 +91,7 @@ const ERROR_CODES = {
     jwtExpired: 'SYSTEM_JWT_EXPIRED',
     fileTooLarge: 'SYSTEM_FILE_TOO_LARGE',
     serverError: 'SYSTEM_SERVER_ERROR',
+    tooManyRequests: 'SYSTEM_TOO_MANY_REQUESTS',
 
     cloudinaryDeleteFailed: 'CLD_DELETE_FAILED'
   }

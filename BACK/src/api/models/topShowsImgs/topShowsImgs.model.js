@@ -21,6 +21,8 @@ const TopShowsImgsSchema = buildSchema(
   'topShowImgs'
 );
 
+TopShowsImgsSchema.index({ country: 1, service: 1 }, { unique: true });
+
 const TopShowsImgs = model('TopShowsImgs', TopShowsImgsSchema);
 
 export default TopShowsImgs;

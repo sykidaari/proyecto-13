@@ -28,7 +28,7 @@ import withTransaction from '../../utils/transactionWrapper.js';
 
 // As we can see, where we place the current user (sender or recipient) changes depending on their role in the action, still //? current user is always the one who starts the action through a REST operation
 
-//* HELPERS EXCLUSIVE TO THIS SERVICE
+//* --- HELPERS EXCLUSIVE TO THIS SERVICE ------------------------------------
 
 const listContainsUser = (list, userId) =>
   list.some((item) => item.user?.toString() === userId.toString());
@@ -93,8 +93,10 @@ const findAffectedDocsAndFields = async (
     affectedRecipientField: affectedRecipientDoc[affectedField]
   };
 };
+//* ---------------------------------------
 
-//* SERVICE FUNCTIONS
+//* ---  SERVICE FUNCTIONS ------------------------------------
+
 const sendRequest = async (
   {
     senderId,
@@ -120,7 +122,7 @@ const sendRequest = async (
         throw customError(409, ERR.request.conflict.recipientAlreadyInvited);
     }
 
-    //* If for whatever reason request only exists on one user, it's treated as nonexisting so it can be made again to correct it
+    // If for whatever reason request only exists on one user, it's treated as nonexisting so it can be made again to correct it
     const alreadyExists =
       listContainsUser(senderSentField, recipientId) &&
       listContainsUser(recipientReceivedField, senderId);
@@ -255,6 +257,8 @@ const removeRequest = async ({ senderId, recipientId, type }, session) =>
       recipientDoc: recipientDoc.toObject()
     };
   }, session);
+
+//* ---------------------------------------
 
 const requestsService = { sendRequest, acceptRequest, removeRequest };
 export default requestsService;

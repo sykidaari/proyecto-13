@@ -64,9 +64,10 @@ const getShows = async ({
         ? [
             {
               country: countryCode,
-              services: show.streamingOptions[countryCode].map(
-                (opt) => opt.service.id
-              )
+              services: show.streamingOptions[countryCode].map((option) => ({
+                id: option.service.id,
+                mediaLink: option.link
+              }))
             }
           ]
         : []

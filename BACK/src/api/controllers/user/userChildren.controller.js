@@ -15,9 +15,7 @@ export const getUserChild =
         await doc.populate(field);
       }
 
-      const docObject = doc.toObject();
-
-      return res.status(status).json(docObject);
+      return res.status(status).json(doc);
     } catch (err) {
       next(err);
     }

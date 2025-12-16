@@ -16,7 +16,7 @@ const likedMediasRouter = Router();
 likedMediasRouter
   .get('/', getLikedMedias)
 
-  .patch('/like', [requireSelf, validateFullMediaData], likeMedia)
+  .patch('/like', [requireSelf, validateMediaId], likeMedia)
   .patch('/unlike', [requireSelf, validateMediaId], unlikeMedia);
 
 export default likedMediasRouter;

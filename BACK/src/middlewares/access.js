@@ -8,8 +8,6 @@ import { customError } from '../utils/controllerUtils.js';
 
 //! So be careful with these middlewares!!! Easy to accidentally break system
 
-//* GENERAL, FULL APP:
-
 export const setBasicAccessFlags = async (req, res, next) => {
   req.user = null;
   req.isAdmin = false;
@@ -129,7 +127,6 @@ export const requireSelfOrAdminOrFriendOrSessionParticipant = async (
   throw customError(403, ERR.access.notFriendOrParticipant);
 };
 
-//* FOR SESSIONS
 export const setIsSessionParticipant = async (req, res, next) => {
   const { user, session } = req;
 

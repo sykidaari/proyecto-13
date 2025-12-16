@@ -3,7 +3,7 @@ import { requireAndValidateReqBody } from './middlewares.js';
 // COMMON BODY VALIDATION MIDDLEWARES STORED HERE. NOT REUSED ONES ARE IN ROUTER FILES
 
 export const validateFullMediaData = requireAndValidateReqBody({
-  required: ['mediaId', 'media.title.languageCode', 'media.title.text'],
+  required: ['mediaId', 'media.title', 'languageCode'],
   optional: [
     'media.showType',
 
