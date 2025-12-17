@@ -662,7 +662,11 @@ Note: Some responses include additional fields depending on access level (self v
 
 - **GET**
   - Access : user
-  - Description : fetches medias from external services (proxy)
+  - Description : fetches medias from external services (proxy) with **req.queries**
+  - Queries :
+    - Required : `countryCode`, `languageCode`
+    - Optional : `showType` (movie|series), `genres`,`services`,`keyword`, `cursor`
+  - Example : `/api/v1/media/fetch?countryCode=us&lang=en&showType=movie`
     <br>
 
 `/api/v1/media/:mediaId`

@@ -18,7 +18,7 @@ app.use(express.json());
 // Once front is deployed, add it to deployed backs process.env, and only front will be able to access
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || true
+    origin: process.env.FRONTEND_URL || '*'
   })
 );
 
@@ -44,5 +44,10 @@ setupSocket(io);
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
-  console.log(`server connected on port ${port} http://localhost:${port}/`);
+  const url =
+    process.env.NODE_ENV === 'development'
+      ? `http://localhost:${port}/`
+      : `port ${port}`;
+
+  console.log(`server connected on ${url}`);
 });

@@ -5,6 +5,7 @@ import {
   getAllMedias,
   getMediaById
 } from '../../controllers/media/media.controller.js';
+import rateLimit from '../../../middlewares/rateLimit.js';
 
 const mediaRouter = Router();
 
@@ -12,7 +13,11 @@ mediaRouter
   .get('/', [requireAdmin], getAllMedias)
 
   // PROXY FOR FRONT
-  .get('/fetch', [requireUser], fetchServiceMedias)
+  .get(
+    '/fetch',
+    [requireUser, rateLimit.streamingAvailabilityDemo],
+    fetchServiceMedias
+  )
 
   .get('/:mediaId', [requireUser], getMediaById);
 

@@ -8,12 +8,10 @@ const getTopShowsImgs = async (country, service) => {
   });
 
   return shows.map((show) => ({
-    imageSet: {
-      verticalPoster: show.imageSet.verticalPoster?.w720,
-      horizontalPoster: show.imageSet.horizontalPoster?.w720,
-      verticalBackdrop: show.imageSet.verticalBackdrop?.w720,
-      horizontalBackdrop: show.imageSet.horizontalBackdrop?.w720
-    }
+    verticalPoster: show.imageSet.verticalPoster?.w720,
+    horizontalPoster: show.imageSet.horizontalPoster?.w720,
+    verticalBackdrop: show.imageSet.verticalBackdrop?.w720,
+    horizontalBackdrop: show.imageSet.horizontalBackdrop?.w720
   }));
 };
 

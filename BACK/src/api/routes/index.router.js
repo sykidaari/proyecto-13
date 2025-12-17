@@ -17,6 +17,6 @@ mainRouter
   .use('/user', userRouter)
   .use('/:userId/session', [setIsSelf, requireSelfOrAdmin], sessionRouter)
   .use('/media', mediaRouter)
-  .use('top', topShowsImgsRouter);
+  .use('/top', [rateLimit.streamingAvailabilityDemo], topShowsImgsRouter);
 
 export default mainRouter;

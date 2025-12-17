@@ -10,6 +10,7 @@ const TopShowsImgsSchema = buildSchema(
 
     shows: [
       {
+        _id: false,
         // all in w720
         verticalPoster: String,
         horizontalPoster: String,
