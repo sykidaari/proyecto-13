@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAdmin, requireUser } from '../../../middlewares/access.js';
+import { requireAdmin } from '../../../middlewares/access.js';
 import {
   fetchServiceMedias,
   getAllMedias,
@@ -13,12 +13,8 @@ mediaRouter
   .get('/', [requireAdmin], getAllMedias)
 
   // PROXY FOR FRONT
-  .get(
-    '/fetch',
-    [requireUser, rateLimit.streamingAvailabilityDemo],
-    fetchServiceMedias
-  )
+  .get('/fetch', [rateLimit.streamingAvailabilityDemo], fetchServiceMedias)
 
-  .get('/:mediaId', [requireUser], getMediaById);
+  .get('/:mediaId', getMediaById);
 
 export default mediaRouter;

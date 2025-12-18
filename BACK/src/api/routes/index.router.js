@@ -2,6 +2,7 @@ import { Router } from 'express';
 import userRouter from './user/user.router.js';
 import {
   requireSelfOrAdmin,
+  requireUser,
   setBasicAccessFlags,
   setIsSelf
 } from '../../middlewares/access.js';
@@ -16,7 +17,7 @@ mainRouter
 
   .use('/user', userRouter)
   .use('/:userId/session', [setIsSelf, requireSelfOrAdmin], sessionRouter)
-  .use('/media', mediaRouter)
+  .use('/media', [requireUser], mediaRouter)
   .use('/top', [rateLimit.streamingAvailabilityDemo], topShowsImgsRouter);
 
 export default mainRouter;

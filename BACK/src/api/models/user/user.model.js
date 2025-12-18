@@ -3,7 +3,7 @@ import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
 import { hash } from 'bcrypt';
 import ERR from '../../../constants/domain/errorCodes.js';
 import COUNTRY_CODES from '../../../constants/domain/countryCodes.js';
-import { LANGUAGE_CODES } from '../../../constants/domain/languageCodes.js';
+import LANGUAGE_CODES from '../../../constants/domain/languageCodes.js';
 
 // PUBLIC FIELDS HAVE SELECT:TRUE(DEFAULT, NOT WRITTEN) WHILE FIELDS THAT ARE MEANT FOR CURRENT-USER/ADMIN HAVE SELECT:FALSE AND ARE SELECTED IN CONTROLLERS WHEN NEEDED
 
