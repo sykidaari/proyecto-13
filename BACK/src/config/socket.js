@@ -1,4 +1,4 @@
-import SE from '../constants/socketEvents.js';
+import SE from '../constants/domain/socketEvents.js';
 
 export let io;
 

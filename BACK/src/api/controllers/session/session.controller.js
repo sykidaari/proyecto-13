@@ -1,6 +1,6 @@
-import ERR from '../../../constants/errorCodes.js';
-import SE from '../../../constants/socketEvents.js';
-import OK from '../../../constants/successCodes.js';
+import ERR from '../../../constants/domain/errorCodes.js';
+import SE from '../../../constants/domain/socketEvents.js';
+import OK from '../../../constants/domain/successCodes.js';
 import { customError, emit } from '../../../utils/controllerUtils.js';
 import withTransaction from '../../../utils/transactionWrapper.js';
 import Session from '../../models/session/session.model.js';

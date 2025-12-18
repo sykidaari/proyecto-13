@@ -5,7 +5,7 @@ import {
   requiredString,
   userRefRequiredUnique
 } from '../../../utils/modelUtils.js';
-import ERR from '../../../constants/errorCodes.js';
+import ERR from '../../../constants/domain/errorCodes.js';
 
 export const sessionParameters = {
   sessionName: { type: String, minlength: 3, maxlength: 30 },

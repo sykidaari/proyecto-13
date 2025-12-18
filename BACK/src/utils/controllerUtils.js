@@ -8,7 +8,7 @@ import SessionsList from '../api/models/user/sessionsList/sessionsList.model.js'
 import WatchedMedias from '../api/models/user/watchedMedias/watchedMedias.model.js';
 import WatchList from '../api/models/user/watchList/watchList.model.js';
 import { io } from '../config/socket.js';
-import ERR from '../constants/errorCodes.js';
+import ERR from '../constants/domain/errorCodes.js';
 
 //* --- GENERAL ------------------------------------
 

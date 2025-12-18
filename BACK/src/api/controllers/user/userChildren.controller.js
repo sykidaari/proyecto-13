@@ -1,5 +1,5 @@
-import ERR from '../../../constants/errorCodes.js';
-import OK from '../../../constants/successCodes.js';
+import ERR from '../../../constants/domain/errorCodes.js';
+import OK from '../../../constants/domain/successCodes.js';
 import { customError, resolvePath } from '../../../utils/controllerUtils.js';
 
 //* GENERIC CONTROLLERS FOR USER CHILDREN

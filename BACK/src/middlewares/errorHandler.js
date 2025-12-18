@@ -1,4 +1,4 @@
-import ERR from '../constants/errorCodes.js';
+import ERR from '../constants/domain/errorCodes.js';
 
 const errorHandler = (err, req, res, next) => {
   let status = err.status || 500;

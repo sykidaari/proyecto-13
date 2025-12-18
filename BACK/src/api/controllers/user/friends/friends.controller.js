@@ -1,4 +1,4 @@
-import SE from '../../../../constants/socketEvents.js';
+import SE from '../../../../constants/domain/socketEvents.js';
 import Friends from '../../../models/user/friends/friends.model.js';
 import {
   getUserChild,
@@ -10,7 +10,7 @@ import {
   removeRequest,
   sendRequest
 } from '../requests/requests.controller.js';
-import OK from '../../../../constants/successCodes.js';
+import OK from '../../../../constants/domain/successCodes.js';
 
 //? FOLLOWING AFFECT REQUESTS-MODEL
 //* GET

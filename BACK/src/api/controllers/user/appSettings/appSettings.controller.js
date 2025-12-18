@@ -1,4 +1,4 @@
-import ERR from '../../../../constants/errorCodes.js';
+import ERR from '../../../../constants/domain/errorCodes.js';
 import { getUserChild } from '../userChildren.controller.js';
 
 //*

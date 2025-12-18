@@ -14,8 +14,8 @@ import {
 import User from '../../models/user/user.model.js';
 import { compare as compareEncryption } from 'bcrypt';
 import withTransaction from '../../../utils/transactionWrapper.js';
-import ERR from '../../../constants/errorCodes.js';
-import OK from '../../../constants/successCodes.js';
+import ERR from '../../../constants/domain/errorCodes.js';
+import OK from '../../../constants/domain/successCodes.js';
 
 // * GET
 

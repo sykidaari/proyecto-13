@@ -5,7 +5,7 @@ import withTransaction from '../../../../utils/transactionWrapper.js';
 import User from '../../../models/user/user.model.js';
 import { getUserChild } from '../userChildren.controller.js';
 import Friends from '../../../models/user/friends/friends.model.js';
-import ERR from '../../../../constants/errorCodes.js';
+import ERR from '../../../../constants/domain/errorCodes.js';
 
 //* GET
 export const getRequests = getUserChild;

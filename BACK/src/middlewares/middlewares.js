@@ -1,5 +1,5 @@
 import Session from '../api/models/session/session.model.js';
-import ERR from '../constants/errorCodes.js';
+import ERR from '../constants/domain/errorCodes.js';
 import { customError, resolvePath } from '../utils/controllerUtils.js';
 import Media from '../api/models/media/media.model.js';
 

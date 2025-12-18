@@ -1,5 +1,5 @@
 import Requests from '../../api/models/user/requests/requests.model.js';
-import ERR from '../../constants/errorCodes.js';
+import ERR from '../../constants/domain/errorCodes.js';
 import { customError } from '../../utils/controllerUtils.js';
 import withTransaction from '../../utils/transactionWrapper.js';
 

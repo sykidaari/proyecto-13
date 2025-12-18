@@ -1,4 +1,4 @@
-import ERR from '../../../constants/errorCodes.js';
+import ERR from '../../../constants/domain/errorCodes.js';
 import streamingAvailabilityService from '../../../services/external/streamingAvailability.service.js';
 import { customError } from '../../../utils/controllerUtils.js';
 import Media from '../../models/media/media.model.js';

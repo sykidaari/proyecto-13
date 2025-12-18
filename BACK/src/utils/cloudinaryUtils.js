@@ -1,5 +1,5 @@
 import cloudinary from '../config/cloudinary.js';
-import ERR from '../constants/errorCodes.js';
+import ERR from '../constants/domain/errorCodes.js';
 
 export const uploadToCloudinary = (buffer, folder) => {
   return new Promise((resolve, reject) => {

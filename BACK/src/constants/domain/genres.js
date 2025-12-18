@@ -1,0 +1,23 @@
+const GENRES = [
+  'action',
+  'adventure',
+  'animation',
+  'comedy',
+  'crime',
+  'documentary',
+  'drama',
+  'family',
+  'fantasy',
+  'history',
+  'horror',
+  'music',
+  'mystery',
+  'news',
+  'reality',
+  'romance',
+  'scifi',
+  'talk',
+  'thriller',
+  'war',
+  'western'
+];

@@ -1,6 +1,6 @@
 import User from '../api/models/user/user.model.js';
 import { verifyToken } from '../config/jwt.js';
-import ERR from '../constants/errorCodes.js';
+import ERR from '../constants/domain/errorCodes.js';
 import { customError } from '../utils/controllerUtils.js';
 
 //! IMPORTANT NOTE ABOUT MIDDLEWARES
