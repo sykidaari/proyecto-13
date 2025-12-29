@@ -6,6 +6,8 @@ import { io } from 'socket.io-client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import AppProvider from '@/contexts/AppContext/AppProvider.jsx';
+import queryClient from '@/config/reactQuery.js';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // SOCKET TEST FOR BACKEND
 const socket = io('http://localhost:3000');
@@ -23,7 +25,8 @@ socket.on('pong', () => console.log('PONG'));
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools />
         <AppProvider>
           <App />
         </AppProvider>

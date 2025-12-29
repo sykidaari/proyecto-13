@@ -7,6 +7,7 @@ import mainRouter from './src/api/routes/index.router.js';
 import { Server as SocketServer } from 'socket.io';
 import { createServer as createHttpServer } from 'http';
 import { setupSocket } from './src/config/socket.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -14,12 +15,20 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Once front is deployed, add it to deployed backs process.env, and only front will be able to access
 app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || '*'
-  })
+  cors(
+    process.env.FRONTEND_URL
+      ? {
+          origin: process.env.FRONTEND_URL,
+          credentials: true
+        }
+      : {
+          origin: '*'
+        }
+  )
 );
 
 connectDB();

@@ -10,6 +10,7 @@ import sessionRouter from './session/session.router.js';
 import mediaRouter from './media/media.router.js';
 import topShowsImgsRouter from './topShowsImgs/topShowsImgs.router.js';
 import rateLimit from '../../middlewares/rateLimit.js';
+import userAccessSessionRouter from './userAccessSession/userAccessSession.router.js';
 
 const mainRouter = Router();
 mainRouter
@@ -18,6 +19,8 @@ mainRouter
   .use('/user', userRouter)
   .use('/:userId/session', [setIsSelf, requireSelfOrAdmin], sessionRouter)
   .use('/media', [requireUser], mediaRouter)
-  .use('/top', [rateLimit.streamingAvailabilityDemo], topShowsImgsRouter);
+  .use('/top', [rateLimit.streamingAvailabilityDemo], topShowsImgsRouter)
+
+  .use('/userAccessSession', userAccessSessionRouter);
 
 export default mainRouter;

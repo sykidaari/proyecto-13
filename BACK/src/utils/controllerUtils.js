@@ -5,8 +5,10 @@ import Friends from '../api/models/user/friends/friends.model.js';
 import LikedMedias from '../api/models/user/likedMedias/likedMedias.model.js';
 import Requests from '../api/models/user/requests/requests.model.js';
 import SessionsList from '../api/models/user/sessionsList/sessionsList.model.js';
+import UserAccessSession from '../api/models/userAccessSession/userAccessSession.model.js';
 import WatchedMedias from '../api/models/user/watchedMedias/watchedMedias.model.js';
 import WatchList from '../api/models/user/watchList/watchList.model.js';
+import { generateRefreshToken, hashRefreshToken } from '../config/auth.js';
 import { io } from '../config/socket.js';
 import ERR from '../constants/domain/errorCodes.js';
 
@@ -96,6 +98,45 @@ export const createAdditionalUserDocs = async (
 
   return docs;
 };
+
+//* --- USER ACCCESS SESSION ------------------------------------
+export const day = 24 * 60 * 60 * 1000;
+export const rememberTtl = 30 * day;
+const sessionTtl = 7 * day;
+
+export const refreshTokenCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'none',
+  path: '/userAccessSession'
+};
+
+export const setRefreshCookie = (res, token, maxAge) =>
+  res.cookie('refreshToken', token, {
+    ...refreshTokenCookieOptions,
+    ...(maxAge && { maxAge })
+  });
+
+export const clearRefreshCookie = (res) =>
+  res.clearCookie('refreshToken', refreshTokenCookieOptions);
+
+export const createSession = async (res, userId, { rememberMe }) => {
+  const persistent = Boolean(rememberMe);
+  const ttl = persistent ? rememberTtl : sessionTtl;
+
+  const refreshToken = generateRefreshToken();
+  const refreshTokenHash = hashRefreshToken(refreshToken);
+
+  await UserAccessSession.create({
+    user: userId,
+    tokenHash: refreshTokenHash,
+    expiresAt: new Date(Date.now() + ttl),
+    persistent
+  });
+
+  setRefreshCookie(res, refreshToken, persistent ? ttl : undefined);
+};
+
 //* ---------------------------------------
 
 //* ---  USER CHILDMODELS ------------------------------------

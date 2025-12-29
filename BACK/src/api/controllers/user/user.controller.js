@@ -1,11 +1,17 @@
-import { generateToken } from '../../../config/jwt.js';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  hashRefreshToken
+} from '../../../config/auth.js';
 import {
   deleteFromCloudinary,
   uploadToCloudinary
 } from '../../../utils/cloudinaryUtils.js';
 import {
   childModels,
+  clearRefreshCookie,
   createAdditionalUserDocs,
+  createSession,
   customError,
   deleteAdditionalUserDocs,
   userNotFoundError,
@@ -94,7 +100,7 @@ export const searchUsers = async (req, res, next) => {
 // * POST
 
 export const registerUser = async (req, res, next) => {
-  const { body: registerFields } = req;
+  const { rememberMe, ...registerFields } = req.body;
 
   try {
     const { user, additionalDocs } = await withTransaction(async (session) => {
@@ -114,12 +120,16 @@ export const registerUser = async (req, res, next) => {
     const userObject = user.toObject();
     delete userObject.password;
 
-    const token = generateToken(userObject._id);
+    const accessToken = generateAccessToken(userObject._id);
+
+    await createSession(res, userObject._id, {
+      rememberMe
+    });
 
     return res.status(201).json({
       message: OK.user.registered,
       user: userObject,
-      token,
+      accessToken,
       additionalDocs
     });
   } catch (err) {
@@ -128,7 +138,7 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const loginUser = async (req, res, next) => {
-  const { userName, emailAddress, password } = req.body;
+  const { userName, emailAddress, password, rememberMe } = req.body;
 
   if (!userName && !emailAddress) {
     throw customError(400, ERR.user.validation.missingCredentials, {
@@ -151,9 +161,13 @@ export const loginUser = async (req, res, next) => {
 
     delete user.password;
 
-    const token = generateToken(user._id);
+    const accessToken = generateAccessToken(user._id);
 
-    return res.status(200).json({ message: OK.user.loggedIn, user, token });
+    await createSession(res, user._id, { rememberMe });
+
+    return res
+      .status(200)
+      .json({ message: OK.user.loggedIn, user, accessToken });
   } catch (err) {
     next(err);
   }
@@ -276,6 +290,29 @@ export const changePassword = async (req, res, next) => {
     return res.status(200).json({
       message: OK.user.passwordChanged
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE
+
+export const logoutUser = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      clearRefreshCookie(res);
+      return res.sendStatus(200);
+    }
+
+    const tokenHash = hashRefreshToken(refreshToken);
+
+    await UserAccessSession.deleteOne({ tokenHash });
+
+    clearRefreshCookie(res);
+
+    return res.sendStatus(200);
   } catch (err) {
     next(err);
   }

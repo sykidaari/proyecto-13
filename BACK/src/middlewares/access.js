@@ -1,5 +1,6 @@
 import User from '../api/models/user/user.model.js';
-import { verifyToken } from '../config/jwt.js';
+import { verifyAccessToken } from '../config/auth.js';
+
 import ERR from '../constants/domain/errorCodes.js';
 import { customError } from '../utils/controllerUtils.js';
 
@@ -13,10 +14,11 @@ export const setBasicAccessFlags = async (req, res, next) => {
   req.isAdmin = false;
 
   try {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) return next();
+    const auth = req.headers.authorization;
+    if (!auth?.startsWith('Bearer ')) return next();
+    const token = auth.slice(7);
 
-    const { userId } = verifyToken(token);
+    const { userId } = verifyAccessToken(token);
     const user = await User.findById(userId).select('+role').lean();
     if (!user) return next();
 

@@ -17,6 +17,7 @@ import {
   getAllUsers,
   getUserById,
   loginUser,
+  logoutUser,
   registerUser,
   searchUsers,
   uploadProfilePicture
@@ -53,7 +54,8 @@ userRouter
           'password',
           'countryCode',
           'languageCode'
-        ]
+        ],
+        optional: 'rememberMe'
       })
     ],
     registerUser
@@ -65,11 +67,12 @@ userRouter
       requireGuest,
       requireAndValidateReqBody({
         required: 'password',
-        optional: ['userName', 'emailAddress']
+        optional: ['userName', 'emailAddress', 'rememberMe']
       })
     ],
     loginUser
-  );
+  )
+  .delete('/', [requireUser], logoutUser);
 
 userRouter.use('/:userId', [setIsSelf], existingUserRouter);
 
