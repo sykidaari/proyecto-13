@@ -2,7 +2,6 @@
 
 ### BACK-END
 
-- Refresh tokens for better security
 - Possibly stricter/more refined rate limits
 - Two factor authentification
 - Password reset system
