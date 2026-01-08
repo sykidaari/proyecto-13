@@ -5,7 +5,7 @@ import App from './App.jsx';
 import { io } from 'socket.io-client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
-import AppProvider from '@/contexts/AppContext/AppProvider.jsx';
+import AppProvider from '@/contexts/App/AppProvider.jsx';
 import queryClient from '@/config/reactQuery.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 

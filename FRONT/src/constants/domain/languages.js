@@ -1,4 +1,4 @@
 const LANGUAGES = [
-  { code: 'es', language: 'Spanish' },
+  { code: 'es', language: 'Español' },
   { code: 'en', language: 'English' }
 ];

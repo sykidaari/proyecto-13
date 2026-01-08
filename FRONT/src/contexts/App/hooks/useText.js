@@ -1,4 +1,4 @@
-import useAppContext from '@/contexts/AppContext/hooks/useAppContext.js';
+import useAppContext from '@/contexts/App/hooks/useAppContext.js';
 import TEXTS from '@/data/texts.js';
 
 const useText = (path) => {

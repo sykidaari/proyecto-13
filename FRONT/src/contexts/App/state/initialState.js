@@ -1,6 +1,7 @@
 const INITIAL_APP_STATE = {
   theme: 'light',
   language: 'en',
+  country: 'us',
   saveMode: 'none'
 };
 

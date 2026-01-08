@@ -54,8 +54,7 @@ userRouter
           'password',
           'countryCode',
           'languageCode'
-        ],
-        optional: 'rememberMe'
+        ]
       })
     ],
     registerUser

@@ -1,4 +1,4 @@
-import AVAILABLE_LANGUAGES from '@/constants/domain/languageCodes.js';
+import { isSupportedCountry, isSupportedLanguage } from '@/utils/helpers.js';
 
 const getInitialAppState = (baseState) => {
   const storedTheme = localStorage.getItem('theme');
@@ -10,8 +10,8 @@ const getInitialAppState = (baseState) => {
     : 'light';
 
   const browserLanguage = navigator.language?.split('-')[0];
-  const browserLanguageIsAvailable =
-    AVAILABLE_LANGUAGES.includes(browserLanguage);
+
+  const browserCountry = navigator.language?.split('-')[1]?.toUpperCase();
 
   return {
     ...baseState,
@@ -22,7 +22,14 @@ const getInitialAppState = (baseState) => {
 
     language:
       storedLanguage ??
-      (browserLanguageIsAvailable ? browserLanguage : baseState.language)
+      (browserLanguage && isSupportedLanguage(browserLanguage)
+        ? browserLanguage
+        : baseState.language),
+
+    country:
+      browserCountry && isSupportedCountry(browserCountry)
+        ? browserCountry
+        : baseState.country
   };
 };
 

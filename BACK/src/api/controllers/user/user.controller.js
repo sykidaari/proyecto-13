@@ -100,37 +100,25 @@ export const searchUsers = async (req, res, next) => {
 // * POST
 
 export const registerUser = async (req, res, next) => {
-  const { rememberMe, ...registerFields } = req.body;
+  const registerFields = req.body;
 
   try {
-    const { user, additionalDocs } = await withTransaction(async (session) => {
+    const { user } = await withTransaction(async (session) => {
       const [user] = await User.create([{ ...registerFields, role: 'user' }], {
         session
       });
 
-      const additionalDocs = await createAdditionalUserDocs(
-        session,
-        user._id,
-        childModels
-      );
+      await createAdditionalUserDocs(session, user._id, childModels);
 
-      return { user, additionalDocs };
+      return { user };
     });
 
     const userObject = user.toObject();
     delete userObject.password;
 
-    const accessToken = generateAccessToken(userObject._id);
-
-    await createSession(res, userObject._id, {
-      rememberMe
-    });
-
     return res.status(201).json({
       message: OK.user.registered,
-      user: userObject,
-      accessToken,
-      additionalDocs
+      user: userObject
     });
   } catch (err) {
     next(err);
