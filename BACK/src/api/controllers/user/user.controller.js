@@ -138,7 +138,7 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({
       $or: [{ userName }, { emailAddress }]
     })
-      .select('+password +accountSettings +emailAddress')
+      .select('+password +accountSettings +emailAddress +role')
       .lean();
 
     if (!user) throw userNotFoundError;

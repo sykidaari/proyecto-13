@@ -1,4 +1,5 @@
 import SAVE_MODES from '@/constants/client/saveModes.js';
+import { IS_DEV } from '@/utils/env.js';
 import { isSupportedCountry, isSupportedLanguage } from '@/utils/helpers.js';
 
 const appReducer = (state, action) => {
@@ -14,7 +15,7 @@ const appReducer = (state, action) => {
 
     case 'SET_LANGUAGE': {
       if (!isSupportedLanguage(payload)) {
-        if (import.meta.env.DEV) console.warn('language not supported');
+        if (IS_DEV) console.warn('language not supported');
         return state;
       }
 
@@ -23,7 +24,7 @@ const appReducer = (state, action) => {
 
     case 'SET_COUNTRY': {
       if (!isSupportedCountry(payload)) {
-        if (import.meta.env.DEV) console.warn('country not supported');
+        if (IS_DEV) console.warn('country not supported');
         return state;
       }
 
@@ -32,7 +33,7 @@ const appReducer = (state, action) => {
 
     case 'SET_SAVE_MODE': {
       if (!SAVE_MODES.includes(payload)) {
-        if (import.meta.env.DEV) console.warn("save mode doesn't exist");
+        if (IS_DEV) console.warn("save mode doesn't exist");
         return state;
       }
       return { ...state, saveMode: payload };

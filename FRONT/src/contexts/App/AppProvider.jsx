@@ -1,9 +1,9 @@
 import AppContext from '@/contexts/App/AppContext.js';
-import reducerActions from '@/contexts/App/state/actions.js';
+import appReducerActions from '@/contexts/App/state/actions.js';
 import getInitialAppState from '@/contexts/App/state/getInitialAppState.js';
 import INITIAL_APP_STATE from '@/contexts/App/state/initialState.js';
 import appReducer from '@/contexts/App/state/reducer.js';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(
@@ -36,7 +36,7 @@ const AppProvider = ({ children }) => {
     // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [saveMode]);
 
-  const actions = useMemo(() => reducerActions(dispatch), [dispatch]);
+  const actions = appReducerActions(dispatch);
 
   return <AppContext value={{ state, actions }}>{children}</AppContext>;
 };

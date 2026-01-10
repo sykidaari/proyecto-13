@@ -1,5 +1,6 @@
 import useAppContext from '@/contexts/App/hooks/useAppContext.js';
 import TEXTS from '@/data/texts.js';
+import { IS_DEV } from '@/utils/env.js';
 
 const useText = (path) => {
   const {
@@ -13,7 +14,7 @@ const useText = (path) => {
   const value = path.split('.').reduce((acc, key) => acc?.[key], langTexts);
 
   if (value === undefined) {
-    if (import.meta.env.DEV) console.warn(`Missing text key: ${path}`);
+    if (IS_DEV) console.warn(`Missing text key: ${path}`);
 
     return path;
   }
