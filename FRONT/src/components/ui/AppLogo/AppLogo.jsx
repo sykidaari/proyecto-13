@@ -1,0 +1,24 @@
+import useAppContext from '@/contexts/App/hooks/useAppContext.js';
+
+const AppLogo = ({ withText }) => {
+  const {
+    state: { theme }
+  } = useAppContext();
+
+  return (
+    <div className='flex gap-1'>
+      {withText && <h1 className='text-xl max-mini:text-lg'>Popcorn</h1>}
+      <img
+        src={
+          theme === 'dark'
+            ? '/imgs/logo_black_lines.svg'
+            : '/imgs/logo_purple_lines.svg'
+        }
+        alt='logo'
+        className='size-8 max-mini:size-7'
+      />
+    </div>
+  );
+};
+
+export default AppLogo;

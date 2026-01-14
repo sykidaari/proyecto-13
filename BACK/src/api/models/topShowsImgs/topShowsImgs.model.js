@@ -1,6 +1,6 @@
 import { model } from 'mongoose';
-import COUNTRY_CODES from '../../../constants/domain/countryCodes.js';
 import { buildSchema, requiredString } from '../../../utils/modelUtils.js';
+import { COUNTRY_CODES } from '../../../constants/domain/countriesAndServices.js';
 
 const TopShowsImgsSchema = buildSchema(
   {

@@ -1,0 +1,37 @@
+const ROUTE_PATHS = {
+  public: {
+    landing: {
+      rel: '',
+      abs: '/'
+    },
+    feature: {
+      rel: 'feature',
+      abs: '/feature'
+    }
+  },
+
+  auth: {
+    discover: {
+      rel: 'discover',
+      abs: '/app/discover'
+    },
+    profile: {
+      rel: 'profile',
+      abs: '/app/profile'
+    },
+    notifications: {
+      rel: 'notifications',
+      abs: '/app/notifications'
+    },
+    sessions: {
+      rel: 'sessions',
+      abs: '/app/sessions'
+    },
+    settings: {
+      rel: 'settings',
+      abs: '/app/settings'
+    }
+  }
+};
+
+export default ROUTE_PATHS;

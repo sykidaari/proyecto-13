@@ -78,4 +78,9 @@
 @theme {
   /* Remove Tailwind palette, as using DaisyUI palette */
   --color-*: initial;
+
+  /* for vertical layout */
+
+  --breakpoint-mini: 19rem;
+  --breakpoint-mobile: 40rem;
 }

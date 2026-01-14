@@ -8,6 +8,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import AppProvider from '@/contexts/App/AppProvider.jsx';
 import queryClient from '@/config/reactQuery.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import UserSessionProvider from '@/contexts/UserSession/UserSessionProvider.jsx';
 
 // SOCKET TEST FOR BACKEND
 const socket = io('http://localhost:3000');
@@ -27,9 +28,11 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools />
-        <AppProvider>
-          <App />
-        </AppProvider>
+        <UserSessionProvider>
+          <AppProvider>
+            <App />
+          </AppProvider>
+        </UserSessionProvider>
       </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>

@@ -3206,3 +3206,5 @@ const COUNTRIES_AND_SERVICES = [
 ];
 
 export default COUNTRIES_AND_SERVICES;
+
+export const COUNTRY_CODES = COUNTRIES_AND_SERVICES.map((c) => c.countryCode);
