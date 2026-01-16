@@ -10,7 +10,8 @@ const TEXTS = {
             3: 'For Showcase Purposes Only'
           }
         }
-      }
+      },
+      landing: { login: 'Login', register: 'Register' }
     }
   },
   es: {}

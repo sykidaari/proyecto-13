@@ -14,7 +14,7 @@ import { Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div id='app' className='bg-base-100 min-h-dvh '>
+    <div id='app' className='bg-base-100'>
       <Routes>
         <Route
           path='/'

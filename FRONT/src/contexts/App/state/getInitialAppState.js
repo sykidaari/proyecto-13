@@ -11,7 +11,11 @@ const getInitialAppState = (baseState) => {
 
   const browserLanguage = navigator.language?.split('-')[0];
 
-  const browserCountry = navigator.language?.split('-')[1]?.toUpperCase();
+  // this country is browser language based!!!
+  const browserCountry = Intl.DateTimeFormat()
+    .resolvedOptions()
+    .locale.split('-')[1]
+    ?.toLowerCase();
 
   return {
     ...baseState,

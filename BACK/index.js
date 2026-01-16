@@ -11,6 +11,26 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 
+// app.use(
+//   cors(
+//     process.env.FRONTEND_URL
+//       ? {
+//           origin: process.env.FRONTEND_URL,
+//           credentials: true
+//         }
+//       : {
+//           origin: '*'
+//         }
+//   )
+// );
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+  })
+);
+
 // necessary for rate limiting to work correctly in build (deploy)
 app.set('trust proxy', 1);
 
@@ -18,18 +38,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Once front is deployed, add it to deployed backs process.env, and only front will be able to access
-app.use(
-  cors(
-    process.env.FRONTEND_URL
-      ? {
-          origin: process.env.FRONTEND_URL,
-          credentials: true
-        }
-      : {
-          origin: '*'
-        }
-  )
-);
 
 connectDB();
 

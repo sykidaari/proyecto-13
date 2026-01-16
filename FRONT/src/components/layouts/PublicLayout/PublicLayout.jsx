@@ -1,12 +1,17 @@
 import Footer from '@c/layouts/PublicLayout/Footer/Footer.jsx';
 import Header from '@c/layouts/PublicLayout/Header/Header.jsx';
+import { Outlet } from 'react-router-dom';
 
-const PublicLayout = ({ children }) => {
+const PublicLayout = () => {
   return (
     <>
-      <Header />
-      <main>{children}</main>
-      <Footer />
+      <div className='flex flex-col min-h-dvh items-center p-2.5'>
+        <Header />
+        <main className='flex-1 flex'>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </>
   );
 };

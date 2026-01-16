@@ -16,7 +16,7 @@ const strict = rateLimiter(20);
 
 // On free plan of RapidAp/Streaming Availability, I only have 1000 reqs
 const streamingAvailabilityDemo = rateLimiter(
-  process.env.NODE_ENV === 'development' ? 20 : 5
+  process.env.NODE_ENV === 'development' ? 100 : 5
 );
 
 const rateLimit = { general, strict, streamingAvailabilityDemo };

@@ -3,7 +3,8 @@ import appReducerActions from '@/contexts/App/state/actions.js';
 import getInitialAppState from '@/contexts/App/state/getInitialAppState.js';
 import INITIAL_APP_STATE from '@/contexts/App/state/initialState.js';
 import appReducer from '@/contexts/App/state/reducer.js';
-import { useEffect, useReducer } from 'react';
+import useEffectIgnoreDeps from '@/hooks/useEffectIgnoreDeps.js';
+import { useReducer } from 'react';
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(
@@ -16,24 +17,21 @@ const AppProvider = ({ children }) => {
 
   const saveOnDevice = saveMode === 'thisDevice';
 
-  useEffect(() => {
+  useEffectIgnoreDeps(() => {
     document.documentElement.setAttribute('data-theme', theme);
 
     if (saveOnDevice) localStorage.setItem('theme', theme);
-    // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [theme]);
 
-  useEffect(() => {
+  useEffectIgnoreDeps(() => {
     if (saveOnDevice) localStorage.setItem('language', language);
-    // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [language]);
 
-  useEffect(() => {
+  useEffectIgnoreDeps(() => {
     if (!saveOnDevice) {
       localStorage.removeItem('theme');
       localStorage.removeItem('language');
     }
-    // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [saveMode]);
 
   const actions = appReducerActions(dispatch);

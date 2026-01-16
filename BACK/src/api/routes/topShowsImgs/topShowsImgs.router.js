@@ -9,6 +9,6 @@ const topShowsImgsRouter = Router();
 
 topShowsImgsRouter
   .get('/', [requireAdmin], getAllTopShowsImgsDocs)
-  .get('/:country/:service', getTopShowsImgsDoc);
+  .get('/:country', getTopShowsImgsDoc);
 
 export default topShowsImgsRouter;

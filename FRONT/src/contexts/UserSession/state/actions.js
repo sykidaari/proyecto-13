@@ -6,6 +6,11 @@ const userSessionReducerActions = (dispatch) => ({
     }),
   logout: () => dispatch({ type: 'LOGOUT' }),
 
+  setAccessToken: (value) =>
+    dispatch({
+      type: 'SET_PRIMITIVE_FIELD',
+      payload: { key: 'accessToken', value }
+    }),
   setUserId: (value) =>
     dispatch({
       type: 'SET_PRIMITIVE_FIELD',

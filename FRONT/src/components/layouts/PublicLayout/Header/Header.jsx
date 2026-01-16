@@ -11,64 +11,62 @@ const Header = () => {
   const featureText = useText('public.layout.nav.feature');
 
   return (
-    <div className='py-2.5 mx-5 relative'>
-      <header className='glass rounded-box  font-semibold w-full  max-w-4xl absolute left-1/2 -translate-x-1/2 text-primary'>
-        <nav className='navbar px-1 mobile:px-7 max-mobile:justify-around'>
-          <div className='mobile:hidden navbar-start'>
-            <Link to={R.public.landing.abs}>
-              <AppLogo withText />
-            </Link>
-          </div>
+    <header className='glass rounded-box font-semibold w-full  max-w-4xl sticky text-primary top-2.5 z-10'>
+      <nav className='navbar px-1 mobile:px-7 max-mobile:justify-around'>
+        <div className='mobile:hidden navbar-start'>
+          <Link to={R.public.landing.abs}>
+            <AppLogo withText />
+          </Link>
+        </div>
 
-          <div className='mobile:navbar-start'>
-            <NavLink
-              to={R.public.feature.abs}
-              className={({ isActive }) =>
-                cN(
-                  'text-sm rounded-field p-2 hover:bg-base-200 transition duration-150 max-mini:text-xs',
-                  isActive && 'bg-base-200'
-                )
-              }
+        <div className='mobile:navbar-start'>
+          <NavLink
+            to={R.public.feature.abs}
+            className={({ isActive }) =>
+              cN(
+                'text-sm rounded-field p-2 hover:bg-base-200 transition duration-150 max-mini:text-xs',
+                isActive && 'bg-base-200'
+              )
+            }
+          >
+            {featureText}
+          </NavLink>
+        </div>
+        <div className='max-mobile:hidden navbar-center'>
+          <Link to={R.public.landing.abs}>
+            <AppLogo withText />
+          </Link>
+        </div>
+
+        <div className='mobile:navbar-end gap-2.5'>
+          <div className='dropdown mobile:hidden'>
+            <div
+              tabIndex={0}
+              role='button'
+              className='btn btn-circle btn-ghost btn-primary max-mini:btn-xs'
             >
-              {featureText}
-            </NavLink>
-          </div>
-          <div className='max-mobile:hidden navbar-center'>
-            <Link to={R.public.landing.abs}>
-              <AppLogo withText />
-            </Link>
+              <ChevronDownIcon className='size-5 max-mini:size-4' />
+            </div>
+            <ul
+              tabIndex='-1'
+              className='dropdown-content menu bg-base-100 rounded-box z-1 p-2 shadow-sm left-1/2 -translate-x-1/2'
+            >
+              <li>
+                <ThemeToggle className='m-auto' />
+              </li>
+              <li>
+                <LanguageDropdown minimal />
+              </li>
+            </ul>
           </div>
 
-          <div className='mobile:navbar-end gap-2.5'>
-            <div className='dropdown mobile:hidden'>
-              <div
-                tabIndex={0}
-                role='button'
-                className='btn btn-circle btn-ghost btn-primary max-mini:btn-xs'
-              >
-                <ChevronDownIcon className='size-5 max-mini:size-4' />
-              </div>
-              <ul
-                tabIndex='-1'
-                className='dropdown-content menu bg-base-100 rounded-box z-1 p-2 shadow-sm left-1/2 -translate-x-1/2'
-              >
-                <li>
-                  <ThemeToggle className='m-auto' />
-                </li>
-                <li>
-                  <LanguageDropdown minimal />
-                </li>
-              </ul>
-            </div>
-
-            <div className='max-mobile:hidden'>
-              <ThemeToggle className='mr-2.5' />
-              <LanguageDropdown minimal />
-            </div>
+          <div className='max-mobile:hidden'>
+            <ThemeToggle className='mr-2.5' />
+            <LanguageDropdown minimal />
           </div>
-        </nav>
-      </header>
-    </div>
+        </div>
+      </nav>
+    </header>
   );
 };
 
