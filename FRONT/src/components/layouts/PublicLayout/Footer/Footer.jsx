@@ -5,7 +5,7 @@ const Footer = () => {
   const text = useText('public.layout.footer.devMessage');
 
   return (
-    <footer className='flex justify-between w-full max-w-4xl p-5 glass rounded-box text-sm max-mobile:flex-col gap-7'>
+    <footer className='flex justify-between w-full max-w-4xl p-5 glass rounded-box text- max-mobile:flex-col gap-7 bg-base-100'>
       <aside className='flex flex-col gap-1'>
         <p>
           {text[1]} <span className='footer-title'>Kira</span>

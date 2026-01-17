@@ -1,6 +1,6 @@
 import R from '@/constants/client/routePaths.js';
 import useText from '@/contexts/App/hooks/useText.js';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import cN from '@/utils/classNameManager.js';
 import ThemeToggle from '@c/ui/AppSettings/ThemeToggle/ThemeToggle.jsx';
 import AppLogo from '@c/ui/AppLogo/AppLogo.jsx';
@@ -9,9 +9,16 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const Header = () => {
   const featureText = useText('public.layout.nav.feature');
+  const { pathname } = useLocation();
 
+  const isLanding = pathname === '/';
   return (
-    <header className='glass rounded-box font-semibold w-full  max-w-4xl sticky text-primary top-2.5 z-10'>
+    <header
+      className={cN(
+        'glass rounded-box font-semibold w-full  max-w-4xl sticky text-primary top-2.5 z-10',
+        isLanding && 'bg-base-100'
+      )}
+    >
       <nav className='navbar px-1 mobile:px-7 max-mobile:justify-around'>
         <div className='mobile:hidden navbar-start'>
           <Link to={R.public.landing.abs}>

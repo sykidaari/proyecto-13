@@ -1,21 +1,20 @@
 import backend from '@/api/config/axios.js';
+import cN from '@/utils/classNameManager.js';
 import {
-  useRandomService,
+  divideDataForLayout,
   useSelectCountry
 } from '@c/features/TopShowBanners/helpers.js';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import Marquee from 'react-fast-marquee';
 
 const TopShowBanners = () => {
   const country = useSelectCountry();
 
-  const serviceId = useRandomService(country);
-
-  const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ['topShowsImgs', country, serviceId],
-    enabled: !!serviceId,
+  const { data } = useQuery({
+    queryKey: ['topShowsImgs', country],
+    enabled: !!country,
     queryFn: async () => {
-      const res = await backend.get(`/top/${country}/${serviceId}`);
+      const res = await backend.get(`/top/${country}`);
       return res.data;
     },
 
@@ -26,36 +25,37 @@ const TopShowBanners = () => {
     refetchOnMount: false
   });
 
-  useEffect(() => {
-    if (data && data.shows?.length === 0) {
-      refetch();
-    }
-  }, [data, refetch]);
+  if (!data) return null;
 
-  useEffect(() => {
-    console.log('data:', data, 'error:', error, 'isLoading:', isLoading);
-  }, [data, error, isLoading]);
+  const { groups, speeds } = divideDataForLayout(data);
+  const length = groups.length;
 
   return (
-    <div className='fixed w-dvw h-dvh top-0 left-0 mobile:p-0'>
-      {data &&
-        data.shows.map((show, index) => (
-          <picture key={index}>
-            <source
-              media='(min-width: 40rem) and (orientation: landscape)'
-              srcSet={show.horizontalPoster}
+    <div className='fixed inset-0 h-dvh flex flex-col justify-center items-center gap-2.5'>
+      {groups.map((group, i) => (
+        <Marquee
+          key={i}
+          speed={speeds[i]}
+          direction={i % 2 === 0 ? 'left' : 'right'}
+          className='w-full h-full overflow-hidden'
+        >
+          {group.map((show, index) => (
+            <img
+              key={index}
+              src={show.horizontalPoster}
+              alt='poster'
+              className={cN(
+                'rounded-box mx-1.5 object-contain',
+                length === 3
+                  ? 'h-[32.7dvh]'
+                  : length === 2
+                  ? 'h-[49.7dvh]'
+                  : 'h-[60dvh]'
+              )}
             />
-            <source
-              media='(max-width: 40rem) and (orientation: landscape)'
-              srcSet={show.horizontalPoster}
-            />
-            <source
-              media='(max-width: 40rem) and (orientation: portrait)'
-              srcSet={show.verticalPoster}
-            />
-            <img src={show.verticalPoster} alt='poster' className='' />
-          </picture>
-        ))}
+          ))}
+        </Marquee>
+      ))}
     </div>
   );
 };

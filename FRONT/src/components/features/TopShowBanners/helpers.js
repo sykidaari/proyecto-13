@@ -1,9 +1,9 @@
-import COUNTRIES_AND_SERVICES from '@/constants/domain/countriesAndServices.js';
 import useAppContext from '@/contexts/App/hooks/useAppContext.js';
 import useEffectIgnoreDeps from '@/hooks/useEffectIgnoreDeps.js';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useMemo } from 'react';
+
+// HOOKS
 
 export const useSelectCountry = () => {
   const {
@@ -39,19 +39,27 @@ export const useSelectCountry = () => {
   return finalCountry;
 };
 
-const pickRandomServiceId = (countryCode) => {
-  const country = COUNTRIES_AND_SERVICES.find(
-    (c) => c.countryCode === countryCode
-  );
+export const divideDataForLayout = (data) => {
+  const count = data.length;
 
-  const services = country.services;
-  const service = services[Math.floor(Math.random() * services.length)];
+  const amount = count > 15 ? 3 : count > 10 ? 2 : 1;
 
-  return service.id;
-};
-export const useRandomService = (countryCode) => {
-  return useMemo(() => {
-    if (!countryCode) return null;
-    return pickRandomServiceId(countryCode);
-  }, [countryCode]);
+  const groups = Array.from({ length: amount }, () => []);
+
+  const base = Math.floor(count / amount);
+  const extra = count % amount;
+
+  let index = 0;
+
+  for (let i = 0; i < amount; i++) {
+    const size = base + (i < extra ? 1 : 0);
+    groups[i] = data.slice(index, index + size);
+    index += size;
+  }
+
+  const speeds = Array.from({ length: amount }, () => {
+    return 15 + (Math.random() * 1.2 - 0.6);
+  });
+
+  return { groups, speeds };
 };
