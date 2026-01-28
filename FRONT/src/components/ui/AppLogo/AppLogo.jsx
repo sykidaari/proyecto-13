@@ -7,7 +7,11 @@ const AppLogo = ({ withText }) => {
 
   return (
     <div className='flex gap-1'>
-      {withText && <h1 className='text-xl max-mini:text-lg'>Popcorn</h1>}
+      {withText && (
+        <h1 className='text-xl max-mini:text-lg font-semibold text-primary'>
+          Popcorn
+        </h1>
+      )}
       <img
         src={
           theme === 'dark'

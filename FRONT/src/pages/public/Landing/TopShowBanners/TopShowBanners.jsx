@@ -1,9 +1,7 @@
 import backend from '@/api/config/axios.js';
+import { divideDataForLayout } from '@/pages/public/Landing/TopShowBanners/helpers.js';
+import { useSelectCountry } from '@/pages/public/Landing/TopShowBanners/hooks.js';
 import cN from '@/utils/classNameManager.js';
-import {
-  divideDataForLayout,
-  useSelectCountry
-} from '@c/features/TopShowBanners/helpers.js';
 import { useQuery } from '@tanstack/react-query';
 import Marquee from 'react-fast-marquee';
 
@@ -14,8 +12,8 @@ const TopShowBanners = () => {
     queryKey: ['topShowsImgs', country],
     enabled: !!country,
     queryFn: async () => {
-      const res = await backend.get(`/top/${country}`);
-      return res.data;
+      const { data } = await backend.get(`/top/${country}`);
+      return data;
     },
 
     staleTime: Infinity,
@@ -30,12 +28,15 @@ const TopShowBanners = () => {
   const { groups, speeds } = divideDataForLayout(data);
   const length = groups.length;
 
+  const groupHeightClass =
+    length === 3 ? 'h-[32.5dvh]' : length === 2 ? 'h-[49.5dvh]' : 'h-[60dvh]';
+
   return (
-    <div className='fixed inset-0 h-dvh flex flex-col justify-center items-center gap-2.5'>
+    <div className='fixed inset-0 h-dvh flex flex-col  items-center gap-2.5'>
       {groups.map((group, i) => (
         <Marquee
           key={i}
-          speed={speeds[i]}
+          speed={length > 1 ? speeds[i] : 50}
           direction={i % 2 === 0 ? 'left' : 'right'}
           className='w-full h-full overflow-hidden'
         >
@@ -46,11 +47,7 @@ const TopShowBanners = () => {
               alt='poster'
               className={cN(
                 'rounded-box mx-1.5 object-contain',
-                length === 3
-                  ? 'h-[32.7dvh]'
-                  : length === 2
-                  ? 'h-[49.7dvh]'
-                  : 'h-[60dvh]'
+                groupHeightClass
               )}
             />
           ))}

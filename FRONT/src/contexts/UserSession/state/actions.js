@@ -1,8 +1,8 @@
-const userSessionReducerActions = (dispatch) => ({
-  login: ({ accessToken, userId, userName, nickName }) =>
+const userSessionContextActions = (dispatch) => ({
+  login: ({ accessToken, userId, userName, nickName, img }) =>
     dispatch({
       type: 'LOGIN',
-      payload: { accessToken, userId, userName, nickName }
+      payload: { accessToken, userId, userName, nickName, img }
     }),
   logout: () => dispatch({ type: 'LOGOUT' }),
 
@@ -25,7 +25,12 @@ const userSessionReducerActions = (dispatch) => ({
     dispatch({
       type: 'SET_PRIMITIVE_FIELD',
       payload: { key: 'nickName', value }
+    }),
+  setImg: (value) =>
+    dispatch({
+      type: 'SET_PRIMITIVE_FIELD',
+      payload: { key: 'img', value }
     })
 });
 
-export default userSessionReducerActions;
+export default userSessionContextActions;

@@ -30,7 +30,7 @@ app.use(
     credentials: true
   })
 );
-
+console.log('CORS allowed origin:', process.env.FRONTEND_URL);
 // necessary for rate limiting to work correctly in build (deploy)
 app.set('trust proxy', 1);
 
@@ -39,7 +39,7 @@ app.use(cookieParser());
 
 // Once front is deployed, add it to deployed backs process.env, and only front will be able to access
 
-connectDB();
+await connectDB();
 
 app.use('/api/v1', mainRouter);
 

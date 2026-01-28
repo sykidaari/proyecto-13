@@ -9,8 +9,18 @@ const ROUTE_PATHS = {
       abs: '/feature'
     }
   },
-
   auth: {
+    login: {
+      rel: 'login',
+      abs: '/login'
+    },
+    register: {
+      rel: 'register',
+      abs: '/register'
+    }
+  },
+
+  private: {
     discover: {
       rel: 'discover',
       abs: '/app/discover'

@@ -6,9 +6,10 @@ import ThemeToggle from '@c/ui/AppSettings/ThemeToggle/ThemeToggle.jsx';
 import AppLogo from '@c/ui/AppLogo/AppLogo.jsx';
 import LanguageDropdown from '@c/ui/AppSettings/LanguageDropdown/LanguageDropdown.jsx';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import HomeLink from '@c/ui/HomeLink/HomeLInk.jsx';
 
 const Header = () => {
-  const featureText = useText('public.layout.nav.feature');
+  const featureText = useText('layouts.public.nav.feature');
   const { pathname } = useLocation();
 
   const isLanding = pathname === '/';
@@ -40,9 +41,7 @@ const Header = () => {
           </NavLink>
         </div>
         <div className='max-mobile:hidden navbar-center'>
-          <Link to={R.public.landing.abs}>
-            <AppLogo withText />
-          </Link>
+          <HomeLink withText />
         </div>
 
         <div className='mobile:navbar-end gap-2.5'>

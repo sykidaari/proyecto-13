@@ -35,8 +35,13 @@ backend.interceptors.response.use(
   async (err) => {
     const originalReq = err.config;
 
+    // SKIP: public route
+    if (!requestContext.accessToken) return Promise.reject(err);
+
+    // SKIP: other errors, not token related
     if (err.response?.status !== 401) return Promise.reject(err);
 
+    // SKIP: retry, prevent infinite loop
     if (originalReq._retry) return Promise.reject(err);
 
     originalReq._retry = true;

@@ -7,7 +7,7 @@
 - Password reset system
 - Pagination in array endpoints (favorites, sessions, etc.)
 - Implement Atlas Search for better searching https://www.youtube.com/watch?v=HsS0z3eOCSQcan
-- Email notifications
+- Email notifications on matches, requests etc.
 - Account lockout
 - User blocking
 - Banned emails/IPs

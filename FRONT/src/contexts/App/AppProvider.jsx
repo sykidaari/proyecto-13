@@ -1,8 +1,11 @@
+import LSI from '@/constants/client/localStorageItems.js';
 import AppContext from '@/contexts/App/AppContext.js';
-import appReducerActions from '@/contexts/App/state/actions.js';
+import appContextActions from '@/contexts/App/state/actions.js';
 import getInitialAppState from '@/contexts/App/state/getInitialAppState.js';
 import INITIAL_APP_STATE from '@/contexts/App/state/initialState.js';
 import appReducer from '@/contexts/App/state/reducer.js';
+import syncAppStateFromBackend from '@/contexts/App/utils/syncAppStateFromBackend.js';
+import useUserSessionContext from '@/contexts/UserSession/hooks/useUserSessionContext.js';
 import useEffectIgnoreDeps from '@/hooks/useEffectIgnoreDeps.js';
 import { useReducer } from 'react';
 
@@ -20,25 +23,30 @@ const AppProvider = ({ children }) => {
   useEffectIgnoreDeps(() => {
     document.documentElement.setAttribute('data-theme', theme);
 
-    if (saveOnDevice) localStorage.setItem('theme', theme);
+    if (saveOnDevice) localStorage.setItem(LSI.theme, theme);
   }, [theme]);
 
   useEffectIgnoreDeps(() => {
-    if (saveOnDevice) localStorage.setItem('language', language);
+    if (saveOnDevice) localStorage.setItem(LSI.language, language);
   }, [language]);
 
   useEffectIgnoreDeps(() => {
     if (!saveOnDevice) {
-      localStorage.removeItem('theme');
-      localStorage.removeItem('language');
+      localStorage.removeItem(LSI.theme);
+      localStorage.removeItem(LSI.language);
     }
   }, [saveMode]);
 
-  const actions = appReducerActions(dispatch);
+  const actions = appContextActions(dispatch);
+
+  const { initialUserData } = useUserSessionContext();
+
+  useEffectIgnoreDeps(() => {
+    if (!initialUserData) return;
+    syncAppStateFromBackend(initialUserData, actions, state);
+  }, []);
 
   return <AppContext value={{ state, actions }}>{children}</AppContext>;
 };
 
 export default AppProvider;
-
-//* Using eslint-disable-next-line as saveOnDevice is not wanted as dep in effects

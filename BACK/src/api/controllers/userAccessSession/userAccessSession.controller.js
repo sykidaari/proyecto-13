@@ -1,11 +1,17 @@
 import {
+  generateAccessToken,
   generateRefreshToken,
   hashRefreshToken
 } from '../../../config/auth.js';
-import { rememberTtl } from '../../../utils/controllerUtils.js';
+import {
+  rememberTtl,
+  setRefreshCookie
+} from '../../../utils/controllerUtils.js';
+import UserAccessSession from '../../models/userAccessSession/userAccessSession.model.js';
 
 export const refreshAccessToken = async (req, res, next) => {
   const refreshToken = req.cookies?.refreshToken;
+
   if (!refreshToken) return res.sendStatus(401);
 
   const tokenHash = hashRefreshToken(refreshToken);

@@ -30,7 +30,8 @@ const userSessionReducer = (state, action) => {
         accessToken: payload.accessToken,
         userId: payload.userId,
         userName: payload.userName,
-        nickName: payload.nickName
+        nickName: payload.nickName,
+        img: payload.img
       };
     }
 

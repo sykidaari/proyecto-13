@@ -13,6 +13,13 @@ const appReducer = (state, action) => {
       };
     }
 
+    case 'SET_THEME': {
+      return {
+        ...state,
+        theme: payload
+      };
+    }
+
     case 'SET_LANGUAGE': {
       if (!isSupportedLanguage(payload)) {
         if (IS_DEV) console.warn('language not supported');

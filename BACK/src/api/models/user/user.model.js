@@ -62,11 +62,9 @@ const UserSchema = buildSchema(
     },
 
     languageCode: {
-      preferred: {
-        ...requiredString,
-        enum: LANGUAGE_CODES,
-        select: false
-      }
+      ...requiredString,
+      enum: LANGUAGE_CODES,
+      select: false
     },
 
     img: { type: String, trim: true },

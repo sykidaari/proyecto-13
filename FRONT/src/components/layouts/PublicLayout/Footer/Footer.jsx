@@ -2,10 +2,10 @@ import useText from '@/contexts/App/hooks/useText.js';
 import React from 'react';
 
 const Footer = () => {
-  const text = useText('public.layout.footer.devMessage');
+  const text = useText('layouts.public.footer.devMessage');
 
   return (
-    <footer className='flex justify-between w-full max-w-4xl p-5 glass rounded-box text- max-mobile:flex-col gap-7 bg-base-100'>
+    <footer className='flex justify-between w-full max-w-4xl p-5 glass rounded-box text-xs max-mobile:flex-col gap-5 bg-base-100'>
       <aside className='flex flex-col gap-1'>
         <p>
           {text[1]} <span className='footer-title'>Kira</span>

@@ -1,9 +1,10 @@
+import LSI from '@/constants/client/localStorageItems.js';
 import { isSupportedCountry, isSupportedLanguage } from '@/utils/helpers.js';
 
 const getInitialAppState = (baseState) => {
-  const storedTheme = localStorage.getItem('theme');
-  const storedLanguage = localStorage.getItem('language');
-  const storedSaveMode = localStorage.getItem('saveMode');
+  const storedTheme = localStorage.getItem(LSI.theme);
+  const storedLanguage = localStorage.getItem(LSI.language);
+  const storedSaveMode = localStorage.getItem(LSI.saveMode);
 
   const browserTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
     ? 'dark'

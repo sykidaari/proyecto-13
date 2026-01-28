@@ -9,7 +9,6 @@ import AppProvider from '@/contexts/App/AppProvider.jsx';
 import queryClient from '@/api/config/reactQuery.js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import UserSessionProvider from '@/contexts/UserSession/UserSessionProvider.jsx';
-import backend from '@/api/config/axios.js';
 
 // SOCKET TEST FOR BACKEND
 const socket = io('http://localhost:3000');

@@ -44,7 +44,7 @@ export const getUserById = async (req, res, next) => {
   } = req;
 
   const projection = isAdmin
-    ? '+role +emailAddress +countryCode +countryCode'
+    ? '+role +emailAddress +languageCode +countryCode'
     : isSelf
     ? '+accountSettings +languageCode +countryCode +emailAddress'
     : null;
@@ -138,7 +138,9 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({
       $or: [{ userName }, { emailAddress }]
     })
-      .select('+password +accountSettings +emailAddress +role')
+      .select(
+        '+password +accountSettings +emailAddress +countryCode +languageCode'
+      )
       .lean();
 
     if (!user) throw userNotFoundError;

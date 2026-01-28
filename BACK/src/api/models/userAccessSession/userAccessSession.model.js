@@ -1,11 +1,14 @@
 import { model } from 'mongoose';
 import {
-  buildUserChildSchema,
-  requiredString
+  buildSchema,
+  requiredString,
+  userRefRequired
 } from '../../../utils/modelUtils.js';
 
-const userAccessSessionSchema = buildUserChildSchema(
+const userAccessSessionSchema = buildSchema(
   {
+    user: userRefRequired,
+
     tokenHash: requiredString,
     expiresAt: { type: Date, required: true },
     persistent: { type: Boolean, required: true }

@@ -107,8 +107,8 @@ const sessionTtl = 7 * day;
 export const refreshTokenCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'none',
-  path: '/userAccessSession'
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/'
 };
 
 export const setRefreshCookie = (res, token, maxAge) =>

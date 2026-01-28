@@ -1,8 +1,9 @@
-const appReducerActions = (dispatch) => ({
+const appContextActions = (dispatch) => ({
   toggleAppTheme: () => dispatch({ type: 'TOGGLE_THEME' }),
+  setAppTheme: (value) => dispatch({ type: 'SET_THEME', payload: value }),
   setLanguage: (value) => dispatch({ type: 'SET_LANGUAGE', payload: value }),
   setCountry: (value) => dispatch({ type: 'SET_COUNTRY', payload: value }),
   setSaveMode: (value) => dispatch({ type: 'SET_SAVE_MODE', payload: value })
 });
 
-export default appReducerActions;
+export default appContextActions;
