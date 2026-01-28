@@ -8,7 +8,7 @@ export const useLoginViews = (users) => {
 
   useEffect(() => {
     if (users.length > 0 && !rawView) {
-      setSearchParams({ view: 'remembered' });
+      setSearchParams({ view: 'remembered' }, { replace: true });
     }
   }, [users, rawView, setSearchParams]);
 

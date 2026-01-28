@@ -121,7 +121,130 @@ const TEXTS = {
       }
     }
   },
-  es: {}
+  es: {
+    ui: {
+      slogan: { 1: 'Encuentra qué ver.', 2: 'Juntos.' },
+      form: {
+        validation: { required: 'Este campo es obligatorio.' },
+        fields: {
+          password: { label: 'Contraseña' },
+          stayLoggedIn: 'Mantener sesión iniciada en este dispositivo'
+        }
+      },
+      error: {
+        serverProblem:
+          'Algo salió mal. Por favor, actualiza la página o inténtalo de nuevo más tarde.'
+      }
+    },
+
+    features: {
+      user: {
+        userFormParts: {
+          next: 'Siguiente',
+          locale: {
+            labels: { country: 'País', language: 'Idioma' }
+          },
+          email: {
+            label: 'Correo electrónico',
+            validation: 'Introduce una dirección de correo válida.',
+            alreadyExists: 'Este correo ya está en uso.'
+          },
+          names: {
+            userName: {
+              label: 'Nombre de usuario',
+              explanation:
+                'Tu nombre de usuario debe ser único y solo puede contener letras minúsculas, números, puntos ( . ) y guiones bajos ( _ )',
+              validation: 'Formato de nombre de usuario incorrecto.',
+              alreadyExists: 'Este nombre de usuario ya está en uso.'
+            },
+            nickName: { label: 'Apodo' },
+
+            tooShort: 'Debe tener al menos 3 caracteres',
+            tooLong: 'No puede tener más de 30 caracteres'
+          },
+          password: {
+            password: {
+              label: 'Contraseña',
+              tooShort: 'Debe tener al menos 8 caracteres',
+              tooLong: 'No puede tener más de 100 caracteres',
+              validation: 'Formato de contraseña incorrecto.',
+              explanation:
+                'La contraseña debe contener al menos una letra mayúscula, una minúscula y un número'
+            },
+            confirmPassword: {
+              label: 'Confirma tu contraseña',
+              doesNotMatch: 'Las contraseñas no coinciden'
+            }
+          },
+          img: {
+            label: 'Foto de perfil',
+            tooBig: 'El archivo es demasiado grande (máx. 5MB).',
+            wrongFormat: 'Solo se permiten formatos JPG, PNG o WEBP.'
+          }
+        }
+      }
+    },
+
+    layouts: {
+      public: {
+        nav: { feature: 'Funcionalidades' },
+        footer: {
+          devMessage: {
+            1: 'Desarrollado por',
+            2: 'App de demostración',
+            3: 'Solo con fines de exhibición'
+          }
+        }
+      }
+    },
+
+    pages: {
+      public: {
+        landing: {
+          login: 'Iniciar sesión',
+          register: 'Únete ahora'
+        }
+      },
+      auth: {
+        login: {
+          title: 'Iniciar sesión',
+          rememberedUsers: {
+            welcomeBack: {
+              title: '¡Bienvenido de nuevo!',
+              text: 'Encuentra tu próxima película o serie. Inicia sesión para descubrir qué ver juntos.'
+            },
+            forgetAccount: 'Olvidar esta cuenta',
+            otherAccount: 'Iniciar sesión con otra cuenta'
+          },
+          form: {
+            labels: { userNameOrEmail: 'Nombre de usuario o correo' },
+            errors: {
+              userNotFound:
+                'No hemos encontrado ninguna cuenta con los datos proporcionados.',
+              incorrectCredentials:
+                'El usuario/correo y la contraseña no coinciden.'
+            }
+          },
+          switchNav: {
+            text: '¿Nuevo en Popcorn?',
+            linkText: 'Únete ahora'
+          }
+        },
+        register: {
+          legends: {
+            locale:
+              'Por favor, confirma tu país y tu idioma de visualización preferido.',
+            email: 'Introduce tu dirección de correo electrónico',
+            names: 'Elige un nombre de usuario y un apodo',
+            password: 'Elige una contraseña segura',
+            img: 'Sube una foto de perfil (opcional)'
+          },
+          skipAndFinish: 'Omitir y finalizar registro',
+          finish: 'Finalizar registro'
+        }
+      }
+    }
+  }
 };
 
 export default TEXTS;

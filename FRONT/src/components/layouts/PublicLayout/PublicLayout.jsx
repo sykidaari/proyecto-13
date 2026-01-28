@@ -7,7 +7,7 @@ const PublicLayout = () => {
     <>
       <div className='flex flex-col min-h-dvh items-center p-2.5'>
         <Header />
-        <main className='flex-1 flex'>
+        <main className='flex-1 flex w-full'>
           <Outlet />
         </main>
         <Footer />
