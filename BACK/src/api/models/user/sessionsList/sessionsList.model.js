@@ -7,7 +7,7 @@ import {
 
 const SessionsListSchema = buildUserChildSchema(
   {
-    sessionsList: [{ session: sessionRef, isNewItem }]
+    sessionsList: [{ session: sessionRef, isNewItem, lastSeenAt: Date }]
   },
   'sessionsLists'
 );

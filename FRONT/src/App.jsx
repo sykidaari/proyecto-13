@@ -1,8 +1,8 @@
 import R from '@/constants/client/routePaths.js';
-import Notifications from '@/pages/auth/Notifications/Notifications.jsx';
-import Profile from '@/pages/auth/Profile/Profile.jsx';
-import Sessions from '@/pages/auth/Sessions/Sessions.jsx';
-import Settings from '@/pages/auth/Settings/Settings.jsx';
+import Notifications from '@/pages/private/Notifications/Notifications.jsx';
+import Profile from '@/pages/private/Profile/Profile.jsx';
+import Sessions from '@/pages/private/Sessions/Sessions.jsx';
+import Settings from '@/pages/private/Settings/Settings.jsx';
 import Feature from '@/pages/public/Feature/Feature.jsx';
 import Landing from '@/pages/public/Landing/Landing.jsx';
 import NotFound from '@/routes/NotFound.jsx';
@@ -12,12 +12,18 @@ import { Route, Routes } from 'react-router-dom';
 import PrivateLayout from '@c/layouts/PrivateLayout/PrivateLayout.jsx';
 import PrivateRoute from '@/routes/PrivateRoute.jsx';
 import AuthLayout from '@c/layouts/AuthLayout/AuthLayout.jsx';
-import Login from '@/pages/public/Login/Login.jsx';
-import Register from '@/pages/public/Register/Register.jsx';
+import Login from '@/pages/auth/Login/Login.jsx';
+import Register from '@/pages/auth/Register/Register.jsx';
+
 import useIsInitializing from '@/contexts/UserSession/hooks/useInitializing.js';
+import Discover from '@/pages/private/Discover/Discover.jsx';
+import useIsLoggedIn from '@/contexts/UserSession/hooks/useIsLoggedIn.js';
+
+//! REGISTER IMG UPLOAD DOESN'T WORK
 
 function App() {
   const isInitializing = useIsInitializing();
+  const isLoggedIn = useIsLoggedIn();
 
   if (isInitializing)
     return (
@@ -60,7 +66,7 @@ function App() {
             </PrivateRoute>
           }
         >
-          <Route path={R.private.discover.rel} element={<Landing />} />
+          <Route path={R.private.discover.rel} element={<Discover />} />
           <Route path={R.private.profile.rel} element={<Profile />} />
           <Route
             path={R.private.notifications.rel}

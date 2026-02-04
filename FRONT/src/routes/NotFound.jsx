@@ -8,7 +8,7 @@ const NotFound = () => {
   return (
     <>
       <Navigate
-        to={isLoggedIn ? R.auth.discover.abs : R.public.landing.abs}
+        to={isLoggedIn ? R.private.discover.abs : R.public.landing.abs}
         replace
         state={{ notFound: true }}
       />

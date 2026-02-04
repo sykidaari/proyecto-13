@@ -60,6 +60,18 @@ const TEXTS = {
             wrongFormat: 'Only JPG, PNG, or WEBP formats are allowed.'
           }
         }
+      },
+      media: {
+        showTypes: { movie: 'Movie', series: 'Series' },
+        detailsTitles: {
+          rating: 'Rating',
+          directors: 'Directors',
+          creators: 'Creators',
+          cast: 'Cast',
+          runtime: 'Runtime',
+          seasonCount: 'Seasons',
+          streamingOptions: 'Stream at'
+        }
       }
     },
 
@@ -72,6 +84,14 @@ const TEXTS = {
             2: 'Demo App',
             3: 'For Showcase Purposes Only'
           }
+        }
+      },
+      private: {
+        pageTitles: {
+          discover: 'Discover',
+          sessions: 'Sessions',
+          notifications: 'Notifications',
+          profile: 'Profile'
         }
       }
     },
@@ -116,7 +136,29 @@ const TEXTS = {
             img: 'Upload a profile picture (optional)'
           },
           skipAndFinish: 'Skip and finish registering',
-          finish: 'Finish registering'
+          finish: 'Finish registering',
+          errors: {
+            loginProblem:
+              'Account created, but automatic login failed. Please login manually'
+          }
+        }
+      },
+      private: {
+        discover: {
+          searchSuggestions: [
+            'zombie movies',
+            'sci-fi thrillers',
+            'romantic comedies',
+            'time travel movies',
+            'heist films',
+            'psychological thrillers',
+            'fantasy adventure',
+            'cozy movies',
+            'post-apocalyptic',
+            'mind-bending films',
+            'superhero movies',
+            'space adventure'
+          ]
         }
       }
     }

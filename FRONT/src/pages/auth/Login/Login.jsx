@@ -1,9 +1,9 @@
 import R from '@/constants/client/routePaths.js';
 import useText from '@/contexts/App/hooks/useText.js';
-import LoginForm from '@/pages/public/Login/LoginForm/LoginForm.jsx';
-import RememberedUsers from '@/pages/public/Login/RememberedUsers/RememberedUsers.jsx';
-import { useRememberedUsers } from '@/pages/public/Login/RememberedUsers/hooks.js';
-import { useLoginViews } from '@/pages/public/Login/hooks.js';
+import LoginForm from '@/pages/auth/Login/LoginForm/LoginForm.jsx';
+import RememberedUsers from '@/pages/auth/Login/RememberedUsers/RememberedUsers.jsx';
+import { useRememberedUsers } from '@/pages/auth/Login/RememberedUsers/hooks.js';
+import { useLoginViews } from '@/pages/auth/Login/hooks.js';
 import { AuthSwitchNav } from '@c/layouts/AuthLayout/AuthSwitchNav/AuthSwitchNav.jsx';
 
 const Login = () => {

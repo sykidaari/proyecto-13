@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import LSI from '@/constants/client/localStorageItems.js';
-import { getLocalRememberedUsers } from '@/pages/public/Login/RememberedUsers/helpers.js';
+import { getLocalRememberedUsers } from '@/pages/auth/Login/RememberedUsers/helpers.js';
 
 export const useRememberedUsers = () => {
   const [users, setUsers] = useState(getLocalRememberedUsers);

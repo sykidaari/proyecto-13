@@ -5,7 +5,7 @@ const ProfilePicture = ({ userImg, className }) => {
   return (
     <div
       className={cN(
-        `*:size-10 *:rounded-full *:object-contain rounded-full overflow-hidden border border-primary`,
+        `*:size-10 *:rounded-full rounded-full overflow-hidden border border-primary *:object-cover flex items-center justify-center`,
         className
       )}
     >

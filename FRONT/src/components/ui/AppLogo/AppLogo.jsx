@@ -1,6 +1,7 @@
 import useAppContext from '@/contexts/App/hooks/useAppContext.js';
+import cN from '@/utils/classNameManager.js';
 
-const AppLogo = ({ withText }) => {
+const AppLogo = ({ withText, className }) => {
   const {
     state: { theme }
   } = useAppContext();
@@ -19,7 +20,7 @@ const AppLogo = ({ withText }) => {
             : '/imgs/logo_purple_lines.svg'
         }
         alt='logo'
-        className='size-8 max-mini:size-7'
+        className={cN('size-8 max-mini:size-7', className)}
       />
     </div>
   );

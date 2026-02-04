@@ -1,7 +1,6 @@
 import backend from '@/api/config/axios.js';
 import useText from '@/contexts/App/hooks/useText.js';
 import { useLoginMutation } from '@/hooks/useLoginMutation.js';
-import { isServerProblem } from '@/utils/helpers.js';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -10,6 +9,9 @@ export const useMultiStepRegister = (stayLoggedInChecked, setServerError) => {
 
   const loginMutation = useLoginMutation(stayLoggedInChecked, () => {});
   const serverProblemText = useText('ui.error.serverProblem');
+  const { loginProblem: loginProblemText } = useText(
+    'pages.auth.register.errors'
+  );
 
   const registerMutation = useMutation({
     mutationFn: async () => {
@@ -18,28 +20,31 @@ export const useMultiStepRegister = (stayLoggedInChecked, setServerError) => {
       const { data } = await backend.post('/user/register', registerPayload);
       const userId = data.userId;
 
-      if (img) {
-        const fd = new FormData();
-        fd.append('img', img);
-
-        await backend.post(`/user/${userId}/img`, fd, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+      try {
+        await loginMutation.mutateAsync({
+          identifier: registerPayload.emailAddress,
+          password: registerPayload.password
         });
+      } catch {
+        setServerError(loginProblemText);
+        return { success: true };
       }
 
-      await loginMutation.mutateAsync({
-        identifier: registerPayload.emailAddress,
-        password: registerPayload.password
-      });
+      if (img) {
+        try {
+          const fd = new FormData();
+          fd.append('img', img);
+          await backend.patch(`/user/${userId}/img`, fd);
+        } catch (error) {
+          console.log(error);
+        }
+      }
 
       return { success: true };
     },
 
-    onError: (error) => {
-      const knownErrors = [];
-      if (isServerProblem(error, knownErrors)) {
-        setServerError(serverProblemText);
-      }
+    onError: () => {
+      setServerError(serverProblemText);
     }
   });
 

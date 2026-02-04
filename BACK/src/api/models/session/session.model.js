@@ -45,7 +45,11 @@ const SessionSchema = buildSchema(
     },
 
     discardedMedias: [mediaRef],
-    matchedMedias: [mediaRef]
+    matchedMedias: [mediaRef],
+
+    lastMatchAt: {
+      type: Date
+    }
   },
   'sessions'
 );

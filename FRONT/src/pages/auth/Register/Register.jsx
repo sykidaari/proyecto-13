@@ -1,5 +1,5 @@
 import useText from '@/contexts/App/hooks/useText.js';
-import { useMultiStepRegister } from '@/pages/public/Register/hooks.js';
+import { useMultiStepRegister } from '@/pages/auth/Register/hooks.js';
 import cN from '@/utils/classNameManager.js';
 import Email from '@c/features/user/userFormParts/Email/Email.jsx';
 import Img from '@c/features/user/userFormParts/Img/Img.jsx';
@@ -9,8 +9,7 @@ import Password from '@c/features/user/userFormParts/Password/Password.jsx';
 import StayLoggedInCheckBox from '@c/ui/form/StayLoggedInCheckBox/StayLoggedInCheckBox.jsx';
 
 import { useState } from 'react';
-
-//* LOGIN NOT FULLY FINISHED
+// IMG UPLOAD NOT WORKING!!!
 const Register = () => {
   const {
     legends: {
@@ -42,6 +41,14 @@ const Register = () => {
   const handleStep = (data) => {
     saveStepData(data);
     next();
+  };
+
+  const handleImgStep = (data) => {
+    console.log('handleImgStep data', data);
+    saveStepData(data);
+
+    setServerError(null);
+    submitAll();
   };
 
   const sharedProps = {
@@ -77,7 +84,7 @@ const Register = () => {
             legendText={imgLegend}
             setSelected={setImageSelected}
             buttonContent={imageSelected ? finishText : skipText}
-            onNext={submitAll}
+            onNext={handleImgStep}
             isSubmitting={isSubmitting}
           >
             <StayLoggedInCheckBox

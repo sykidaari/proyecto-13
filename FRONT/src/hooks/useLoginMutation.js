@@ -5,7 +5,7 @@ import useAppContext from '@/contexts/App/hooks/useAppContext.js';
 import useText from '@/contexts/App/hooks/useText.js';
 import syncAppStateFromBackend from '@/contexts/App/utils/syncAppStateFromBackend.js';
 import useUserSessionContext from '@/contexts/UserSession/hooks/useUserSessionContext.js';
-import { addLocalRememberedUser } from '@/pages/public/Login/RememberedUsers/helpers.js';
+import { addLocalRememberedUser } from '@/pages/auth/Login/RememberedUsers/helpers.js';
 import { backendErrorMessage } from '@/utils/helpers.js';
 import { useMutation } from '@tanstack/react-query';
 

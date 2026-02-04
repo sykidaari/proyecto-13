@@ -81,7 +81,6 @@ const Names = ({ onNext, legendText, hasButton, buttonContent }) => {
       <Fieldset legendText={legendText}>
         <TextField
           labelText={userLabelText}
-          className='lowercase'
           placeholder='username'
           error={errors?.userName?.message}
           {...register('userName', {
@@ -91,7 +90,7 @@ const Names = ({ onNext, legendText, hasButton, buttonContent }) => {
               value: usernameRegex,
               message: usernameValidationText
             },
-            onChange: (e) => setUserName(e.target.value.toLowerCase())
+            onChange: (e) => setUserName(e.target.value)
           })}
         >
           <InfoToolTip

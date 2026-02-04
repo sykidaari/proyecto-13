@@ -119,13 +119,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId`
 
 - **GET**
-
   - Access : user
   - Description : gets a user by id
     <br>
 
 - **PATCH**
-
   - Access : self | admin
   - Body :
     - Required : —
@@ -180,7 +178,6 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/img`
 
 - **PATCH**
-
   - Access : self
   - Body :
     - Required : `img`
@@ -204,13 +201,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/favorites`
 
 - **GET**
-
   - Access : self | admin | friend (depending on privacy)
   - Description : gets user favorites
     <br>
 
 - **PATCH** `/genre`
-
   - Access : self | admin
   - Body :
     - Required : `genre`
@@ -225,7 +220,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/genre/remove`
-
   - Access : self | admin
   - Body :
     - Required : `genre`
@@ -240,7 +234,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/media`
-
   - Access : self | admin
   - Body :
     - Required : full media data
@@ -275,13 +268,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/watch-list`
 
 - **GET**
-
   - Access : self | admin | friend (depending on privacy)
   - Description : gets user watchlist
     <br>
 
 - **PATCH** `/media/add`
-
   - Access : self | admin
   - Body :
     - Required : full media data
@@ -316,13 +307,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/watched-medias`
 
 - **GET**
-
   - Access : self | admin | friend | session participant
   - Description : gets watched medias
     <br>
 
 - **PATCH** `/media/add`
-
   - Access : self
   - Body :
     - Required : `mediaId`
@@ -355,13 +344,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/liked-medias`
 
 - **GET**
-
   - Access : self | admin | friend | session participant
   - Description : gets liked medias
     <br>
 
 - **PATCH** `/like`
-
   - Access : self
   - Body :
     - Required : `mediaId`
@@ -394,7 +381,6 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/private/appSettings`
 
 - **GET**
-
   - Access : self
   - Description : gets app settings
     <br>
@@ -425,7 +411,6 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/private/friends`
 
 - **GET**
-
   - Access : self | admin
   - Description : gets user friends
     <br>
@@ -447,13 +432,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/private/requests`
 
 - **GET**
-
   - Access : self | admin
   - Description : gets user friend requests
     <br>
 
 - **PATCH** `/send`
-
   - Access : self
   - Body :
     - Required : `user`
@@ -468,7 +451,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/accept`
-
   - Access : self
   - Body :
     - Required : `user`
@@ -476,7 +458,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/cancel`
-
   - Access : self
   - Body :
     - Required : `user`
@@ -484,7 +465,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/reject`
-
   - Access : self
   - Body :
     - Required : `user`
@@ -501,7 +481,6 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/private/sessions-list`
 
 - **GET**
-
   - Access : self
   - Description : gets sessions list
     <br>
@@ -539,13 +518,11 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/session/request`
 
 - **PATCH** `/mark-all-seen`
-
   - Access : self
   - Description : marks all received session requests as seen
     <br>
 
 - **PATCH** `/send`
-
   - Access : self
   - Body :
     - Required : `otherUserId` (otherUserId can be single ("" String) or mutiple ([] Array))
@@ -572,7 +549,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/accept`
-
   - Access : self
   - Body :
     - Required : `otherUserId`
@@ -580,7 +556,6 @@ Note: Some responses include additional fields depending on access level (self v
     <br>
 
 - **PATCH** `/cancel`
-
   - Access : self
   - Body :
     - Required : `otherUserId`
@@ -597,7 +572,6 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/session/:sessionId`
 
 - **GET**
-
   - Access : session participant | admin
   - Description : gets a session by id
     <br>
@@ -610,7 +584,6 @@ Note: Some responses include additional fields depending on access level (self v
 `/api/v1/user/:userId/session/:sessionId/interact`
 
 - **PATCH** `/propose-match`
-
   - Access : self
   - Body :
     - Required : `mediaId`, `media.title`, `languageCode`

@@ -288,7 +288,10 @@ export const proposeMatch = async (req, res, next) => {
     participant.matchProposals.includes(mediaId)
   );
 
-  if (isMatch) addMediaToField(mediaId, session.matchedMedias);
+  if (isMatch) {
+    addMediaToField(mediaId, session.matchedMedias);
+    session.lastMatchAt = new Date();
+  }
 
   try {
     await session.save();

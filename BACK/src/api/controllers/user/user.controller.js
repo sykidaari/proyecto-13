@@ -46,8 +46,8 @@ export const getUserById = async (req, res, next) => {
   const projection = isAdmin
     ? '+role +emailAddress +languageCode +countryCode'
     : isSelf
-    ? '+accountSettings +languageCode +countryCode +emailAddress'
-    : null;
+      ? '+accountSettings +languageCode +countryCode +emailAddress'
+      : '+accountSettings.isSharedInfo.watchList +accountSettings.isSharedInfo.favorites';
 
   try {
     const user = await User.findById(userId).select(projection).lean();
@@ -183,6 +183,7 @@ export const uploadProfilePicture = async (req, res, next) => {
     user.img = imgUrl;
     await user.save();
 
+    console.log('worked');
     return res.status(200).json({
       message: OK.user.profilePictureUpdated,
       img: imgUrl

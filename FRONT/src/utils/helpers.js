@@ -24,3 +24,5 @@ export const retry = async (fn, tries = 2) => {
     return retry(fn, tries - 1);
   }
 };
+
+export const delay = (ms) => new Promise((res) => setTimeout(res, ms));

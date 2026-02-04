@@ -1,5 +1,5 @@
 import useText from '@/contexts/App/hooks/useText.js';
-import RememberedUserItem from '@/pages/public/Login/RememberedUsers/RememberedUserItem/RememberedUserItem.jsx';
+import RememberedUserItem from '@/pages/auth/Login/RememberedUsers/RememberedUserItem/RememberedUserItem.jsx';
 
 const RememberedUsers = ({ users, onClose, onForget, onSelectUser }) => {
   const { welcomeBack: welcomeBackText, otherAccount: otherAccountText } =

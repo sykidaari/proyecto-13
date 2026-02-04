@@ -53,6 +53,7 @@ const Img = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
+    console.log('IMG SUBMIT', file);
 
     onNext({ img: file });
   };
