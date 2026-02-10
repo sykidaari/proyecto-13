@@ -71,7 +71,9 @@ const TEXTS = {
           runtime: 'Runtime',
           seasonCount: 'Seasons',
           streamingOptions: 'Stream at'
-        }
+        },
+        noResults: 'Sorry! No results found for your preferences.',
+        noneLeft: 'Sorry! No more results match your preferences.'
       }
     },
 

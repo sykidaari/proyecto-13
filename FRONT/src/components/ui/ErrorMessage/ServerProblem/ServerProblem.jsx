@@ -1,9 +1,9 @@
-import useText from '@/contexts/App/hooks/useText.js';
+import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText.js';
 import ErrorMessage from '@c/ui/ErrorMessage/ErrorMessage.jsx';
 import React from 'react';
 
 const ServerProblem = ({ className }) => {
-  const t = useText('ui.error.serverProblem');
+  const t = useServerProblemtext();
 
   return <ErrorMessage text={t} className={className} />;
 };

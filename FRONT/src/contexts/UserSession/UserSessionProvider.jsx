@@ -44,9 +44,11 @@ const UserSessionProvider = ({ children }) => {
 
         setInitialUserData(userData);
       } catch (error) {
-        if (IS_DEV && error.response?.status === 401)
-          console.log('Ignoring 401 errors caused by React Strict Mode');
-        else console.error('Session initialization failed:', error);
+        if (!IS_DEV) return;
+
+        if (error.response?.status === 401)
+          console.log('DEV: Ignoring 401 errors caused by React Strict Mode');
+        else console.error('DEV: Session initialization failed:', error);
       } finally {
         setInitializing(false);
       }

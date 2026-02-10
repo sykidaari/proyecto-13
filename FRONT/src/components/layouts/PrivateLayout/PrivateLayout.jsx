@@ -6,7 +6,7 @@ const PrivateLayout = () => {
   return (
     <div className='h-dvh w-full flex flex-col items-center'>
       <Header />
-      <main className='flex-1 p-2.5 py-10  w-full max-w-4xl'>
+      <main className='flex-1 p-2.5 pt-5 mobile:py-10 w-full max-w-4xl'>
         <Outlet />
       </main>
       <NavMenu />

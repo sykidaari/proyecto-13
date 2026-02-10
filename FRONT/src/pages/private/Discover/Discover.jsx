@@ -1,63 +1,56 @@
-import backend from '@/api/config/axios.js';
-import useAppContext from '@/contexts/App/hooks/useAppContext.js';
-import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText.js';
 import useText from '@/contexts/App/hooks/useText.js';
+import useFetchMedias from '@/hooks/media/useFetchMedias.js';
+import useMediaSwipeIndex from '@/hooks/media/useMediaSwipeIndex.js';
+import usePrefetchNextPage from '@/hooks/media/usePrefetchNetxPage.js';
 import MediaSection from '@c/features/media/MediaSection/MediaSection.jsx';
 import SearchBar from '@c/ui/SearchBar/SearchBar.jsx';
 import SectionBox from '@c/ui/SectionBox/SectionBox.jsx';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const Discover = () => {
   const searchSuggestions = useText('pages.private.discover.searchSuggestions');
-  const {
-    state: { language, country }
-  } = useAppContext();
-  const errorText = useServerProblemtext();
-
   const [placeholderText] = useState(() => {
     const i = Math.floor(Math.random() * searchSuggestions.length);
     return searchSuggestions[i];
   });
-
   const [query, setQuery] = useState('');
   const keyword = query.trim();
 
-  const { data, isPending, error } = useQuery({
-    queryKey: ['discoverMedia', keyword, country, language],
-    queryFn: async () => {
-      const params = {
-        countryCode: country,
-        languageCode: language,
-        ...(keyword && { keyword })
-      };
-
-      const { data } = await backend.get('/media/fetch', { params });
-      return data;
-    },
-    staleTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false
+  const { shows, hasNextPage, isFetching, fetchNextPage, isError } =
+    useFetchMedias({
+      ...(keyword && { keyword })
+    });
+  const { index, advance } = useMediaSwipeIndex();
+  usePrefetchNextPage({
+    totalLength: shows.length,
+    currentIndex: index,
+    hasNextPage,
+    isFetching,
+    fetchNextPage
   });
-
-  useEffect(() => {
-    console.log('data', data, 'isPending', isPending, 'error', error);
-  }, [data, isPending, error]);
 
   return (
     <SectionBox>
       <SearchBar
         mode='submit'
         placeholder={placeholderText}
-        error={error && errorText}
+        isLoading={isFetching}
+        isError={isError}
         onSearch={setQuery}
       />
+
       <MediaSection
-        shows={data?.shows}
+        shows={shows}
+        isLoading={isFetching}
+        isError={isError}
+        hasNextPage={hasNextPage}
         swipeDirection='y'
         specifyShowType
-      ></MediaSection>
+        onNegative={advance}
+        onPositive={advance}
+        PositiveButton={({ onClick }) => <button onClick={onClick}>✅</button>}
+        GoBackButton={({ onClick }) => <button onClick={onClick}>↩️</button>}
+      />
     </SectionBox>
   );
 };

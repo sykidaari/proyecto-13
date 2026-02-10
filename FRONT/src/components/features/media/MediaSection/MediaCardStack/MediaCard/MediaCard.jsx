@@ -1,6 +1,5 @@
 import useText from '@/contexts/App/hooks/useText.js';
 import DetailsToggle from '@c/features/media/MediaSection/MediaCardStack/MediaCard/DetailsToggle/DetailsToggle.jsx';
-import Interactions from '@c/features/media/MediaSection/MediaCardStack/MediaCard/Interactions/Interactions.jsx';
 import MediaDetails from '@c/features/media/MediaSection/MediaCardStack/MediaCard/MediaDetails/MediaDetails.jsx';
 import { useState } from 'react';
 
@@ -18,8 +17,8 @@ const MediaCard = ({ media, specifyShowType }) => {
         : null;
 
   return (
-    <article className='flex flex-col items-center justify-center glass rounded-box p-5 w-full max-mobile:px-2.5 gap-2.5'>
-      <div className='max-w-fit rounded-box overflow-hidden relative'>
+    <article className='flex flex-col items-center justify-center glass rounded-box p-5 w-full max-mobile:px-2.5 gap-2.5 h-fit'>
+      <div className='max-w-fit rounded-box overflow-hidden relative h-fit'>
         <DetailsToggle onChange={() => setShowDetails(!showDetails)} />
         {showDetails && (
           <MediaDetails
@@ -28,7 +27,7 @@ const MediaCard = ({ media, specifyShowType }) => {
           />
         )}
 
-        <Interactions mediaId={media.id} />
+        {/* <Interactions mediaId={media.id} /> */}
 
         <picture className='w-full h-full pointer-events-none block'>
           <source
