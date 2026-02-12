@@ -73,8 +73,10 @@ const TEXTS = {
           streamingOptions: 'Stream at'
         },
         noResults: 'Sorry! No results found for your preferences.',
-        noneLeft: 'Sorry! No more results match your preferences.',
-        controlButtons: { back: 'Previous show' }
+        noneLeft: 'Sorry! No more results match your preferences.'
+      },
+      sessions: {
+        usersSearch: { placeholder: 'Find people to start a session with' }
       }
     },
 

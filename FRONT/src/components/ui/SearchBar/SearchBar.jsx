@@ -11,7 +11,7 @@ const SearchBar = ({
   delay = 500,
   mode = 'debounce', // "debounce" | "submit"
   isError,
-  withText = false,
+  withErrorText = false,
   showLoader = false,
   isLoading
 }) => {
@@ -36,9 +36,9 @@ const SearchBar = ({
   };
 
   return (
-    <div className={cN('w-full', withText && 'h-17')}>
+    <div className={cN('w-full', withErrorText && 'h-17')}>
       <TextField
-        error={isError && withText && errorText}
+        error={isError && withErrorText && errorText}
         className='w-full input-secondary pl-9 pr-10'
         value={value}
         placeholder={placeholder}
@@ -63,7 +63,9 @@ const SearchBar = ({
               <span
                 className={cN(
                   'loading loading-xs ',
-                  !isIdle && isLoading ? 'block' : 'hidden'
+                  (!isIdle || mode === 'debounce') && isLoading
+                    ? 'block'
+                    : 'hidden'
                 )}
               />
             )}

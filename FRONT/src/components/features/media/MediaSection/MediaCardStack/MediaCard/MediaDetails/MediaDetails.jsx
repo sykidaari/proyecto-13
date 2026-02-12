@@ -29,7 +29,7 @@ const MediaDetails = ({ details, streamingOptions }) => {
   const enrichedServices = useEnrichedServices(streamingOptions);
 
   return (
-    <section className='absolute size-full backdrop-blur-xs p-2.5 flex items-center cursor-auto select-text'>
+    <section className='absolute top-0.5 bottom-0.5 backdrop-blur-xs p-2.5 flex items-center cursor-auto select-text'>
       <div className='size-fit flex flex-col bg-base-100/75 rounded-box p-2.5 mobile:max-w-2/3 max-mobile:text-balance text-sm gap-2.5 py-5 pb-10 max-h-full overflow-y-auto'>
         <div className='flex flex-col gap-2.5'>
           {releaseYear && <p>{releaseYear}</p>}

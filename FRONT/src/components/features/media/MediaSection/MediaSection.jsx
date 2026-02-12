@@ -8,6 +8,8 @@ import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 const MediaSection = ({
   shows = [],
 
+  sessionKey = null,
+
   isLoading,
   isError,
   hasNextPage,
@@ -35,6 +37,7 @@ const MediaSection = ({
       <div className='relative h-full'>
         <div className='relative h-full z-50'>
           <MediaCardStack
+            key={sessionKey}
             medias={shows}
             direction={swipeDirection}
             specifyShowType={specifyShowType}

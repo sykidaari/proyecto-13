@@ -5,12 +5,7 @@ import usePrefetchNextPage from '@/hooks/media/usePrefetchNetxPage.js';
 import MediaSection from '@c/features/media/MediaSection/MediaSection.jsx';
 import SearchBar from '@c/ui/SearchBar/SearchBar.jsx';
 import SectionBox from '@c/ui/SectionBox/SectionBox.jsx';
-import {
-  ArrowTurnRightUpIcon,
-  ArrowUturnLeftIcon,
-  ChevronUpIcon,
-  HandRaisedIcon
-} from '@heroicons/react/24/outline';
+import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 const Discover = () => {
@@ -35,6 +30,8 @@ const Discover = () => {
     fetchNextPage
   });
 
+  const [searchSession, setSearchSession] = useState(0);
+
   return (
     <SectionBox>
       <SearchBar
@@ -42,11 +39,15 @@ const Discover = () => {
         placeholder={placeholderText}
         isLoading={isFetching}
         isError={isError}
-        onSearch={setQuery}
+        onSearch={(value) => {
+          setQuery(value);
+          setSearchSession((s) => s + 1);
+        }}
       />
 
       <MediaSection
         shows={shows}
+        sessionKey={searchSession}
         isLoading={isFetching}
         isError={isError}
         hasNextPage={hasNextPage}

@@ -2,10 +2,10 @@ import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'motion/react';
 import MediaCard from '@c/features/media/MediaSection/MediaCardStack/MediaCard/MediaCard.jsx';
+import cN from '@/utils/classNameManager.js';
 
 const MediaCardStack = ({
   medias = [],
-
   specifyShowType,
 
   direction = 'x', // x or y
@@ -44,9 +44,16 @@ const MediaCardStack = ({
     else if (offset < -threshold) doNegative();
   };
 
+  const [isCurrentLoaded, setIsCurrentLoaded] = useState(false);
+
   return (
     <div className='flex flex-col h-full items-center justify-center gap-3'>
-      <div className='relative select-none flex items-center justify-center rounded-box max-h-full min-h-0 w-fit'>
+      <div
+        className={cN(
+          'relative select-none flex items-center justify-center rounded-box max-h-full min-h-0 w-fit',
+          (!isCurrentLoaded || !current) && 'min-h-[50dvh]'
+        )}
+      >
         {next && (
           <div className='absolute inset-0 scale-95 opacity-60 flex items-center justify-center'>
             {<MediaCard media={next} specifyShowType={specifyShowType} />}
@@ -62,7 +69,13 @@ const MediaCardStack = ({
             onDragEnd={handleEnd}
             className='relative z-10 cursor-grab active:cursor-grabbing flex items-center justify-center w-fit h-full min-w-0'
           >
-            {<MediaCard media={current} specifyShowType={specifyShowType} />}
+            {
+              <MediaCard
+                media={current}
+                specifyShowType={specifyShowType}
+                onMediaLoaded={() => setIsCurrentLoaded(true)}
+              />
+            }
           </motion.div>
         )}
       </div>

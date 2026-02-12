@@ -4,7 +4,7 @@ import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserPr
 
 const UserProfile = ({ userId, isSelf = false }) => {
   const isFriend = useIsFriend(isSelf);
-  const { data } = useUserProfile(userId);
+  const { data, isPending, isError } = useUserProfile(userId);
 
   const shared = data?.accountSettings?.isSharedInfo;
   const sharedWatchlist = shared?.watchList;
@@ -17,7 +17,7 @@ const UserProfile = ({ userId, isSelf = false }) => {
   return (
     <div>
       <div>
-        <UserProfileCard userId={userId} />
+        <UserProfileCard user={data} isLoading={isPending} isError={isError} />
       </div>
       {(isSelf || (isFriend && hasShared)) && ''}
     </div>

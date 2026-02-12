@@ -1,5 +1,6 @@
 import useUserSessionContext from '@/contexts/UserSession/hooks/useUserSessionContext.js';
 import UserProfile from '@c/features/user/UserProfile/UserProfile.jsx';
+import FullLengthPageWrapper from '@c/layouts/PrivateLayout/FullLengthPageWrapper/FullLengthPageWrapper.jsx';
 
 const Profile = () => {
   const {
@@ -7,9 +8,9 @@ const Profile = () => {
   } = useUserSessionContext();
 
   return (
-    <div className='flex flex-col mobile:flex-row'>
+    <FullLengthPageWrapper>
       <UserProfile userId={userId} isSelf />
-    </div>
+    </FullLengthPageWrapper>
   );
 };
 
