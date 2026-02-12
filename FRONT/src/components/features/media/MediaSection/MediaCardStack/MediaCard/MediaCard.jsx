@@ -17,9 +17,10 @@ const MediaCard = ({ media, specifyShowType }) => {
         : null;
 
   return (
-    <article className='flex flex-col items-center justify-center glass rounded-box p-5 w-full max-mobile:px-2.5 gap-2.5 h-fit'>
-      <div className='max-w-fit rounded-box overflow-hidden relative h-fit'>
+    <article className='flex flex-col items-center justify-center glass bg-base-100/25 rounded-box p-2.5 gap-2.5 h-full min-h-0 w-fit'>
+      <div className='w-fit min-h-0 rounded-box overflow-hidden relative'>
         <DetailsToggle onChange={() => setShowDetails(!showDetails)} />
+
         {showDetails && (
           <MediaDetails
             details={media?.details}
@@ -27,9 +28,7 @@ const MediaCard = ({ media, specifyShowType }) => {
           />
         )}
 
-        {/* <Interactions mediaId={media.id} /> */}
-
-        <picture className='w-full h-full pointer-events-none block'>
+        <picture className='block max-w-full w-fit h-full max-h-full pointer-events-none '>
           <source
             srcSet={
               showDetails && media?.imageSet?.horizontalBackdrop
@@ -41,13 +40,13 @@ const MediaCard = ({ media, specifyShowType }) => {
           <img
             src={media?.imageSet?.verticalPoster}
             alt='banner'
-            className='w-full object-contain max-h-[50dvh]'
+            className='max-w-full m-auto h-full max-h-full rounded-box object-contain'
           />
         </picture>
       </div>
 
-      <div className='mobile:w-1/5 flex gap-2 items-center justify-center'>
-        <h3 className='text-xl font-semibold text-center text-nowrap'>
+      <div className='flex gap-2 items-center justify-center w-fit'>
+        <h3 className='text-lg mobile:text-xl max-mobile:text-base font-semibold text-center cursor-auto select-text'>
           {media?.title}
         </h3>
         {specifyShowType && showTypeText && (
@@ -57,5 +56,4 @@ const MediaCard = ({ media, specifyShowType }) => {
     </article>
   );
 };
-
 export default MediaCard;

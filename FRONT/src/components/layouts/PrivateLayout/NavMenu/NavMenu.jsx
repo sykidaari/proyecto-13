@@ -14,9 +14,9 @@ const NavMenu = () => {
     state: { img }
   } = useUserSessionContext();
   return (
-    <div className='w-full flex-initial'>
-      <nav className='bg-base-300 glass flex justify-center p-2.5 max-mini:px-0'>
-        <ul className='menu menu-horizontal gap-2.5 justify-center flex-nowrap max-mini:menu-xs max-mini:px-0 mobile:gap-5'>
+    <div className='w-full'>
+      <nav className='bg-base-300 glass flex justify-center px-2.5 max-mini:px-0'>
+        <ul className='menu menu-horizontal menu-xs gap-2.5 justify-center flex-nowrap max-mini:menu-xs max-mini:px-0 mobile:gap-5'>
           <MenuNavItem to={R.private.discover.abs} title={discover}>
             <MagnifyingGlassIcon />
           </MenuNavItem>

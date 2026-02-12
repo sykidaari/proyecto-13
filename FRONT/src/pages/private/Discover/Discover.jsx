@@ -5,6 +5,12 @@ import usePrefetchNextPage from '@/hooks/media/usePrefetchNetxPage.js';
 import MediaSection from '@c/features/media/MediaSection/MediaSection.jsx';
 import SearchBar from '@c/ui/SearchBar/SearchBar.jsx';
 import SectionBox from '@c/ui/SectionBox/SectionBox.jsx';
+import {
+  ArrowTurnRightUpIcon,
+  ArrowUturnLeftIcon,
+  ChevronUpIcon,
+  HandRaisedIcon
+} from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 const Discover = () => {
@@ -48,8 +54,12 @@ const Discover = () => {
         specifyShowType
         onNegative={advance}
         onPositive={advance}
-        PositiveButton={({ onClick }) => <button onClick={onClick}>✅</button>}
-        GoBackButton={({ onClick }) => <button onClick={onClick}>↩️</button>}
+        PositiveButton={({ onClick }) => (
+          <button onClick={onClick} className='btn-secondary'>
+            <ChevronUpIcon />
+          </button>
+        )}
+        hasGoBackButton
       />
     </SectionBox>
   );

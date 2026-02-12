@@ -3,6 +3,7 @@ import MediaCard from '@c/features/media/MediaSection/MediaCardStack/MediaCard/M
 import MediaCardStack from '@c/features/media/MediaSection/MediaCardStack/MediaCardStack.jsx';
 
 import ServerProblem from '@c/ui/ErrorMessage/ServerProblem/ServerProblem.jsx';
+import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 
 const MediaSection = ({
   shows = [],
@@ -20,7 +21,7 @@ const MediaSection = ({
 
   PositiveButton,
   NegativeButton,
-  GoBackButton
+  hasGoBackButton
 }) => {
   const { noResults: noResultsText, noneLeft: noneLeftText } =
     useText('features.media') || {};
@@ -30,23 +31,28 @@ const MediaSection = ({
   const showNone = !isLoading && !isError && (noResults || noMorePages);
 
   return (
-    <section className=' bg-base-200 h-full w-full rounded-box p-2.5 mobile:p-5  min-[450px]:px-[7dvw] min-[501px]:max-mobile:px-[12dvw] overflow-hidden flex flex-col'>
-      <div className='flex-1 relative'>
-        <div className='relative size-full z-50'>
+    <section className=' bg-base-200 w-full h-full rounded-box p-2.5 overflow-hidden flex flex-col'>
+      <div className='relative h-full'>
+        <div className='relative h-full z-50'>
           <MediaCardStack
             medias={shows}
             direction={swipeDirection}
-            renderCard={(media) => (
-              <MediaCard media={media} specifyShowType={specifyShowType} />
-            )}
+            specifyShowType={specifyShowType}
             onPositive={onPositive}
             onNegative={onNegative}
             controlButtons={({ swipePositive, swipeNegative, goBack }) => (
               <>
+                {hasGoBackButton && (
+                  <button
+                    onClick={goBack}
+                    className=' btn-warning btn-dash size-9'
+                  >
+                    <ArrowUturnLeftIcon />
+                  </button>
+                )}
+
                 {NegativeButton && <NegativeButton onClick={swipeNegative} />}
                 {PositiveButton && <PositiveButton onClick={swipePositive} />}
-
-                {GoBackButton && <GoBackButton onClick={goBack} />}
               </>
             )}
           />

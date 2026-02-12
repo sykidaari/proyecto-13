@@ -1,11 +1,12 @@
 import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'motion/react';
+import MediaCard from '@c/features/media/MediaSection/MediaCardStack/MediaCard/MediaCard.jsx';
 
 const MediaCardStack = ({
   medias = [],
 
-  renderCard,
+  specifyShowType,
 
   direction = 'x', // x or y
   threshold = 120,
@@ -44,11 +45,11 @@ const MediaCardStack = ({
   };
 
   return (
-    <div className='flex flex-col size-full items-center justify-center gap-2.5 mobile:gap-5'>
-      <div className='relative w-full h-fit select-none flex items-center justify-center rounded-box'>
+    <div className='flex flex-col h-full items-center justify-center gap-3'>
+      <div className='relative select-none flex items-center justify-center rounded-box max-h-full min-h-0 w-fit'>
         {next && (
-          <div className='absolute inset-x-0 top-0 scale-95 opacity-60 flex items-center justify-center'>
-            {renderCard(next)}
+          <div className='absolute inset-0 scale-95 opacity-60 flex items-center justify-center'>
+            {<MediaCard media={next} specifyShowType={specifyShowType} />}
           </div>
         )}
 
@@ -59,18 +60,13 @@ const MediaCardStack = ({
             dragElastic={0.2}
             whileDrag={{ scale: 0.9 }}
             onDragEnd={handleEnd}
-            className='absolute inset-x-0 top-0 cursor-grab active:cursor-grabbing flex items-center justify-center'
+            className='relative z-10 cursor-grab active:cursor-grabbing flex items-center justify-center w-fit h-full min-w-0'
           >
-            {renderCard(current)}
+            {<MediaCard media={current} specifyShowType={specifyShowType} />}
           </motion.div>
         )}
-
-        {/* INVISIBLE SIZER FOR MEDIACARD */}
-        <div className='invisible pointer-events-none'>
-          {current && renderCard(current)}
-        </div>
       </div>
-      <div className='flex gap-2.5 *:btn *:btn-circle *:glass glass p-2.5 w-full justify-center rounded-box bg-base-100'>
+      <div className='flex gap-2.5 items-center *:btn *:btn-lg *:p-2.5 *:btn-circle glass p-2.5 justify-center rounded-box bg-base-100/25 relative z-20'>
         {controlButtons?.({
           swipePositive: doPositive,
           swipeNegative: doNegative,

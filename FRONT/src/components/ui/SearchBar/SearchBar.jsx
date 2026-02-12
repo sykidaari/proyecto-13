@@ -36,7 +36,7 @@ const SearchBar = ({
   };
 
   return (
-    <div className='w-full h-17'>
+    <div className={cN('w-full', withText && 'h-17')}>
       <TextField
         error={isError && withText && errorText}
         className='w-full input-secondary pl-9 pr-10'
