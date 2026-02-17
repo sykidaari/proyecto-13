@@ -64,32 +64,33 @@ export const requireAndValidateReqBody = ({ required = [], optional = [] }) => {
 
 //* --- USER CHILDREN ------------------------------------
 
-export const findOrCreateByUser = (Model) => async (req, res, next) => {
-  const { userId } = req.params;
+export const findOrCreateByUser =
+  (Model, reqProperty = 'doc') =>
+  async (req, res, next) => {
+    const { userId } = req.params;
 
-  let doc;
-  let status = 200;
+    let status = 200;
 
-  try {
-    let doc = await Model.findOne({
-      user: userId
-    });
+    try {
+      let doc = await Model.findOne({
+        user: userId
+      });
 
-    if (!doc) {
-      const created = await Model.create({ user: userId });
-      doc = created;
+      if (!doc) {
+        const created = await Model.create({ user: userId });
+        doc = created;
 
-      // ONLY GET GIVES 201 if created
-      if (req.method === 'GET') status = 201;
+        // ONLY GET GIVES 201 if created
+        if (req.method === 'GET') status = 201;
+      }
+
+      req[reqProperty] = doc;
+      req.status = status;
+      next();
+    } catch (err) {
+      next(err);
     }
-
-    req.doc = doc;
-    req.status = status;
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
+  };
 
 //* ---------------------------------------
 

@@ -21,6 +21,7 @@ import {
   requireSelfOrAdminOrFriendOrSessionParticipant,
   requireSelfOrAdminOrFriendWithPrivacy
 } from '../../../middlewares/access.js';
+import peopleRouter from '../people/people.router.js';
 
 const userChildrenRouter = Router({ mergeParams: true });
 const privateRouter = Router({ mergeParams: true });
@@ -60,9 +61,14 @@ privateRouter
   .use('/requests', [findOrCreateByUser(Requests)], requestsRouter)
   .use('/appSettings', [findOrCreateByUser(AppSettings)], appSettingsRouter)
   .use('/friends', [findOrCreateByUser(Friends)], friendsRouter)
-  .use('/sessions-list', [
-    findOrCreateByUser(SessionsList),
-    sessionsListRouter
-  ]);
+  .use('/sessions-list', [findOrCreateByUser(SessionsList)], sessionsListRouter)
+  .use(
+    '/people',
+    [
+      findOrCreateByUser(Friends, 'friendsDoc'),
+      findOrCreateByUser(Requests, 'requestsDoc')
+    ],
+    peopleRouter
+  );
 
 export default userChildrenRouter;

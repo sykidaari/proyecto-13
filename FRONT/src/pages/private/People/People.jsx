@@ -17,7 +17,6 @@ const People = () => {
     <FullLengthPageWrapper>
       <UsersSearch
         onSelectUser={(user) => {
-          console.log(R.private.profile.abs);
           if (isSelf(user._id, currentUserId))
             return navigate(R.private.profile.abs);
 
