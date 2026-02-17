@@ -41,9 +41,9 @@ const ROUTE_PATHS = {
       rel: 'settings',
       abs: '/app/settings'
     },
-    users: {
-      rel: 'users',
-      abs: '/app/users'
+    people: {
+      rel: 'people',
+      abs: '/app/people'
     }
   }
 };

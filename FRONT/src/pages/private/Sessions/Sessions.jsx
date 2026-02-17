@@ -1,12 +1,3 @@
-import UsersSearch from '@/pages/private/Sessions/UsersSearch/UsersSearch.jsx';
-import FullLengthPageWrapper from '@c/layouts/PrivateLayout/FullLengthPageWrapper/FullLengthPageWrapper.jsx';
-
-const Sessions = () => {
-  return (
-    <FullLengthPageWrapper className='pt-2.5'>
-      <UsersSearch />
-    </FullLengthPageWrapper>
-  );
-};
+const Sessions = () => {};
 
 export default Sessions;

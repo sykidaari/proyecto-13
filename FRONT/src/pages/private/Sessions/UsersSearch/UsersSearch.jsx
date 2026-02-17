@@ -1,13 +1,15 @@
 import backend from '@/api/config/axios.js';
 import useText from '@/contexts/App/hooks/useText.js';
+
+import cN from '@/utils/classNameManager.js';
 import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserProfileCard.jsx';
 import SearchBar from '@c/ui/SearchBar/SearchBar.jsx';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-const UsersSearch = () => {
+const UsersSearch = ({ onSelectUser }) => {
   const { placeholder: placeholderText } = useText(
-    'features.sessions.usersSearch'
+    'features.people.usersSearch'
   );
 
   const [value, setValue] = useState('');
@@ -30,10 +32,15 @@ const UsersSearch = () => {
     enabled: !!query
   });
 
-  console.log(foundUsers, isFetching);
+  const noResults = !foundUsers?.length || !foundUsers;
 
   return (
-    <section className='w-full glass rounded-box p-2.5 bg-secondary/50'>
+    <section
+      className={cN(
+        'w-full glass rounded-box p-1.5 bg-secondary/50 flex flex-col max-w-2xl',
+        !isError && !noResults && 'gap-1.5'
+      )}
+    >
       <SearchBar
         mode='debounce'
         placeholder={placeholderText}
@@ -43,12 +50,16 @@ const UsersSearch = () => {
         isError={isError}
         isLoading={isFetching}
       />
-      <div>
-        <ul className='menu w-full menu-xs gap-0.5'>
+      <div className={cN(noResults && 'h-0')}>
+        <ul className='menu w-full menu-xs gap-0.5 max-h-52 flex-nowrap overflow-auto p-0'>
           {foundUsers?.map((user) => (
-            <li key={user._id} className='w-full'>
-              <button className='w-full'>
-                <UserProfileCard user={user} minimal listItem onClick />
+            <li
+              key={user._id}
+              className='w-full'
+              onClick={() => onSelectUser(user)}
+            >
+              <button className='size-full pl-0'>
+                <UserProfileCard user={user} minimal listItem />
               </button>
             </li>
           ))}

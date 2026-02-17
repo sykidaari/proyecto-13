@@ -1,11 +1,9 @@
 import backend from '@/api/config/axios.js';
-import useUserSessionContext from '@/contexts/UserSession/hooks/useUserSessionContext.js';
+import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId.js';
 import { useQuery } from '@tanstack/react-query';
 
 const useIsFriend = (isSelf, userId) => {
-  const {
-    state: { userId: currentUserId }
-  } = useUserSessionContext();
+  const currentUserId = useCurrentUserId();
 
   const { data } = useQuery({
     queryKey: ['isFriend', currentUserId],

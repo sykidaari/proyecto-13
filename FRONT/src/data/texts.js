@@ -17,6 +17,7 @@ const TEXTS = {
 
     features: {
       user: {
+        relation: { self: 'Me', friend: 'Friend' },
         userFormParts: {
           next: 'Next',
           locale: {
@@ -75,8 +76,13 @@ const TEXTS = {
         noResults: 'Sorry! No results found for your preferences.',
         noneLeft: 'Sorry! No more results match your preferences.'
       },
-      sessions: {
-        usersSearch: { placeholder: 'Find people to start a session with' }
+      people: {
+        usersSearch: { placeholder: 'Find other users' },
+        friendship: {
+          requestFriendship: '',
+          acceptFriendship: '',
+          rejectFriendship: ''
+        }
       }
     },
 
@@ -94,6 +100,7 @@ const TEXTS = {
       private: {
         pageTitles: {
           discover: 'Discover',
+          people: 'People',
           sessions: 'Sessions',
           notifications: 'Notifications',
           profile: 'Profile'

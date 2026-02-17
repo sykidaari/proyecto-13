@@ -18,6 +18,7 @@ import Register from '@/pages/auth/Register/Register.jsx';
 import useIsInitializing from '@/contexts/UserSession/hooks/useInitializing.js';
 import Discover from '@/pages/private/Discover/Discover.jsx';
 import useIsLoggedIn from '@/contexts/UserSession/hooks/useIsLoggedIn.js';
+import People from '@/pages/private/People/People.jsx';
 
 //! REGISTER IMG UPLOAD DOESN'T WORK
 
@@ -67,6 +68,7 @@ function App() {
           }
         >
           <Route path={R.private.discover.rel} element={<Discover />} />
+          <Route path={R.private.people.rel} element={<People />} />
           <Route path={R.private.profile.rel} element={<Profile />} />
           <Route
             path={R.private.notifications.rel}

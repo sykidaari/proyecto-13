@@ -1,4 +1,7 @@
 import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText.js';
+import useText from '@/contexts/App/hooks/useText.js';
+import useIsSelf from '@/contexts/UserSession/hooks/useIsSelf.js';
+import useIsFriend from '@/hooks/user/useIsFriend.js';
 import cN from '@/utils/classNameManager.js';
 import ErrorMessage from '@c/ui/ErrorMessage/ErrorMessage.jsx';
 import ProfilePicture from '@c/ui/ProfilePicture/ProfilePicture.jsx';
@@ -9,9 +12,15 @@ const UserProfileCard = ({
   isLoading,
   isError,
   minimal = false,
-  listItem = false,
-  onClick
+  listItem = false
 }) => {
+  const isSelf = useIsSelf(user._id);
+  const isFriend = useIsFriend(isSelf, user._id);
+
+  const { self: selfText, friend: friendText } = useText(
+    'features.user.relation'
+  );
+
   const errorText = useServerProblemtext();
 
   return (
@@ -34,7 +43,14 @@ const UserProfileCard = ({
               className={cN('*:size-30', minimal && '*:size-8')}
             />
           </div>
-          <div className={cN('flex-1 flex flex-col gap-2', minimal && 'gap-0')}>
+          <div
+            className={cN(
+              'flex-1 flex flex-col gap-2',
+              minimal
+                ? 'gap-0'
+                : 'max-mobile:text-center max-mobile:items-center'
+            )}
+          >
             <h3
               className={cN(
                 'text-xl font-semibold text-primary',
@@ -44,6 +60,21 @@ const UserProfileCard = ({
               {user.userName}
             </h3>
             <h4 className={cN(minimal && 'text-xs')}>{user.nickName}</h4>
+            {
+              <span
+                className={cN(
+                  'badge badge-xs',
+                  isSelf
+                    ? 'badge-secondary'
+                    : isFriend
+                      ? 'badge-secondary'
+                      : 'invisible',
+                  minimal && 'absolute right-2.5 top-2.5'
+                )}
+              >
+                {isSelf ? selfText : friendText}
+              </span>
+            }
           </div>
         </>
       ) : null}
