@@ -418,12 +418,12 @@ Note: Some responses include additional fields depending on access level (self v
 - **PATCH** `/remove`
   - Access : self | admin
   - Body :
-    - Required : `user`
+    - Required : `otherUserId`
     - Optional : —
     - Example :
       ```
       {
-        "user": "64f1c2e8a9b3c123456789ab"
+        "otherUserId": "64f1c2e8a9b3c123456789ab"
       }
       ```
   - Description : removes a friend

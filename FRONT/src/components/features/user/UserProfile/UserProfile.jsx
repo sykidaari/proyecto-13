@@ -19,7 +19,7 @@ const UserProfile = ({ userId }) => {
   const hasShared = isSharedWatchlist || isSharedFavorites;
 
   return (
-    <div>
+    <div className='flex flex-col items-center *:w-full gap-2.5'>
       <div>
         {data && (
           <UserProfileCard

@@ -79,9 +79,11 @@ const TEXTS = {
       people: {
         usersSearch: { placeholder: 'Find other users' },
         friendship: {
-          requestFriendship: '',
-          acceptFriendship: '',
-          rejectFriendship: ''
+          requestFriendship: 'Send friend request',
+          acceptFriendship: 'Accept friend request',
+          cancelFriendRequest: 'Cancel friend request',
+          rejectFriendship: 'Reject friend request',
+          removeFriendship: 'Remove friend'
         }
       }
     },

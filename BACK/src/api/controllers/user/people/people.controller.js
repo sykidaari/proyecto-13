@@ -12,11 +12,11 @@ export const getRelationshipToUser = (req, res, next) => {
   );
 
   const hasSentRequest = requestsDoc.friends.sent.some(
-    (item) => item.user.toString() === otherId
+    (item) => item.user.toString() === otherUserId
   );
 
   const hasReceivedRequest = requestsDoc.friends.received.some(
-    (item) => item.user.toString() === otherId
+    (item) => item.user.toString() === otherUserId
   );
 
   try {

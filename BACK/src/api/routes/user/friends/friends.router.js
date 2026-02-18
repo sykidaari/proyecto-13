@@ -12,8 +12,8 @@ import {
 import { requireSelf } from '../../../../middlewares/access.js';
 import { validateOtherUserId } from '../../../../middlewares/validation.js';
 
-const friendsRouter = Router();
-const requestRouter = Router();
+const friendsRouter = Router({ mergeParams: true });
+const requestRouter = Router({ mergeParams: true });
 
 friendsRouter.use('/request', requestRouter);
 

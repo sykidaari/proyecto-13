@@ -27,7 +27,7 @@ const UserProfileCard = ({
     <section
       className={cN(
         'flex flex-col mobile:flex-row items-center justify-center w-full  p-7 gap-5 rounded-box  h-full',
-        minimal && 'flex-row p-1.5 gap-2.5',
+        minimal ? 'flex-row p-1.5 gap-2.5 min-h-8' : 'min-h-30',
         !listItem && 'glass bg-base-200'
       )}
     >
@@ -72,7 +72,7 @@ const UserProfileCard = ({
                   minimal && 'absolute right-2.5 top-2.5'
                 )}
               >
-                {isSelf ? selfText : friendText}
+                {isSelf ? selfText : isFriend ? friendText : ''}
               </span>
             }
           </div>
