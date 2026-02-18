@@ -19,11 +19,7 @@ friendsRouter.use('/request', requestRouter);
 
 friendsRouter
   .get('/', getFriends)
-  .patch(
-    '/remove',
-    requireAndValidateReqBody({ required: ['user'] }),
-    removeFriend
-  );
+  .patch('/remove', [validateOtherUserId], removeFriend);
 
 // REQUESTS
 requestRouter

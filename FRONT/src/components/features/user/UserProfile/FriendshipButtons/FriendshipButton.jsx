@@ -1,4 +1,5 @@
 import backend from '@/api/config/axios';
+import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText';
 import useText from '@/contexts/App/hooks/useText.js';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useIsSelf from '@/contexts/UserSession/hooks/useIsSelf';
@@ -14,8 +15,9 @@ const FriendshipButtons = ({ userId }) => {
     acceptFriendship: acceptFriendshipText,
     cancelFriendRequest: cancelFriendRequestText,
     rejectFriendship: rejectFriendshipText,
-    removeFriend: removeFriendText
+    removeFriendship: removeFriendText
   } = useText('features.people.friendship');
+  const errorMessage = useServerProblemtext();
 
   const currentUserId = useCurrentUserId();
 
@@ -39,15 +41,16 @@ const FriendshipButtons = ({ userId }) => {
   });
   const config =
     relationshipConfig[relationshipState] ?? relationshipConfig.none;
-  const body = { otherUserId: userId };
+
   const queryClient = useQueryClient();
+  console.log(userId);
   const {
     mutate,
     isPending: mutationIsPending,
-    isError,
-    data: mutadata
+    isError
   } = useMutation({
     mutationFn: async ({ action }) => {
+      const body = { otherUserId: userId };
       switch (action) {
         case 'remove':
           await backend.patch(
@@ -61,14 +64,11 @@ const FriendshipButtons = ({ userId }) => {
           };
 
         case 'sendRequest': {
-          const res = await backend.patch(
+          await backend.patch(
             `/user/${currentUserId}/private/friends/request/send`,
             body
           );
-
-          console.log('sendRequest response:', res.data);
           return {
-            data,
             isFriend: false,
             hasSentRequest: true,
             hasReceivedRequest: false
@@ -126,7 +126,13 @@ const FriendshipButtons = ({ userId }) => {
   }
 
   return (
-    <section className='flex *:btn *:btn-soft *:mobile:flex-1 gap-1 max-mobile:flex-col tooltip'>
+    <section
+      className={cN(
+        'flex *:btn *:btn-soft *:mobile:flex-1 gap-1 max-mobile:flex-col',
+        isError && 'tooltip tooltip-error'
+      )}
+      data-tip={errorMessage}
+    >
       <button
         className={cN(
           isError ? 'btn-error' : config.className,

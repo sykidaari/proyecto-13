@@ -70,12 +70,10 @@ export const removeItemFromUserChildList =
     const isObjectList = typeof list[0] === 'object';
 
     const index = isObjectList
-      ? (index = list.findIndex(
+      ? list.findIndex(
           (entry) => entry[itemKey]?.toString() === value.toString()
-        ))
-      : (index = list.findIndex(
-          (entry) => entry.toString() === value.toString()
-        ));
+        )
+      : list.findIndex((entry) => entry.toString() === value.toString());
 
     const notFound = index === -1;
     if (notFound)

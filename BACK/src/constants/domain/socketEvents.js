@@ -6,7 +6,8 @@ const SOCKET_EVENTS = {
       accepted: 'friends:new-friend',
       cancelled: 'friends:request-cancelled',
       rejected: 'friends:request-rejected'
-    }
+    },
+    removed: 'friends:friend-removed'
   },
   sessions: {
     created: 'sessions:new',

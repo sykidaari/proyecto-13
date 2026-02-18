@@ -5,7 +5,7 @@ import React from 'react';
 const UserProfileModal = ({ userId, open, setOpen }) => {
   return (
     <dialog className={cN('modal', open && 'modal-open')}>
-      <div className='modal-box max-w-2xs mobile:max-w-fit'>
+      <div className='modal-box max-w-2xs mobile:max-w-md'>
         <UserProfile userId={userId} />
       </div>
       <div
