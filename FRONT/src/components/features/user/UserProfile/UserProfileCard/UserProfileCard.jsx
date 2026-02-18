@@ -15,7 +15,7 @@ const UserProfileCard = ({
   listItem = false
 }) => {
   const isSelf = useIsSelf(user._id);
-  const isFriend = useIsFriend(isSelf, user._id);
+  const isFriend = useIsFriend(user._id);
 
   const { self: selfText, friend: friendText } = useText(
     'features.user.relation'

@@ -1,25 +1,9 @@
-import backend from '@/api/config/axios.js';
-import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId.js';
-import { useQuery } from '@tanstack/react-query';
+import useRelationship from '@/hooks/people/useRelationship';
 
-const useIsFriend = (isSelf, userId) => {
-  const currentUserId = useCurrentUserId();
+const useIsFriend = (targetUserId) => {
+  const { data } = useRelationship(targetUserId);
 
-  const { data } = useQuery({
-    queryKey: ['isFriend', currentUserId],
-    queryFn: async () => {
-      const { data } = await backend.get(
-        `/user/${currentUserId}/private/friends`
-      );
-
-      return data;
-    },
-    enabled: !isSelf
-  });
-
-  const isFriend = !!data?.friendsList?.some((f) => f.user === userId);
-
-  return isFriend;
+  return data?.isFriend ?? false;
 };
 
 export default useIsFriend;

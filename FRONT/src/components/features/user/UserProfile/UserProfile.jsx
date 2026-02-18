@@ -6,7 +6,7 @@ import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserPr
 
 const UserProfile = ({ userId }) => {
   const isSelf = useIsSelf(userId);
-  const isFriend = useIsFriend(isSelf);
+  const isFriend = useIsFriend(userId);
 
   const { data, isPending, isError } = useUserProfile(userId);
 
