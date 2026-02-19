@@ -17,14 +17,14 @@ import Register from '@/pages/auth/Register/Register.jsx';
 
 import useIsInitializing from '@/contexts/UserSession/hooks/useInitializing.js';
 import Discover from '@/pages/private/Discover/Discover.jsx';
-import useIsLoggedIn from '@/contexts/UserSession/hooks/useIsLoggedIn.js';
 import People from '@/pages/private/People/People.jsx';
+import useAppContext from '@/contexts/App/hooks/useAppContext';
 
 //! REGISTER IMG UPLOAD DOESN'T WORK
 
 function App() {
+  console.log(useAppContext());
   const isInitializing = useIsInitializing();
-  const isLoggedIn = useIsLoggedIn();
 
   if (isInitializing)
     return (

@@ -20,6 +20,8 @@ export const requireReqBody = (req, res, next) => {
   if (isEmpty(req.body)) {
     throw isEmptyError;
   }
+
+  next();
 };
 
 // ACCEPTS BOTH STRINGS AND ARRAYS

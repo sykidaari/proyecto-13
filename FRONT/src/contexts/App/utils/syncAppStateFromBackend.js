@@ -9,14 +9,14 @@ const syncAppStateFromBackend = async (user, appActions, appState) => {
   const route = `/user/${user._id}/private/appSettings`;
 
   try {
-    const { appSettings: accountAppSettings } = await retry(
+    const { data: accountAppSettings } = await retry(
       () => backend.get(route),
       2
     );
 
-    if (!accountAppSettings.syncedAcrossDevices) return;
+    if (!accountAppSettings?.syncedAcrossDevices) return;
 
-    if (!accountAppSettings.settings.theme) {
+    if (!accountAppSettings?.settings?.theme) {
       await retry(
         () =>
           backend.patch(route, {
@@ -24,11 +24,11 @@ const syncAppStateFromBackend = async (user, appActions, appState) => {
           }),
         2
       );
-
+      appActions.setAppTheme(appState.theme);
       return;
     }
 
-    appActions.setAppTheme(accountAppSettings.theme);
+    appActions.setAppTheme(accountAppSettings?.settings?.theme);
   } catch (error) {
     IS_DEV && console.log(error);
   }

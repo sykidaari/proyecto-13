@@ -59,7 +59,7 @@ const UserSessionProvider = ({ children }) => {
 
   return (
     <UserSessionContext
-      value={{ state, actions, initializing, initialUserData: initialUserData }}
+      value={{ state, actions, initializing, initialUserData }}
     >
       {children}
     </UserSessionContext>

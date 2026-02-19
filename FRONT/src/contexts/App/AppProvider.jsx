@@ -39,12 +39,15 @@ const AppProvider = ({ children }) => {
 
   const actions = appContextActions(dispatch);
 
-  const { initialUserData } = useUserSessionContext();
+  const {
+    initialUserData,
+    state: { accessToken }
+  } = useUserSessionContext();
 
   useEffectIgnoreDeps(() => {
-    if (!initialUserData) return;
+    if (!initialUserData || !accessToken) return;
     syncAppStateFromBackend(initialUserData, actions, state);
-  }, []);
+  }, [initialUserData, accessToken]);
 
   return <AppContext value={{ state, actions }}>{children}</AppContext>;
 };
