@@ -69,7 +69,9 @@ export const removeFriend = async (req, res, next) => {
       currentUserDoc.friendsList.pull({ user: otherUserId });
       await currentUserDoc.save({ session: ses });
 
-      const otherUserDoc = await Friends.findById(otherUserId).session(ses);
+      const otherUserDoc = await Friends.findOne({
+        user: otherUserId
+      }).session(ses);
 
       if (otherUserDoc) {
         otherUserDoc.friendsList.pull({ user: currentUserId });

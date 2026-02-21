@@ -24,6 +24,9 @@ export const refreshAccessToken = async (req, res, next) => {
     const newRefreshToken = generateRefreshToken();
     const newRefreshTokenHash = hashRefreshToken(newRefreshToken);
 
+    console.log('OLD COOKIE:', req.cookies.refreshToken);
+    console.log('NEW TOKEN:', newRefreshToken);
+
     const session = await UserAccessSession.findOne({ tokenHash });
 
     console.log('session found:', !!session);
