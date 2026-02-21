@@ -16,10 +16,7 @@ export const refreshAccessToken = async (req, res, next) => {
 
   const tokenHash = hashRefreshToken(refreshToken);
   try {
-    const session = await UserAccessSession.findOneAndDelete({
-      tokenHash
-    }).lean();
-
+    const session = await UserAccessSession.findOne({ tokenHash });
     if (!session) return res.sendStatus(401);
 
     const newRefreshToken = generateRefreshToken();
@@ -29,13 +26,9 @@ export const refreshAccessToken = async (req, res, next) => {
       ? new Date(Date.now() + rememberTtl)
       : new Date(session.expiresAt);
 
-    await UserAccessSession.create({
-      user: session.user,
-      tokenHash: newRefreshTokenHash,
-
-      expiresAt,
-      persistent: session.persistent
-    });
+    session.tokenHash = newRefreshTokenHash;
+    session.expiresAt = expiresAt;
+    await session.save();
 
     setRefreshCookie(
       res,

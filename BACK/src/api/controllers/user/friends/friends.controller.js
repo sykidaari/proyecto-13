@@ -17,7 +17,9 @@ import { emit } from '../../../../utils/controllerUtils.js';
 
 //? FOLLOWING AFFECT REQUESTS-MODEL
 //* GET
-export const getFriends = getUserChild({ populateFields: ['friendsList'] });
+export const getFriends = getUserChild({
+  populateFields: ['friendsList.user']
+});
 
 //* PATCH
 export const sendFriendRequest = sendRequest({

@@ -1,8 +1,4 @@
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  hashRefreshToken
-} from '../../../config/auth.js';
+import { generateAccessToken, hashRefreshToken } from '../../../config/auth.js';
 import {
   deleteFromCloudinary,
   uploadToCloudinary

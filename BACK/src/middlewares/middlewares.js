@@ -17,11 +17,12 @@ const isEmptyError = customError(400, ERR.body.missingBody);
 
 // FOR CASES WHERE VALIDATION MUST BE DONE IN CONTROLLER
 export const requireReqBody = (req, res, next) => {
+  //* only include next in params if middleware called alone, not if inside another middleware
   if (isEmpty(req.body)) {
     throw isEmptyError;
   }
 
-  next();
+  if (next) next();
 };
 
 // ACCEPTS BOTH STRINGS AND ARRAYS
