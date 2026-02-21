@@ -10,25 +10,37 @@ import {
 import UserAccessSession from '../../models/userAccessSession/userAccessSession.model.js';
 
 export const refreshAccessToken = async (req, res, next) => {
-  const refreshToken = req.cookies?.refreshToken;
+  console.log('reached');
 
+  const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken) return res.sendStatus(401);
 
   const tokenHash = hashRefreshToken(refreshToken);
-  try {
-    const session = await UserAccessSession.findOne({ tokenHash });
-    if (!session) return res.sendStatus(401);
 
+  console.log('cookie token:', refreshToken);
+  console.log('cookie hash:', tokenHash);
+
+  try {
     const newRefreshToken = generateRefreshToken();
     const newRefreshTokenHash = hashRefreshToken(newRefreshToken);
 
+    const session = await UserAccessSession.findOne({ tokenHash });
+
+    console.log('session found:', !!session);
+
+    if (!session) return res.sendStatus(401);
+
     const expiresAt = session.persistent
       ? new Date(Date.now() + rememberTtl)
-      : new Date(session.expiresAt);
+      : session.expiresAt;
 
-    session.tokenHash = newRefreshTokenHash;
-    session.expiresAt = expiresAt;
-    await session.save();
+    await UserAccessSession.updateOne(
+      { _id: session._id },
+      {
+        tokenHash: newRefreshTokenHash,
+        expiresAt
+      }
+    );
 
     setRefreshCookie(
       res,

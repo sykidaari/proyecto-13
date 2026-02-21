@@ -3,7 +3,7 @@ const { sign, verify } = jsonwebtoken;
 import { createHash, randomBytes } from 'crypto';
 
 export const generateAccessToken = (userId) =>
-  sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1m' });
+  sign({ userId }, process.env.JWT_SECRET, { expiresIn: '10m' });
 
 export const verifyAccessToken = (token) =>
   verify(token, process.env.JWT_SECRET);
