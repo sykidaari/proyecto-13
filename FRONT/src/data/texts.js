@@ -12,7 +12,8 @@ const TEXTS = {
       error: {
         serverProblem:
           'Something went wrong, please refresh the page or try again later.'
-      }
+      },
+      searchBar: { noResults: 'No results found' }
     },
 
     features: {
@@ -59,6 +60,16 @@ const TEXTS = {
             label: 'Profile picture',
             tooBig: 'File is too large (max 5MB).',
             wrongFormat: 'Only JPG, PNG, or WEBP formats are allowed.'
+          }
+        },
+        currentUser: {
+          friendsSection: {
+            title: 'Friends',
+            noFriends: 'Your friends list is empty.'
+          },
+          receivedRequestsSection: {
+            title: 'Received friend requests',
+            noRequests: 'You have no pending requests.'
           }
         }
       },

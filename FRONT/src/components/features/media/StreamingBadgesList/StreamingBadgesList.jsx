@@ -7,7 +7,7 @@ const StreamingBadgesList = ({ services }) => (
         className='badge bg-neutral'
       >
         <a
-          className='bg-primary-content badge badge-sm glass hover:underline'
+          className='bg-primary-content text-neutral badge badge-sm glass hover:underline text-nowrap'
           href={s.mediaLink}
           target='_blank'
           rel='noopener noreferrer'

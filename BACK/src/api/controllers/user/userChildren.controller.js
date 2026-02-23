@@ -129,23 +129,28 @@ export const markItemAsSeen = (field, itemIdKey) => async (req, res, next) => {
 };
 
 //! NEEDS [requireSelf] SO EVEN IF ADMIN CHECKS REQS, THIS DOESN'T FIRE EVEN IF FRONT TRIES TO
-export const markAllItemsAsSeen = (field) => async (req, res, next) => {
-  const { doc, status } = req;
-  const list = resolvePath(doc, field);
+export const markAllItemsAsSeen =
+  (field, targetDoc = 'doc') =>
+  async (req, res, next) => {
+    const { [targetDoc]: doc, status } = req;
 
-  for (const item of list) {
-    item.isNewItem = false;
-  }
+    console.log('doc:', doc);
+    const list = resolvePath(doc, field);
 
-  try {
-    await doc.save();
+    console.log('list:', list);
+    for (const item of list) {
+      item.isNewItem = false;
+    }
 
-    return res.status(status).json({
-      message: OK.userChild.allMarkedSeen,
-      field,
-      list
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+    try {
+      await doc.save();
+
+      return res.status(status).json({
+        message: OK.userChild.allMarkedSeen,
+        field,
+        list
+      });
+    } catch (err) {
+      next(err);
+    }
+  };

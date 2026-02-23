@@ -7,7 +7,7 @@ const AppLogo = ({ withText, className }) => {
   } = useAppContext();
 
   return (
-    <div className='flex gap-1'>
+    <div className='flex gap-1 justify-center items-center'>
       {withText && (
         <h1 className='text-xl max-mini:text-lg font-semibold text-primary'>
           Popcorn

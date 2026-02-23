@@ -29,8 +29,8 @@ const MediaDetails = ({ details, streamingOptions }) => {
   const enrichedServices = useEnrichedServices(streamingOptions);
 
   return (
-    <section className='absolute top-0.5 bottom-0.5 backdrop-blur-xs p-2.5 flex items-center cursor-auto select-text'>
-      <div className='size-fit flex flex-col bg-base-100/75 rounded-box p-2.5 mobile:max-w-2/3 max-mobile:text-balance text-sm gap-2.5 py-5 pb-10 max-h-full overflow-y-auto'>
+    <section className='absolute top-0.5 bottom-0.5 backdrop-blur-xs p-2.5 flex items-center cursor-auto select-text max-w-full max-compact:p-1.5 '>
+      <div className='size-fit flex flex-col bg-base-100/75 rounded-box p-2.5 max-w-full mobile:max-w-2/3 max-mobile:text-balance text-sm gap-2.5 py-5 pb-10 max-h-full overflow-y-auto max-compact:text-xs'>
         <div className='flex flex-col gap-2.5'>
           {releaseYear && <p>{releaseYear}</p>}
           {overview && <p>{overview}</p>}
@@ -69,7 +69,7 @@ const MediaDetails = ({ details, streamingOptions }) => {
           )}
 
           {creators?.length > 0 && (
-            <div className='flex gap-1'>
+            <div className='flex flex-wrap gap-1'>
               <p className='font-semibold'>{creatorsTitle}:</p>
               <ul className='contents'>
                 {creators.map((c, i) => (
@@ -88,7 +88,7 @@ const MediaDetails = ({ details, streamingOptions }) => {
 
               <ul className='contents'>
                 {cast.map((c, i) => (
-                  <li key={c} className=''>
+                  <li key={c}>
                     {c}
                     {i < cast.length - 1 && ','}
                   </li>

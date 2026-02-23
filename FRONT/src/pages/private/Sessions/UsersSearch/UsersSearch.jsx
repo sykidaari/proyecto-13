@@ -49,8 +49,9 @@ const UsersSearch = ({ onSelectUser }) => {
         onSearch={setValue}
         isError={isError}
         isLoading={isFetching}
+        noResults={noResults}
       />
-      <div className={cN(noResults && 'h-0')}>
+      <div>
         <ul className='menu w-full menu-xs gap-0.5 max-h-52 flex-nowrap overflow-auto p-0'>
           {foundUsers?.map((user) => (
             <li

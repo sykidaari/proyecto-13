@@ -1,5 +1,6 @@
 import backend, { injectUserSessionActions } from '@/api/config/axios.js';
 import { updateRequestContext } from '@/api/config/requestContext.js';
+import { refreshAccessToken } from '@/contexts/UserSession/helpers/refreshAccessToken';
 import userSessionContextActions from '@/contexts/UserSession/state/actions.js';
 import INITIAL_USER_SESSION_STATE from '@/contexts/UserSession/state/initialState.js';
 import userSessionReducer from '@/contexts/UserSession/state/reducer.js';
@@ -26,7 +27,7 @@ const UserSessionProvider = ({ children }) => {
   useEffectIgnoreDeps(() => {
     const tryRefresh = async () => {
       try {
-        const { data: refreshData } = await backend.post('/userAccessSession');
+        const { data: refreshData } = await refreshAccessToken();
         const accessToken = refreshData.accessToken;
 
         updateRequestContext({ accessToken });

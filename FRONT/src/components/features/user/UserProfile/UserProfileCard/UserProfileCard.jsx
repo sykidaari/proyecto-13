@@ -1,7 +1,7 @@
 import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText.js';
 import useText from '@/contexts/App/hooks/useText.js';
 import useIsSelf from '@/contexts/UserSession/hooks/useIsSelf.js';
-import useIsFriend from '@/hooks/user/useIsFriend.js';
+import useIsFriend from '@/hooks/people/useIsFriend.js';
 import cN from '@/utils/classNameManager.js';
 import ErrorMessage from '@c/ui/ErrorMessage/ErrorMessage.jsx';
 import ProfilePicture from '@c/ui/ProfilePicture/ProfilePicture.jsx';
@@ -12,7 +12,9 @@ const UserProfileCard = ({
   isLoading,
   isError,
   minimal = false,
-  listItem = false
+  listItem = false,
+  hideRelationshipBanner = false,
+  smallerImg = false
 }) => {
   const isSelf = useIsSelf(user._id);
   const isFriend = useIsFriend(user._id);
@@ -26,7 +28,7 @@ const UserProfileCard = ({
   return (
     <section
       className={cN(
-        'flex flex-col mobile:flex-row items-center justify-center w-full  p-7 gap-5 rounded-box  h-full',
+        'flex flex-col mobile:flex-row max-mini-override:flex-col max-short:flex-row items-center justify-center w-full  p-7 max-small:p-3.5  gap-5 max-small:gap-2.5 max-mini-override:gap-1.5 rounded-box  h-full',
         minimal ? 'flex-row p-1.5 gap-2.5 min-h-8' : 'min-h-30',
         !listItem && 'glass bg-base-200'
       )}
@@ -40,12 +42,16 @@ const UserProfileCard = ({
           <div>
             <ProfilePicture
               userImg={user.img}
-              className={cN('*:size-30', minimal && '*:size-8')}
+              className={cN(
+                '*:size-30 max-tiny:*:size-20',
+                minimal && '*:size-8',
+                smallerImg && '*:size-25'
+              )}
             />
           </div>
           <div
             className={cN(
-              'flex-1 flex flex-col gap-2',
+              'flex-1 flex flex-col gap-2 max-compact:gap-0.5',
               minimal
                 ? 'gap-0'
                 : 'max-mobile:text-center max-mobile:items-center'
@@ -53,14 +59,16 @@ const UserProfileCard = ({
           >
             <h3
               className={cN(
-                'text-xl font-semibold text-primary',
+                'text-xl font-semibold text-primary max-compact:text-lg',
                 minimal && 'text-sm'
               )}
             >
               {user.userName}
             </h3>
-            <h4 className={cN(minimal && 'text-xs')}>{user.nickName}</h4>
-            {
+            <h4 className={cN('max-compact:text-sm', minimal && 'text-xs')}>
+              {user.nickName}
+            </h4>
+            {!hideRelationshipBanner && (
               <span
                 className={cN(
                   'badge badge-xs',
@@ -74,7 +82,7 @@ const UserProfileCard = ({
               >
                 {isSelf ? selfText : isFriend ? friendText : ''}
               </span>
-            }
+            )}
           </div>
         </>
       ) : null}

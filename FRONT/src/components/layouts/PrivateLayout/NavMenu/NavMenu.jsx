@@ -21,8 +21,8 @@ const NavMenu = () => {
   } = useUserSessionContext();
   return (
     <div className='w-full'>
-      <nav className='bg-base-300 glass flex justify-center px-2.5 max-mini:px-0'>
-        <ul className='menu menu-horizontal max-mobile:menu-xs gap-2.5 justify-center flex-nowrap max-mini:menu-xs max-mini:px-0 mobile:gap-5'>
+      <nav className='bg-base-300 glass flex justify-center px-2.5 max-[320px]:px-0'>
+        <ul className='menu menu-horizontal max-mobile:menu-xs gap-2.5 justify-center flex-nowrap max-mini:menu-xs max-[320px]:px-0 mobile:gap-5 max-[320px]:gap-0.5 '>
           <MenuNavItem to={R.private.discover.abs} title={discover}>
             <SparklesIcon />
           </MenuNavItem>

@@ -4,7 +4,7 @@ import useMediaSwipeIndex from '@/hooks/media/useMediaSwipeIndex.js';
 import usePrefetchNextPage from '@/hooks/media/usePrefetchNetxPage.js';
 import MediaSection from '@c/features/media/MediaSection/MediaSection.jsx';
 import SearchBar from '@c/ui/SearchBar/SearchBar.jsx';
-import SectionBox from '@c/ui/SectionBox/SectionBox.jsx';
+import SectionBox from '@c/ui/containers/SectionBox/SectionBox.jsx';
 import { ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 

@@ -45,7 +45,7 @@ const MediaCard = ({ media, specifyShowType, onMediaLoaded }) => {
 
   return (
     <article
-      className='flex flex-col items-center justify-center glass bg-base-100/25 rounded-box p-2.5 gap-2.5 h-full min-h-0 '
+      className='flex flex-col items-center justify-center glass bg-base-100/25 rounded-box p-2.5 max-compact:p-1.5 gap-2.5 h-full min-h-0'
       style={imgWidth ? { width: imgWidth } : undefined}
     >
       <div className='w-fit min-h-0 rounded-box overflow-hidden relative'>

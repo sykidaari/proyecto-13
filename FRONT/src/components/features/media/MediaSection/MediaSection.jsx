@@ -33,7 +33,7 @@ const MediaSection = ({
   const showNone = !isLoading && !isError && (noResults || noMorePages);
 
   return (
-    <section className=' bg-base-200 w-full h-full rounded-box p-2.5 overflow-hidden flex flex-col'>
+    <section className=' bg-base-200 w-full h-full rounded-box p-2.5 overflow-hidden flex flex-col max-small:p-1.5 max-short:p-1.5'>
       <div className='relative h-full'>
         <div className='relative h-full z-50'>
           <MediaCardStack

@@ -9,7 +9,7 @@ const MenuNavItem = ({ to, children, title, className }) => {
         to={to}
         className={({ isActive }) =>
           cN(
-            ' size-full *:size-8 *:object-contain text-primary border',
+            ' size-full *:size-8 *:object-contain text-primary border max-mini:*:size-7',
             isActive && 'bg-secondary',
             className
           )

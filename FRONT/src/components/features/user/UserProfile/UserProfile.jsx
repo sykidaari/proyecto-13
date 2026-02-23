@@ -1,5 +1,5 @@
 import useIsSelf from '@/contexts/UserSession/hooks/useIsSelf.js';
-import useIsFriend from '@/hooks/user/useIsFriend.js';
+import useIsFriend from '@/hooks/people/useIsFriend.js';
 import useUserProfile from '@/hooks/user/useUserProfile.js';
 import FriendshipButtons from '@c/features/user/UserProfile/FriendshipButtons/FriendshipButton.jsx';
 import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserProfileCard.jsx';

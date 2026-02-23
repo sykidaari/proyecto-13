@@ -10,40 +10,43 @@ import {
 import UserAccessSession from '../../models/userAccessSession/userAccessSession.model.js';
 
 export const refreshAccessToken = async (req, res, next) => {
-  console.log('reached');
-
   const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken) return res.sendStatus(401);
 
   const tokenHash = hashRefreshToken(refreshToken);
 
-  console.log('cookie token:', refreshToken);
-  console.log('cookie hash:', tokenHash);
-
   try {
     const newRefreshToken = generateRefreshToken();
     const newRefreshTokenHash = hashRefreshToken(newRefreshToken);
 
-    console.log('OLD COOKIE:', req.cookies.refreshToken);
-    console.log('NEW TOKEN:', newRefreshToken);
-
     const session = await UserAccessSession.findOne({ tokenHash });
+    console.log('tokenHash:', tokenHash);
+    console.log(session);
 
-    console.log('session found:', !!session);
-
-    if (!session) return res.sendStatus(401);
+    if (!session) {
+      console.log('session found: false');
+      return res.sendStatus(401);
+    }
+    console.log('session found: true');
+    console.log('persistent:', session.persistent);
 
     const expiresAt = session.persistent
       ? new Date(Date.now() + rememberTtl)
       : session.expiresAt;
 
-    await UserAccessSession.updateOne(
-      { _id: session._id },
+    const updatedSession = await UserAccessSession.updateOne(
+      { tokenHash },
       {
         tokenHash: newRefreshTokenHash,
         expiresAt
-      }
+      },
+      { new: true }
     );
+
+    if (!updatedSession) {
+      console.log('rotation failed - hash mismatch');
+      return res.sendStatus(401);
+    }
 
     setRefreshCookie(
       res,

@@ -1,6 +1,6 @@
 const GenresBadgesList = ({ genres }) => {
   return (
-    <ul className='flex gap-1'>
+    <ul className='flex gap-1 flex-wrap'>
       {genres?.map((g) => (
         <li key={g.id} className='font-semibold badge badge-sm'>
           {g.name}

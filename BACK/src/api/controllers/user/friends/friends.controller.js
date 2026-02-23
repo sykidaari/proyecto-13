@@ -51,8 +51,12 @@ export const rejectFriendRequest = removeRequest({
   emitMessage: SE.friends.requests.rejected
 });
 
-export const markAllReceivedFriendsRequestsAsSeen =
-  markAllItemsAsSeen('friends.received');
+export const markAllReceivedFriendsRequestsAsSeen = markAllItemsAsSeen(
+  'friends.received',
+  'requestDoc'
+);
+
+export const markAllFriendsAsSeen = markAllItemsAsSeen('friendsList');
 
 //? FOLLOWING AFFECT FRIENDS-MODEL
 export const removeFriend = async (req, res, next) => {

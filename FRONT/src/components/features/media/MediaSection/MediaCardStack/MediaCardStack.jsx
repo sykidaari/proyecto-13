@@ -47,7 +47,7 @@ const MediaCardStack = ({
   const [isCurrentLoaded, setIsCurrentLoaded] = useState(false);
 
   return (
-    <div className='flex flex-col h-full items-center justify-center gap-3'>
+    <div className='flex flex-col  h-full items-center justify-center gap-3 max-compact:gap-1.5'>
       <div
         className={cN(
           'relative select-none flex items-center justify-center rounded-box max-h-full min-h-0 w-fit',
@@ -79,7 +79,7 @@ const MediaCardStack = ({
           </motion.div>
         )}
       </div>
-      <div className='flex gap-2.5 items-center *:btn *:btn-lg *:p-2.5 *:btn-circle glass p-2.5 justify-center rounded-box bg-base-100/25 relative z-20'>
+      <div className='flex gap-2.5 items-center *:btn *:btn-lg *:p-2.5 *:btn-circle glass p-2.5 justify-center rounded-box bg-base-100/25 relative z-20 max-compact:*:btn-md'>
         {controlButtons?.({
           swipePositive: doPositive,
           swipeNegative: doNegative,

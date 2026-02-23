@@ -1,4 +1,5 @@
 import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText.js';
+import useText from '@/contexts/App/hooks/useText';
 import cN from '@/utils/classNameManager.js';
 import TextField from '@c/ui/form/TextField/TextField.jsx';
 import { MagnifyingGlassCircleIcon } from '@heroicons/react/24/outline';
@@ -8,19 +9,33 @@ import { useDebounce } from 'use-debounce';
 const SearchBar = ({
   onSearch,
   placeholder,
-  delay = 500,
+
   mode = 'debounce', // "debounce" | "submit"
+  debounceDelay = 500,
+
   isError,
   withErrorText = false,
+
   showLoader = false,
-  isLoading
+  isLoading,
+
+  noResults
 }) => {
   const [value, setValue] = useState('');
-  const [debounced] = useDebounce(value, delay);
+  const [debounced] = useDebounce(value, debounceDelay);
   const errorText = useServerProblemtext();
+  const noResultsText = useText('ui.searchBar.noResults');
 
   // visual changes since can't and shouldn't change isError and isLoading
   const [isIdle, setIsIdle] = useState(true);
+
+  const shouldShowNoResults =
+    isIdle && !isError && value && noResults && !isLoading;
+  const [debouncedShouldShow] = useDebounce(
+    shouldShowNoResults,
+    debounceDelay + 5
+  );
+  const renderNoResults = shouldShowNoResults && debouncedShouldShow;
 
   useEffect(() => {
     if (mode !== 'debounce') return;
@@ -71,6 +86,7 @@ const SearchBar = ({
             )}
           </div>
         </div>
+        {renderNoResults && <p className='text-xs '>{noResultsText}</p>}
       </TextField>
     </div>
   );

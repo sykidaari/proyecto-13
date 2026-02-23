@@ -24,7 +24,7 @@ const Header = () => {
   if (!title) return null;
 
   return (
-    <header className='w-full flex justify-center mt-2.5 mobile:mt-5 -mb-2.5 mobile:-mb-5'>
+    <header className='w-full flex justify-center relative z-10 bg-base-100 p-2.5 mobile:pt-5 max-compact:p-1.5'>
       <h1 className='text-primary/60 text-xl font-semibold'>{title}</h1>
     </header>
   );

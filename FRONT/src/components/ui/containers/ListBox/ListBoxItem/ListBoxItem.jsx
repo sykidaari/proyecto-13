@@ -1,0 +1,33 @@
+import cN from '@/utils/classNameManager';
+import { useState } from 'react';
+
+const ListBoxItem = ({ children, className, onClick, isNew }) => {
+  // internal isNew so isNew visual is removed inmediately upon interaction with item
+  const [renderIsNew, setRenderIsNew] = useState(isNew);
+
+  return (
+    <li
+      className={cN(
+        'w-full max-mobile:*:max-w-xs *:m-auto rounded-box p-1.5 mobile:p-2.5 relative',
+        className
+      )}
+    >
+      {renderIsNew && (
+        <div className='animate-pulse rounded-box absolute inset-1.5 mobile:inset-2.5 z-10 bg-info/25 pointer-events-none' />
+      )}
+
+      {/* onClick here so it only affects the actual content, not li which has container width */}
+      <div
+        onClick={() => {
+          setRenderIsNew(false);
+          onClick();
+        }}
+        className={cN(onClick && 'cursor-pointer')}
+      >
+        {children}
+      </div>
+    </li>
+  );
+};
+
+export default ListBoxItem;

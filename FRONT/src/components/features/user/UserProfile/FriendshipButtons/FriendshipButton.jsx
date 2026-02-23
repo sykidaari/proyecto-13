@@ -1,13 +1,11 @@
-import backend from '@/api/config/axios';
 import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText';
 import useText from '@/contexts/App/hooks/useText.js';
-import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useIsSelf from '@/contexts/UserSession/hooks/useIsSelf';
+import useFriendshipMutation from '@/hooks/people/useFriendshipMutation';
 import useRelationship from '@/hooks/people/useRelationship';
 import cN from '@/utils/classNameManager.js';
 import { createRelationshipConfig } from '@c/features/user/UserProfile/FriendshipButtons/helpers';
 import { XCircleIcon } from '@heroicons/react/24/outline';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const FriendshipButtons = ({ userId }) => {
   const {
@@ -18,8 +16,6 @@ const FriendshipButtons = ({ userId }) => {
     removeFriendship: removeFriendText
   } = useText('features.people.friendship');
   const errorMessage = useServerProblemtext();
-
-  const currentUserId = useCurrentUserId();
 
   const isSelf = useIsSelf(userId);
 
@@ -42,80 +38,11 @@ const FriendshipButtons = ({ userId }) => {
   const config =
     relationshipConfig[relationshipState] ?? relationshipConfig.none;
 
-  const queryClient = useQueryClient();
-  console.log(userId);
   const {
     mutate,
     isPending: mutationIsPending,
     isError
-  } = useMutation({
-    mutationFn: async ({ action }) => {
-      const body = { otherUserId: userId };
-      switch (action) {
-        case 'remove':
-          await backend.patch(
-            `/user/${currentUserId}/private/friends/remove`,
-            body
-          );
-          return {
-            isFriend: false,
-            hasSentRequest: false,
-            hasReceivedRequest: false
-          };
-
-        case 'sendRequest': {
-          await backend.patch(
-            `/user/${currentUserId}/private/friends/request/send`,
-            body
-          );
-          return {
-            isFriend: false,
-            hasSentRequest: true,
-            hasReceivedRequest: false
-          };
-        }
-
-        case 'acceptRequest':
-          await backend.patch(
-            `/user/${currentUserId}/private/friends/request/accept`,
-            body
-          );
-          return {
-            isFriend: true,
-            hasSentRequest: false,
-            hasReceivedRequest: false
-          };
-
-        case 'cancelRequest':
-          await backend.patch(
-            `/user/${currentUserId}/private/friends/request/cancel`,
-            body
-          );
-          return {
-            isFriend: false,
-            hasSentRequest: false,
-            hasReceivedRequest: false
-          };
-
-        case 'rejectRequest':
-          await backend.patch(
-            `/user/${currentUserId}/private/friends/request/reject`,
-            body
-          );
-          return {
-            isFriend: false,
-            hasSentRequest: false,
-            hasReceivedRequest: false
-          };
-      }
-    },
-    onSuccess: (newState) => {
-      queryClient.setQueryData(
-        ['relationship', currentUserId, userId],
-        newState
-      );
-    }
-  });
+  } = useFriendshipMutation(userId);
 
   if (isSelf) {
     console.warn(
