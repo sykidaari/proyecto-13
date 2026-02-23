@@ -67,7 +67,7 @@ const TEXTS = {
             title: 'Friends',
             noFriends: 'Your friends list is empty.'
           },
-          receivedRequestsSection: {
+          receivedFriendRequestsSection: {
             title: 'Received friend requests',
             noRequests: 'You have no pending requests.'
           }

@@ -77,6 +77,10 @@ const useFriendshipMutation = (targetUserId) => {
       queryClient.refetchQueries({
         queryKey: ['friendsList', currentUserId]
       });
+
+      queryClient.refetchQueries({
+        queryKey: ['requests', currentUserId]
+      });
     }
   });
 };

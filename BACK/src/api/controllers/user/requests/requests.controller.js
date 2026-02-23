@@ -8,7 +8,9 @@ import Friends from '../../../models/user/friends/friends.model.js';
 import ERR from '../../../../constants/domain/errorCodes.js';
 
 //* GET
-export const getRequests = getUserChild;
+export const getRequests = getUserChild({
+  populateFields: ['friends.received.user', 'sessions.received.user']
+});
 
 //? The following controller factories are used in controllers of models that use requests:
 //? - Friends

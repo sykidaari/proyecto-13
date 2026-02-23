@@ -10,41 +10,44 @@ import {
 import UserAccessSession from '../../models/userAccessSession/userAccessSession.model.js';
 
 export const refreshAccessToken = async (req, res, next) => {
+  const requestId = crypto.randomUUID();
+  const now = new Date().toISOString();
+
+  console.log(`[REFRESH START] ${now} id=${requestId}`);
+
   const refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken) return res.sendStatus(401);
+  if (!refreshToken) {
+    console.log(`[REFRESH 401 NO COOKIE] id=${requestId}`);
+    return res.sendStatus(401);
+  }
 
   const tokenHash = hashRefreshToken(refreshToken);
 
   try {
-    const newRefreshToken = generateRefreshToken();
-    const newRefreshTokenHash = hashRefreshToken(newRefreshToken);
-
-    const session = await UserAccessSession.findOne({ tokenHash });
-    console.log('tokenHash:', tokenHash);
-    console.log(session);
+    const session = await UserAccessSession.findOne({ tokenHash }).lean();
 
     if (!session) {
-      console.log('session found: false');
+      console.log(`[REFRESH 401 NO SESSION] id=${requestId} hash=${tokenHash}`);
       return res.sendStatus(401);
     }
-    console.log('session found: true');
-    console.log('persistent:', session.persistent);
+
+    const newRefreshToken = generateRefreshToken();
+    const newRefreshTokenHash = hashRefreshToken(newRefreshToken);
 
     const expiresAt = session.persistent
       ? new Date(Date.now() + rememberTtl)
       : session.expiresAt;
 
-    const updatedSession = await UserAccessSession.updateOne(
+    const rotated = await UserAccessSession.findOneAndUpdate(
       { tokenHash },
-      {
-        tokenHash: newRefreshTokenHash,
-        expiresAt
-      },
-      { new: true }
+      { tokenHash: newRefreshTokenHash, expiresAt },
+      { returnDocument: 'after' }
     );
 
-    if (!updatedSession) {
-      console.log('rotation failed - hash mismatch');
+    if (!rotated) {
+      console.log(
+        `[REFRESH 401 ROTATION LOST] id=${requestId} hash=${tokenHash}`
+      );
       return res.sendStatus(401);
     }
 
@@ -56,6 +59,7 @@ export const refreshAccessToken = async (req, res, next) => {
 
     const accessToken = generateAccessToken(session.user);
 
+    console.log(`[REFRESH SUCCESS] id=${requestId}`);
     return res.status(200).json({ accessToken });
   } catch (err) {
     next(err);

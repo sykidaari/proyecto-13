@@ -134,10 +134,8 @@ export const markAllItemsAsSeen =
   async (req, res, next) => {
     const { [targetDoc]: doc, status } = req;
 
-    console.log('doc:', doc);
     const list = resolvePath(doc, field);
 
-    console.log('list:', list);
     for (const item of list) {
       item.isNewItem = false;
     }

@@ -12,6 +12,7 @@ import { customError } from '../utils/controllerUtils.js';
 export const setBasicAccessFlags = async (req, res, next) => {
   req.user = null;
   req.isAdmin = false;
+  req.authError = null;
 
   try {
     const auth = req.headers.authorization;
@@ -25,7 +26,7 @@ export const setBasicAccessFlags = async (req, res, next) => {
     req.user = user;
     req.isAdmin = user.role === 'admin';
   } catch (err) {
-    // ignores errors, continues, just keeps initial values
+    req.authError = err?.name || 'INVALID_TOKEN';
   }
   next();
 };

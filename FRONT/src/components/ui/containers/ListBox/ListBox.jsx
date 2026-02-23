@@ -7,10 +7,12 @@ const ListBox = ({
   isLoading,
   isError,
   noItems,
-  noItemsText
+  noItemsText,
+
+  className
 }) => {
   return (
-    <SectionBox>
+    <SectionBox className={className}>
       <section className='w-full h-full flex flex-col'>
         <div className='pb-2 m-auto'>
           <h3 className='badge badge-secondary badge-soft max-compact:badge-sm'>

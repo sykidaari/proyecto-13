@@ -60,7 +60,7 @@ const FriendsSection = () => {
               smallerImg
             />
           </ListBoxItem>
-        ))}{' '}
+        ))}
       </ListBox>
       {selectedUser && (
         <UserProfileModal

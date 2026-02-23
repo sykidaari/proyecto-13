@@ -44,7 +44,7 @@ const People = () => {
           />
         ))}
 
-      <MultiListContainer>
+      <MultiListContainer customFlexSizes>
         <FriendsSection />
         <ReceivedFriendRequestsSection />
       </MultiListContainer>

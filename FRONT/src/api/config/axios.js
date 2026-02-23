@@ -35,8 +35,7 @@ backend.interceptors.response.use(
   async (err) => {
     const originalReq = err.config;
 
-    // SKIP: public route
-    if (!requestContext.accessToken) return Promise.reject(err);
+    if (!err.response) return Promise.reject(err);
 
     // SKIP: other errors, not token related
     if (err.response?.status !== 401) return Promise.reject(err);
@@ -83,3 +82,20 @@ backend.interceptors.response.use(
     }
   }
 );
+
+const refreshClient = axios.create({
+  baseURL: BACKEND_BASE_URL,
+  withCredentials: true,
+  timeout: 8000
+});
+
+let refreshPromise = null;
+export const refreshAccessToken = async () => {
+  if (!refreshPromise) {
+    refreshPromise = refreshClient.post('/userAccessSession').finally(() => {
+      refreshPromise = null;
+    });
+  }
+
+  return refreshPromise;
+};
