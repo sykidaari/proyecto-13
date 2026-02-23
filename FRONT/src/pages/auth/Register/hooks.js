@@ -1,6 +1,7 @@
 import backend from '@/api/config/axios.js';
 import useText from '@/contexts/App/hooks/useText.js';
 import { useLoginMutation } from '@/hooks/useLoginMutation.js';
+import { IS_DEV } from '@/utils/env';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -36,7 +37,7 @@ export const useMultiStepRegister = (stayLoggedInChecked, setServerError) => {
           fd.append('img', img);
           await backend.patch(`/user/${userId}/img`, fd);
         } catch (error) {
-          console.log(error);
+          if (IS_DEV) console.log(error);
         }
       }
 

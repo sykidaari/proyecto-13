@@ -28,7 +28,6 @@ const ReceivedFriendRequestsSection = ({ secondary = false }) => {
     isSuccess
   );
 
-  console.log(data);
   const receivedRequests = data?.friends?.received;
 
   return (

@@ -1,10 +1,31 @@
 import cN from '@/utils/classNameManager.js';
-import React from 'react';
+import NotificationIndicator from '@c/features/user/currentUser/NotificationIndicator/NotificationIndicator';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-const MenuNavItem = ({ to, children, title, className }) => {
+const MenuNavItem = ({
+  to,
+  children,
+  title,
+  className,
+  featured = false,
+  notify = false
+}) => {
+  const [renderNotify, setRenderNotify] = useState(notify);
+
+  useEffect(() => {
+    setRenderNotify(notify);
+  }, [notify]);
+
+  console.log(notify, renderNotify);
+
   return (
-    <li className='tooltip' data-tip={title}>
+    <li
+      className={cN('tooltip', featured && 'tooltip-secondary')}
+      data-tip={title}
+      onClick={() => setRenderNotify(false)}
+    >
+      {renderNotify && <NotificationIndicator />}
       <NavLink
         to={to}
         className={({ isActive }) =>

@@ -15,8 +15,6 @@ const useRelationship = (targetUserId) => {
         `/user/${currentUserId}/private/people/${targetUserId}/relationship/`
       );
 
-      console.log(data);
-
       return data;
     },
     enabled: !isSelf

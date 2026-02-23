@@ -30,7 +30,7 @@ const ListBox = ({
               {noItemsText}
             </p>
           ) : (
-            <ul className='size-full flex flex-col gap-2.5 items-center overflow-auto *:shrink-0'>
+            <ul className='size-full flex flex-col gap-2.5 p-1.5 mobile:p-2.5 items-center overflow-auto *:shrink-0'>
               {children}
             </ul>
           )}

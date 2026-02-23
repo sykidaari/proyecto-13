@@ -5,6 +5,12 @@
     }
   ],
   "settings": {
-    "javascript.preferences.importModuleSpecifier": "non-relative"
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "folder-color.pathColors": [
+      {
+        "folderPath": "proyecto 13\\FRONT\\src\\pages\\private\\Notifications\\",
+        "color": "foldercolorizer.color_660000"
+      }
+    ]
   }
 }

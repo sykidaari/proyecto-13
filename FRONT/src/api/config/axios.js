@@ -59,7 +59,7 @@ backend.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const res = await backend.post('/userAccessSession');
+      const res = await refreshAccessToken();
       const newToken = res.data.accessToken;
 
       updateRequestContext({ accessToken: newToken });

@@ -18,14 +18,11 @@ import Register from '@/pages/auth/Register/Register.jsx';
 import useIsInitializing from '@/contexts/UserSession/hooks/useInitializing.js';
 import Discover from '@/pages/private/Discover/Discover.jsx';
 import People from '@/pages/private/People/People.jsx';
-import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 
 //! REGISTER IMG UPLOAD DOESN'T WORK
 
 function App() {
   const isInitializing = useIsInitializing();
-
-  console.log(useCurrentUserId());
 
   if (isInitializing)
     return (

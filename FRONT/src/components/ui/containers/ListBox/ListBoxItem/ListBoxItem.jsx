@@ -11,12 +11,12 @@ const ListBoxItem = ({ children, className, onClick, isNew }) => {
   return (
     <li
       className={cN(
-        'w-full max-mobile:*:max-w-xs *:m-auto rounded-box p-1.5 mobile:p-2.5 relative',
+        'w-full max-mobile:*:max-w-xs *:m-auto rounded-box relative',
         className
       )}
     >
       {renderIsNew && (
-        <div className='animate-pulse rounded-box absolute inset-1.5 mobile:inset-2.5 z-10 bg-info/25 pointer-events-none'>
+        <div className='animate-pulse rounded-box absolute inset-0 z-10 bg-info/25 pointer-events-none'>
           <span className='badge badge-xs badge-info uppercase flex m-auto mt-1'>
             {isNewText}
           </span>
