@@ -46,7 +46,7 @@ const People = () => {
 
       <MultiListContainer customFlexSizes>
         <FriendsSection />
-        <ReceivedFriendRequestsSection />
+        <ReceivedFriendRequestsSection secondary />
       </MultiListContainer>
     </FullLengthPageWrapper>
   );

@@ -29,10 +29,10 @@ const ROUTE_PATHS = {
       rel: 'profile',
       abs: '/app/profile'
     },
-    notifications: {
-      rel: 'notifications',
-      abs: '/app/notifications'
-    },
+    // notifications: {
+    //   rel: 'notifications',
+    //   abs: '/app/notifications'
+    // },
     sessions: {
       rel: 'sessions',
       abs: '/app/sessions'

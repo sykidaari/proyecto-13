@@ -1,13 +1,12 @@
-import backend from '@/api/config/axios';
 import useText from '@/contexts/App/hooks/useText';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useMarkAllItemsAsSeen from '@/hooks/useMarkAllItemsAsSeen';
+import useFriendsList from '@/hooks/user/currentUser/useFriendsList';
 import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserProfileCard';
 import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileModal/hooks';
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
-import { useQuery } from '@tanstack/react-query';
 
 const FriendsSection = () => {
   const { title: titleText, noFriends: noItemsText } = useText(
@@ -16,16 +15,7 @@ const FriendsSection = () => {
 
   const currentUserId = useCurrentUserId();
 
-  const { data, isPending, isError, isSuccess } = useQuery({
-    queryKey: ['friendsList', currentUserId],
-    queryFn: async () => {
-      const { data } = await backend.get(
-        `/user/${currentUserId}/private/friends`
-      );
-      return data;
-    },
-    enabled: !!currentUserId
-  });
+  const { data, isPending, isError, isSuccess } = useFriendsList();
 
   useMarkAllItemsAsSeen(`/user/${currentUserId}/private/friends`, isSuccess);
 

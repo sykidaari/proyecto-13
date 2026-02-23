@@ -8,7 +8,7 @@ import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/User
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
 
-const ReceivedFriendRequestsSection = () => {
+const ReceivedFriendRequestsSection = ({ secondary = false }) => {
   const { title: titleText, noRequests: noItemsText } = useText(
     'features.user.currentUser.receivedFriendRequestsSection'
   );
@@ -39,6 +39,7 @@ const ReceivedFriendRequestsSection = () => {
         isLoading={isPending}
         isError={isError}
         noItems={!receivedRequests || !receivedRequests.length}
+        secondary={secondary}
       >
         {receivedRequests &&
           receivedRequests.map((item) => (

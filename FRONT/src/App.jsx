@@ -71,10 +71,10 @@ function App() {
           <Route path={R.private.discover.rel} element={<Discover />} />
           <Route path={R.private.people.rel} element={<People />} />
           <Route path={R.private.profile.rel} element={<Profile />} />
-          <Route
+          {/* <Route
             path={R.private.notifications.rel}
             element={<Notifications />}
-          />
+          /> */}
           <Route path={R.private.sessions.rel} element={<Sessions />} />
           <Route path={R.private.settings.rel} element={<Settings />} />
         </Route>

@@ -5,7 +5,7 @@ import R from '@/constants/client/routePaths.js';
 const Header = () => {
   const location = useLocation();
 
-  const { discover, people, sessions, notifications, profile } = useText(
+  const { discover, people, sessions, profile } = useText(
     'layouts.private.pageTitles'
   );
 
@@ -15,7 +15,7 @@ const Header = () => {
     [R.private.discover.abs, discover],
     [R.private.people.abs, people],
     [R.private.sessions.abs, sessions],
-    [R.private.notifications.abs, notifications],
+    // [R.private.notifications.abs, notifications],
     [R.private.profile.abs, profile]
   ];
 

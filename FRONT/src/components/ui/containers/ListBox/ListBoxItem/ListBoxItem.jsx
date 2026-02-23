@@ -1,7 +1,10 @@
+import useText from '@/contexts/App/hooks/useText';
 import cN from '@/utils/classNameManager';
 import { useState } from 'react';
 
 const ListBoxItem = ({ children, className, onClick, isNew }) => {
+  const isNewText = useText('features.isNewItem');
+
   // internal isNew so isNew visual is removed inmediately upon interaction with item
   const [renderIsNew, setRenderIsNew] = useState(isNew);
 
@@ -13,7 +16,11 @@ const ListBoxItem = ({ children, className, onClick, isNew }) => {
       )}
     >
       {renderIsNew && (
-        <div className='animate-pulse rounded-box absolute inset-1.5 mobile:inset-2.5 z-10 bg-info/25 pointer-events-none' />
+        <div className='animate-pulse rounded-box absolute inset-1.5 mobile:inset-2.5 z-10 bg-info/25 pointer-events-none'>
+          <span className='badge badge-xs badge-info uppercase flex m-auto mt-1'>
+            {isNewText}
+          </span>
+        </div>
       )}
 
       {/* onClick here so it only affects the actual content, not li which has container width */}

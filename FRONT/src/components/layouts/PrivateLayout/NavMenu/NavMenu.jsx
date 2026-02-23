@@ -32,9 +32,9 @@ const NavMenu = () => {
           <MenuNavItem to={R.private.sessions.abs} title={sessions}>
             <AppLogo />
           </MenuNavItem>
-          <MenuNavItem to={R.private.notifications.abs} title={notifications}>
+          {/* <MenuNavItem to={R.private.notifications.abs} title={notifications}>
             <BellIcon />
-          </MenuNavItem>
+          </MenuNavItem> */}
           <MenuNavItem
             to={R.private.profile.abs}
             title={profile}

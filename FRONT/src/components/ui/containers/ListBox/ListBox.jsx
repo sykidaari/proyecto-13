@@ -9,10 +9,10 @@ const ListBox = ({
   noItems,
   noItemsText,
 
-  className
+  secondary = false
 }) => {
   return (
-    <SectionBox className={className}>
+    <SectionBox className={secondary && 'bg-base-300'}>
       <section className='w-full h-full flex flex-col'>
         <div className='pb-2 m-auto'>
           <h3 className='badge badge-secondary badge-soft max-compact:badge-sm'>

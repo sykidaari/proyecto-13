@@ -68,7 +68,7 @@ const TEXTS = {
             noFriends: 'Your friends list is empty.'
           },
           receivedFriendRequestsSection: {
-            title: 'Received friend requests',
+            title: 'Friend requests',
             noRequests: 'You have no pending requests.'
           }
         }
@@ -96,7 +96,8 @@ const TEXTS = {
           rejectFriendship: 'Reject friend request',
           removeFriendship: 'Remove friend'
         }
-      }
+      },
+      isNewItem: 'NEW'
     },
 
     layouts: {
@@ -115,7 +116,7 @@ const TEXTS = {
           discover: 'Discover',
           people: 'People',
           sessions: 'Sessions',
-          notifications: 'Notifications',
+          // notifications: 'Notifications',
           profile: 'Profile'
         }
       }
