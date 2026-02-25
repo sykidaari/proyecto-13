@@ -11,7 +11,16 @@ const userAccessSessionSchema = buildSchema(
 
     tokenHash: requiredString,
     expiresAt: { type: Date, required: true },
-    persistent: { type: Boolean, required: true }
+    persistent: { type: Boolean, required: true },
+
+    previousTokenHash: {
+      type: String,
+      default: null
+    },
+    previousValidUntil: {
+      type: Date,
+      default: null
+    }
   },
   'userAccessSessions'
 );

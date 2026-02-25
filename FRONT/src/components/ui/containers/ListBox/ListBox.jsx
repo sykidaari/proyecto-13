@@ -13,14 +13,14 @@ const ListBox = ({
 }) => {
   return (
     <SectionBox className={secondary && 'bg-base-300'}>
-      <section className='w-full h-full flex flex-col'>
+      <section className='w-full h-full flex flex-col min-h-20'>
         <div className='pb-2 m-auto'>
           <h3 className='badge badge-secondary badge-soft max-compact:badge-sm'>
             {title}
           </h3>
         </div>
 
-        <div className='flex-1 bg-base-200 rounded-box relative flex justify-center items-center'>
+        <div className='flex-1 bg-base-200 rounded-box relative flex justify-center items-center min-h-0'>
           {isLoading ? (
             <div className='skeleton size-full absolute' />
           ) : isError ? (

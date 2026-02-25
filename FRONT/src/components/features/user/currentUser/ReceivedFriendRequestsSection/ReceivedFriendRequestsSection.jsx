@@ -54,6 +54,7 @@ const ReceivedFriendRequestsSection = ({ secondary = false }) => {
                 user={item.user}
                 hideRelationshipBanner
                 minimal
+                listItem
               />
             </ListBoxItem>
           ))}

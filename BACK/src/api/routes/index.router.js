@@ -17,7 +17,11 @@ mainRouter
   .use([rateLimit.general, setBasicAccessFlags])
 
   .use('/user', userRouter)
-  .use('/:userId/session', [setIsSelf, requireSelfOrAdmin], sessionRouter)
+  .use(
+    '/:userId/session',
+    [requireUser, setIsSelf, requireSelfOrAdmin],
+    sessionRouter
+  )
   .use('/media', [requireUser], mediaRouter)
   .use('/top', [rateLimit.streamingAvailabilityDemo], topShowsImgsRouter)
 

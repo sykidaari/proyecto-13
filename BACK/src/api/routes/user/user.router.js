@@ -73,10 +73,10 @@ userRouter
   )
   .delete('/', [requireUser], logoutUser);
 
-userRouter.use('/:userId', [setIsSelf], existingUserRouter);
+userRouter.use('/:userId', [requireUser, setIsSelf], existingUserRouter);
 
 existingUserRouter
-  .get('/', [requireUser], getUserById)
+  .get('/', getUserById)
 
   .patch(
     // BODY IS VALIDATED IN CONTROLLER BECAUSE IT'S DYNAMIC

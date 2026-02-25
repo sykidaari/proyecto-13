@@ -37,6 +37,10 @@ backend.interceptors.response.use(
 
     if (!err.response) return Promise.reject(err);
 
+    if (originalReq.url.includes('/userAccessSession')) {
+      return Promise.reject(err);
+    }
+
     // SKIP: other errors, not token related
     if (err.response?.status !== 401) return Promise.reject(err);
 
@@ -50,6 +54,7 @@ backend.interceptors.response.use(
         pendingRequests.push({ resolve, reject });
       })
         .then((newToken) => {
+          originalReq.headers = originalReq.headers || {};
           originalReq.headers.Authorization = `Bearer ${newToken}`;
           return backend(originalReq);
         })

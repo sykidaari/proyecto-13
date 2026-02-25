@@ -28,9 +28,10 @@ const UserProfileCard = ({
   return (
     <section
       className={cN(
-        'flex flex-col mobile:flex-row max-mini-override:flex-col max-short:flex-row items-center justify-center w-full  p-7 max-small:p-3.5  gap-5 max-small:gap-2.5 max-mini-override:gap-1.5 rounded-box  h-full',
+        'flex flex-col mobile:flex-row max-short:flex-row items-center justify-center w-full  p-7 max-small:p-3.5  gap-5 max-small:gap-2.5 rounded-box  h-full',
         minimal ? 'flex-row p-1.5 gap-2.5 min-h-8' : 'min-h-30',
-        !listItem && 'glass bg-base-200'
+        !listItem &&
+          'glass bg-base-200  max-mini-override:flex-col max-mini-override:gap-1.5'
       )}
     >
       {isError ? (
@@ -43,8 +44,8 @@ const UserProfileCard = ({
             <ProfilePicture
               userImg={user.img}
               className={cN(
-                '*:size-30 max-tiny:*:size-20',
-                minimal && '*:size-8',
+                '*:size-30',
+                minimal ? '*:size-8' : 'max-tiny:*:size-20',
                 smallerImg && '*:size-25'
               )}
             />
@@ -59,13 +60,13 @@ const UserProfileCard = ({
           >
             <h3
               className={cN(
-                'text-xl font-semibold text-primary max-compact:text-lg',
-                minimal && 'text-sm'
+                'text-xl font-semibold text-primary ',
+                minimal ? 'text-sm' : 'max-compact:text-lg'
               )}
             >
               {user.userName}
             </h3>
-            <h4 className={cN('max-compact:text-sm', minimal && 'text-xs')}>
+            <h4 className={cN(minimal ? 'text-xs' : 'max-compact:text-sm')}>
               {user.nickName}
             </h4>
             {!hideRelationshipBanner && (

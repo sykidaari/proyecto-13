@@ -1,7 +1,7 @@
 import cN from '@/utils/classNameManager.js';
 import NotificationIndicator from '@c/features/user/currentUser/NotificationIndicator/NotificationIndicator';
-import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const MenuNavItem = ({
   to,
@@ -17,7 +17,15 @@ const MenuNavItem = ({
     setRenderNotify(notify);
   }, [notify]);
 
-  console.log(notify, renderNotify);
+  const location = useLocation();
+  const prevPath = useRef(location.pathname);
+  useEffect(() => {
+    if (prevPath.current !== location.pathname) {
+      setRenderNotify(false);
+    }
+
+    prevPath.current = location.pathname;
+  }, [location.pathname]);
 
   return (
     <li

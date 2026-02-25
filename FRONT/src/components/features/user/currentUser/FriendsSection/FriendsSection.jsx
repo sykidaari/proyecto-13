@@ -17,7 +17,11 @@ const FriendsSection = () => {
 
   const { data, isPending, isError, isSuccess } = useFriendsList();
 
-  useMarkAllItemsAsSeen(`/user/${currentUserId}/private/friends`, isSuccess);
+  useMarkAllItemsAsSeen(
+    `/user/${currentUserId}/private/friends`,
+    isSuccess,
+    'friendsList'
+  );
 
   const {
     user: selectedUser,
