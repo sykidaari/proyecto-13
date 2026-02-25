@@ -1,7 +1,7 @@
 import R from '@/constants/client/routePaths.js';
 import isSelf from '@/contexts/UserSession/helpers/isSelf.js';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId.js';
-import UsersSearch from '@/pages/private/Sessions/UsersSearch/UsersSearch.jsx';
+import UsersSearch from '@c/features/user/UsersSearch/UsersSearch.jsx';
 import FriendsSection from '@c/features/user/currentUser/FriendsSection/FriendsSection';
 import ReceivedFriendRequestsSection from '@c/features/user/currentUser/ReceivedFriendRequestsSection/ReceivedFriendRequestsSection';
 import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileModal/hooks';

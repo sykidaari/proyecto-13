@@ -65,7 +65,8 @@ const TEXTS = {
         currentUser: {
           friendsSection: {
             title: 'Friends',
-            noFriends: 'Your friends list is empty.'
+            noFriends: 'Your friends list is empty.',
+            search: 'Search your friends'
           },
           receivedFriendRequestsSection: {
             title: 'Friend requests',

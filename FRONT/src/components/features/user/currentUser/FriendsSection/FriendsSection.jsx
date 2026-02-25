@@ -7,16 +7,20 @@ import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileMod
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
+import SearchBar from '@c/ui/SearchBar/SearchBar';
+import { useState } from 'react';
 
 const FriendsSection = () => {
-  const { title: titleText, noFriends: noItemsText } = useText(
-    'features.user.currentUser.friendsSection'
-  );
+  const {
+    title: titleText,
+    noFriends: noItemsText,
+    search: SearchBarPlaceholder
+  } = useText('features.user.currentUser.friendsSection');
 
   const currentUserId = useCurrentUserId();
 
   const { data, isPending, isError, isSuccess } = useFriendsList();
-
+  console.log(data);
   useMarkAllItemsAsSeen(
     `/user/${currentUserId}/private/friends`,
     isSuccess,
@@ -30,6 +34,16 @@ const FriendsSection = () => {
     setOpen: setSelectedUserOpen
   } = useUserProfileModal();
 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const friends = data?.friendsList ?? [];
+
+  const filteredFriends = searchQuery.trim()
+    ? friends.filter(({ user }) =>
+        user.userName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : friends;
+
   return (
     <>
       <ListBox
@@ -38,8 +52,18 @@ const FriendsSection = () => {
         noItems={!data?.friendsList || !data?.friendsList.length}
         noItemsText={noItemsText}
         isError={isError}
+        topContent={
+          <div className='max-mobile:*:max-w-xs *:m-auto'>
+            <SearchBar
+              placeholder={SearchBarPlaceholder}
+              onSearch={setSearchQuery}
+              noResults={!filteredFriends.length}
+              debounceDelay={150}
+            />
+          </div>
+        }
       >
-        {data?.friendsList.map((item) => (
+        {filteredFriends.map((item) => (
           <ListBoxItem
             key={item._id}
             isNew={item.isNewItem}

@@ -21,20 +21,29 @@ const MediaCardStack = ({
   const current = medias[index];
   const next = medias[index + 1];
 
+  const [canGoBack, setCanGoBack] = useState(false);
+
   const doPositive = () => {
     if (!current) return;
     onPositive?.(current);
     setIndex((i) => i + 1);
+
+    setCanGoBack(true);
   };
 
   const doNegative = () => {
     if (!current) return;
     onNegative?.(current);
     setIndex((i) => i + 1);
+
+    setCanGoBack(true);
   };
 
   const goBack = () => {
+    if (!canGoBack) return;
+
     setIndex((i) => (i > 0 ? i - 1 : 0));
+    setCanGoBack(false);
   };
 
   const handleEnd = (_, info) => {
@@ -83,7 +92,8 @@ const MediaCardStack = ({
         {controlButtons?.({
           swipePositive: doPositive,
           swipeNegative: doNegative,
-          goBack
+          goBack,
+          canGoBack: canGoBack && index > 0
         })}
       </div>
     </div>

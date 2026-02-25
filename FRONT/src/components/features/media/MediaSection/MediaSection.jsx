@@ -1,4 +1,5 @@
 import useText from '@/contexts/App/hooks/useText.js';
+import cN from '@/utils/classNameManager';
 import MediaCard from '@c/features/media/MediaSection/MediaCardStack/MediaCard/MediaCard.jsx';
 import MediaCardStack from '@c/features/media/MediaSection/MediaCardStack/MediaCardStack.jsx';
 
@@ -43,12 +44,20 @@ const MediaSection = ({
             specifyShowType={specifyShowType}
             onPositive={onPositive}
             onNegative={onNegative}
-            controlButtons={({ swipePositive, swipeNegative, goBack }) => (
+            controlButtons={({
+              swipePositive,
+              swipeNegative,
+              goBack,
+              canGoBack
+            }) => (
               <>
                 {hasGoBackButton && (
                   <button
                     onClick={goBack}
-                    className=' btn-warning btn-dash size-9'
+                    className={cN(
+                      ' btn-warning btn-dash size-9',
+                      !canGoBack && 'btn-disabled'
+                    )}
                   >
                     <ArrowUturnLeftIcon />
                   </button>

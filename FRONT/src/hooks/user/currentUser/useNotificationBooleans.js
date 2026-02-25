@@ -17,7 +17,7 @@ const useNotificationBooleans = () => {
     (item) => item.isNewItem
   );
   const sessionsNotify = hasNewSessionRequests;
-  console.log('useNotifications', peopleNotify, requestsData);
+
   return { peopleNotify, sessionsNotify };
 };
 

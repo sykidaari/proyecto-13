@@ -1,9 +1,11 @@
+import cN from '@/utils/classNameManager';
 import SectionBox from '@c/ui/containers/SectionBox/SectionBox';
 import ServerProblem from '@c/ui/ErrorMessage/ServerProblem/ServerProblem';
 
 const ListBox = ({
   title,
   children,
+  topContent,
   isLoading,
   isError,
   noItems,
@@ -20,7 +22,10 @@ const ListBox = ({
           </h3>
         </div>
 
-        <div className='flex-1 bg-base-200 rounded-box relative flex justify-center items-center min-h-0'>
+        <div className='flex-1 bg-base-200 rounded-box relative flex flex-col justify-center items-center min-h-0'>
+          {topContent && (
+            <div className='w-full p-1.5 mobile:p-2.5 z-10'>{topContent}</div>
+          )}
           {isLoading ? (
             <div className='skeleton size-full absolute' />
           ) : isError ? (
@@ -30,7 +35,14 @@ const ListBox = ({
               {noItemsText}
             </p>
           ) : (
-            <ul className='size-full flex flex-col gap-2.5 p-1.5 mobile:p-2.5 items-center overflow-auto *:shrink-0'>
+            <ul
+              className={cN(
+                'size-full flex flex-col gap-2.5 items-center overflow-auto *:shrink-0',
+                topContent
+                  ? 'px-1.5 pb-1.5 mobile:px-2.5 mobile:pb-2.5'
+                  : 'p-1.5 mobile:p-2.5'
+              )}
+            >
               {children}
             </ul>
           )}
