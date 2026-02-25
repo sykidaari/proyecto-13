@@ -16,7 +16,8 @@ import { markAllItemsAsSeen } from '../user/userChildren.controller.js';
 const addMediaToField = (mediaId, field) => {
   const exists = field.some((entry) => entry.toString() === mediaId.toString());
 
-  if (exists) throw customError(404, ERR.session.conflict.mediaAlreadyExists);
+  if (exists)
+    throw customError(404, ERR.session.conflict.mediaAlreadyExists, { field });
 
   field.addToSet(mediaId);
 };
@@ -42,7 +43,6 @@ export const getAllSessions = async (req, res, next) => {
     const sessions = await Session.find()
       .populate([
         { path: 'participants.user', select: 'userName' },
-        'discardedMedias',
         'matchedMedias'
       ])
       .lean();
@@ -270,12 +270,25 @@ export const proposeMatch = async (req, res, next) => {
     body: { mediaId }
   } = req;
 
-  const isDiscarded = session.discardedMedias.some(
-    (media) => media.toString() === mediaId.toString()
+  const discardEntry = session.discardedMedias.find(
+    (entry) => entry.mediaId.toString() === mediaId.toString()
   );
 
-  if (isDiscarded)
-    throw customError(403, ERR.session.conflict.mediaIsDiscarded);
+  if (discardEntry) {
+    const isSameUser =
+      discardEntry.user.toString() === currentUserId.toString();
+
+    const withinUndoWindow =
+      Date.now() - discardEntry.discardedAt.getTime() < 7000;
+
+    if (!isSameUser || !withinUndoWindow) {
+      throw customError(403, ERR.session.conflict.mediaIsDiscarded);
+    }
+
+    session.discardedMedias = session.discardedMedias.filter(
+      (entry) => entry.mediaId.toString() !== mediaId.toString()
+    );
+  }
 
   const { currentParticipant, otherParticipants } = splitParticipants(
     session,
@@ -285,12 +298,19 @@ export const proposeMatch = async (req, res, next) => {
   addMediaToField(mediaId, currentParticipant.matchProposals);
 
   const isMatch = session.participants.every((participant) =>
-    participant.matchProposals.includes(mediaId)
+    participant.matchProposals.some(
+      (id) => id.toString() === mediaId.toString()
+    )
   );
-
   if (isMatch) {
     addMediaToField(mediaId, session.matchedMedias);
     session.lastMatchAt = new Date();
+
+    session.participants.forEach((participant) => {
+      participant.matchProposals = participant.matchProposals.filter(
+        (id) => id.toString() !== mediaId.toString()
+      );
+    });
   }
 
   try {
@@ -323,7 +343,27 @@ export const discardMedia = async (req, res, next) => {
 
   if (isMatched) throw customError(403, ERR.session.conflict.mediaIsMatched);
 
-  addMediaToField(mediaId, session.discardedMedias);
+  const exists = session.discardedMedias.some(
+    (entry) =>
+      entry.mediaId.toString() === mediaId.toString() &&
+      entry.user.toString() === currentUserId.toString()
+  );
+
+  if (exists) {
+    throw customError(404, ERR.session.conflict.mediaAlreadyExists);
+  }
+
+  session.discardedMedias.push({
+    mediaId,
+    user: currentUserId,
+    discardedAt: new Date()
+  });
+
+  session.participants.forEach((participant) => {
+    participant.matchProposals = participant.matchProposals.filter(
+      (id) => id.toString() !== mediaId.toString()
+    );
+  });
 
   try {
     await session.save();

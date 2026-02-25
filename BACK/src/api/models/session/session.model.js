@@ -3,6 +3,8 @@ import {
   buildSchema,
   mediaRef,
   requiredString,
+  userRef,
+  userRefRequired,
   userRefRequiredUnique
 } from '../../../utils/modelUtils.js';
 import ERR from '../../../constants/domain/errorCodes.js';
@@ -44,7 +46,13 @@ const SessionSchema = buildSchema(
       }
     },
 
-    discardedMedias: [mediaRef],
+    discardedMedias: [
+      {
+        mediaId: { ...mediaRef, required: true },
+        user: userRefRequired,
+        discardedAt: { type: Date, required: true }
+      }
+    ],
     matchedMedias: [mediaRef],
 
     lastMatchAt: {
