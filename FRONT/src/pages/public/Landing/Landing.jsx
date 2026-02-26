@@ -1,6 +1,6 @@
 import R from '@/constants/client/routePaths.js';
 import useText from '@/contexts/App/hooks/useText.js';
-import TopShowBanners from '@/pages/public/Landing/TopShowBanners/TopShowBanners.jsx';
+import TopShowBanners from '@c/features/media/TopShowBanners/TopShowBanners';
 import Slogan from '@c/ui/Slogan/Slogan.jsx';
 import { useNavigate } from 'react-router-dom';
 

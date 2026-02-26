@@ -14,7 +14,9 @@ const ListBox = ({
   secondary = false
 }) => {
   return (
-    <SectionBox className={secondary && 'bg-base-300'}>
+    <SectionBox
+      className={secondary && ' bg-transparent border border-secondary'}
+    >
       <section className='w-full h-full flex flex-col min-h-20'>
         <div className='pb-2 m-auto'>
           <h3 className='badge badge-secondary badge-soft max-compact:badge-sm'>

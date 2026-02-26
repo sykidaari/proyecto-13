@@ -18,6 +18,8 @@ import Register from '@/pages/auth/Register/Register.jsx';
 import useIsInitializing from '@/contexts/UserSession/hooks/useInitializing.js';
 import Discover from '@/pages/private/Discover/Discover.jsx';
 import People from '@/pages/private/People/People.jsx';
+import Session from '@/pages/private/Sessions/Session/Session';
+import CreateSession from '@/pages/private/Sessions/CreateSession/CreateSession';
 
 //! REGISTER IMG UPLOAD DOESN'T WORK
 
@@ -72,7 +74,15 @@ function App() {
             path={R.private.notifications.rel}
             element={<Notifications />}
           /> */}
-          <Route path={R.private.sessions.rel} element={<Sessions />} />
+          <Route path={R.private.sessions.rel}>
+            <Route index element={<Sessions />} />
+            <Route
+              path={R.private.sessions.create.rel}
+              element={<CreateSession />}
+            />
+            <Route path=':sessionId' element={<Session />} />
+          </Route>
+
           <Route path={R.private.settings.rel} element={<Settings />} />
         </Route>
 

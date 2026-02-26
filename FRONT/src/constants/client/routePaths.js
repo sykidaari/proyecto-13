@@ -35,7 +35,9 @@ const ROUTE_PATHS = {
     // },
     sessions: {
       rel: 'sessions',
-      abs: '/app/sessions'
+      abs: '/app/sessions',
+
+      create: { rel: 'create', abs: '/app/sessions/create' }
     },
     settings: {
       rel: 'settings',

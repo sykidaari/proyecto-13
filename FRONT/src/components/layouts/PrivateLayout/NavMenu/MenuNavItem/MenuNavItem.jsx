@@ -1,5 +1,5 @@
 import cN from '@/utils/classNameManager.js';
-import NotificationIndicator from '@c/features/user/currentUser/NotificationIndicator/NotificationIndicator';
+import NotificationIndicator from '@c/ui/NotificationIndicator/NotificationIndicator';
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 

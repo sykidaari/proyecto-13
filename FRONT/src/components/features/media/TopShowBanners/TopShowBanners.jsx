@@ -1,7 +1,7 @@
 import backend from '@/api/config/axios.js';
-import { divideDataForLayout } from '@/pages/public/Landing/TopShowBanners/helpers.js';
-import { useSelectCountry } from '@/pages/public/Landing/TopShowBanners/hooks.js';
 import cN from '@/utils/classNameManager.js';
+import { divideDataForLayout } from '@c/features/media/TopShowBanners/helpers';
+import { useSelectCountry } from '@c/features/media/TopShowBanners/hooks';
 import { useQuery } from '@tanstack/react-query';
 import Marquee from 'react-fast-marquee';
 

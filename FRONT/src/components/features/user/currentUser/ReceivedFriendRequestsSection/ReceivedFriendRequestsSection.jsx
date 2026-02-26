@@ -9,9 +9,10 @@ import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
 
 const ReceivedFriendRequestsSection = ({ secondary = false }) => {
-  const { title: titleText, noRequests: noItemsText } = useText(
-    'features.user.currentUser.receivedFriendRequestsSection'
-  );
+  const {
+    friends: { title: titleText },
+    noRequests: noItemsText
+  } = useText('features.user.currentUser.receivedRequests');
 
   const {
     user: selectedUser,

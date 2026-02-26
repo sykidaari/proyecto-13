@@ -68,9 +68,17 @@ const TEXTS = {
             noFriends: 'Your friends list is empty.',
             search: 'Search your friends'
           },
-          receivedFriendRequestsSection: {
-            title: 'Friend requests',
-            noRequests: 'You have no pending requests.'
+          receivedRequests: {
+            noRequests: 'You have no pending requests.',
+            friends: {
+              title: 'Friend requests'
+            },
+            sessions: {
+              title: 'Session requests',
+              noRequests: 'You have no pending requests.',
+
+              session: { invite: 'Invite friends' }
+            }
           }
         }
       },
@@ -98,6 +106,7 @@ const TEXTS = {
           removeFriendship: 'Remove friend'
         }
       },
+      sessions: { createSession: 'Create new session' },
       isNewItem: 'NEW'
     },
 
