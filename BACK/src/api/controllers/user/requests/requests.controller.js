@@ -50,18 +50,20 @@ export const sendRequest =
     if (!allowMultiple && recipients.length > 1)
       throw customError(400, ERR.request.invalid.multiNotAllowed);
 
-    let senderFriends;
+    let friendIdsSet;
     if (onlyFriends) {
-      senderFriends = await Friends.findOne({ user: currentUserId });
+      const senderFriends = await Friends.findOne({
+        user: currentUserId
+      }).lean();
+
+      friendIdsSet = new Set(
+        senderFriends?.friendsList?.map((f) => f.user.toString()) ?? []
+      );
     }
 
     for (const recipientId of recipients) {
-      if (onlyFriends) {
-        const isFriend = senderFriends?.friendsList.some(
-          (friend) => friend.user.toString() === recipientId
-        );
-
-        if (!isFriend) throw customError(403, ERR.request.invalid.notFriend);
+      if (onlyFriends && !friendIdsSet.has(recipientId)) {
+        throw customError(403, ERR.request.invalid.notFriend);
       }
     }
 
