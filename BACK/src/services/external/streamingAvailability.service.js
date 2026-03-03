@@ -27,6 +27,7 @@ const getShows = async ({
   const { shows, ...paginationData } =
     await client.showsApi.searchShowsByFilters({
       country: countryCode,
+      genresRelation: 'or',
       outputLanguage: languageCode,
       orderBy: 'popularity_1week',
       ...(showType && { showType }),
