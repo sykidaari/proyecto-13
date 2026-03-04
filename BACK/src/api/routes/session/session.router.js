@@ -65,6 +65,7 @@ requestRouter
         optional: [
           'additionalPayload.sessionName',
 
+          'additionalPayload.includedMedia',
           'additionalPayload.includedMedia.mediaType',
           'additionalPayload.includedMedia.genres',
           'additionalPayload.sessionParameters.includedMedia.keyWord',

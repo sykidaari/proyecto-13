@@ -429,7 +429,7 @@ Note: Some responses include additional fields depending on access level (self v
   - Description : removes a friend
     <br>
 
-`/api/v1/user/:userId/private/requests`
+`/api/v1/user/:userId/private/friends/requests`
 
 - **GET**
   - Access : self | admin
@@ -515,7 +515,7 @@ Note: Some responses include additional fields depending on access level (self v
   - Description : gets shared sessions with another user
     <br>
 
-`/api/v1/user/:userId/session/request`
+`/api/v1/:userId/session/request`
 
 - **PATCH** `/mark-all-seen`
   - Access : self

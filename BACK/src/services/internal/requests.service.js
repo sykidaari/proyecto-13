@@ -40,13 +40,13 @@ const findRequestsDocsAndFields = async (
   session
 ) => {
   const senderDoc = await Requests.findOne({ user: senderId })
-    .select(`${type}.sent`)
+    .select(type)
     .session(session);
 
   if (!senderDoc) throw customError(404, ERR.request.notFound.senderDoc);
 
   const recipientDoc = await Requests.findOne({ user: recipientId })
-    .select(`${type}.received`)
+    .select(type)
     .session(session);
 
   if (!recipientDoc) throw customError(404, ERR.request.notFound.recipientDoc);
@@ -144,12 +144,12 @@ const sendRequest = async (
     }
 
     requireUniqueConnection
-      ? senderSentField.addToSet(senderFieldPayload)
-      : senderSentField.push(senderFieldPayload);
+      ? senderDoc[type].sent.addToSet(senderFieldPayload)
+      : senderDoc[type].sent.push(senderFieldPayload);
 
     requireUniqueConnection
-      ? recipientReceivedField.addToSet(recipientFieldPayload)
-      : recipientReceivedField.push(recipientFieldPayload);
+      ? recipientDoc[type].received.addToSet(recipientFieldPayload)
+      : recipientDoc[type].received.push(recipientFieldPayload);
 
     await senderDoc.save({ session });
     await recipientDoc.save({ session });

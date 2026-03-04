@@ -1,6 +1,5 @@
 import useAppContext from '@/contexts/App/hooks/useAppContext';
 import useText from '@/contexts/App/hooks/useText';
-import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useKeywordPlaceholderText from '@/hooks/media/useKeywordPlaceholderText';
 import cN from '@/utils/classNameManager';
 import defaultFormConfig from '@/utils/defaultFormConfig';
@@ -34,6 +33,10 @@ const SessionParameters = ({ onSubmit }) => {
     },
     create: submitText
   } = useText('features.sessions.session');
+
+  const { tooShort: tooShortText, tooLong: tooLongText } = useText(
+    'features.user.userFormParts.names'
+  );
   const keywordPlaceholderText = useKeywordPlaceholderText();
 
   const {
@@ -53,33 +56,59 @@ const SessionParameters = ({ onSubmit }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    setError,
-    clearErrors
+    formState: { errors }
   } = useForm(defaultFormConfig());
 
   return (
     <Form
       className='gap-2.5 pb-10 max-w-md'
       onSubmit={handleSubmit((data) => {
+        const { sessionName, keyWord } = data || {};
+
         const finalData = {
           additionalPayload: {
-            ...data,
+            ...(sessionName?.trim() && { sessionName }),
             includedMedia: {
-              mediaType: selectedMediaType,
-              genres: selectedGenres
+              ...(selectedMediaType !== 'all' && {
+                mediaType: selectedMediaType
+              }),
+              ...(selectedGenres.size >= 1 && {
+                genres: [...selectedGenres]
+              }),
+              ...(keyWord?.trim() && { keyWord }),
+
+              ...(selectedServices.size >= 1 && {
+                availability: {
+                  services: [...selectedServices],
+                  country: selectedCountry
+                }
+              })
             }
           }
         };
+
+        onSubmit(finalData);
       })}
     >
       <h2 className='text-primary text-lg font-semibold'>{titleText}:</h2>
       <div className='w-full flex flex-col items-center gap-1.5'>
         <Fieldset legendText={nameLegendText} wide>
-          <TextField />
+          <TextField
+            error={errors?.sessionName?.message}
+            {...register('sessionName', {
+              minLength: {
+                value: 3,
+                message: tooShortText
+              },
+              maxLength: {
+                value: 30,
+                message: tooLongText
+              }
+            })}
+          />
         </Fieldset>
 
-        <Fieldset legendText={mediaTypeLegendText} asDi wide>
+        <Fieldset legendText={mediaTypeLegendText} asDiv wide>
           <ul className='flex gap-1 flex-wrap'>
             {Object.entries(mediaTypeOptions).map(([key, value]) => (
               <li key={key}>
@@ -120,7 +149,10 @@ const SessionParameters = ({ onSubmit }) => {
         </Fieldset>
 
         <Fieldset legendText={keywordLegendText} wide>
-          <TextField placeholder={keywordPlaceholderText} />
+          <TextField
+            placeholder={keywordPlaceholderText}
+            {...register('keyWord')}
+          />
         </Fieldset>
 
         <Fieldset legendText={servicesLegendText} asDiv wide>
@@ -147,6 +179,7 @@ const SessionParameters = ({ onSubmit }) => {
                 <CountrySelect
                   text={countryLabelText}
                   onChange={setSelectedCountry}
+                  defaultValue={currentCountryCode}
                 />
                 <InfoToolTip
                   className='min-w-6 min-h-6 max-mobile:tooltip-left pt-2.5'

@@ -108,7 +108,7 @@ export const sendRequest =
         }
       }
 
-      return res.status(status).json({
+      return res.status(status ?? 200).json({
         message: resMessage,
         results,
         currentUserDoc: finalSenderDoc

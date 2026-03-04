@@ -14,7 +14,7 @@ export const sessionParameters = {
 
   includedMedia: {
     mediaType: {
-      ...requiredString,
+      type: String,
       enum: ['movie', 'series'],
       default: null
     },
@@ -22,8 +22,8 @@ export const sessionParameters = {
     keyWord: { type: String, trim: true },
 
     availability: {
-      services: { type: [String], required: true },
-      country: { type: String, required: true }
+      services: { type: [String] },
+      country: { type: String }
     }
   }
 };

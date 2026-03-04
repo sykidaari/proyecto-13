@@ -9,6 +9,9 @@ import {
 } from '../../../utils/controllerUtils.js';
 import UserAccessSession from '../../models/userAccessSession/userAccessSession.model.js';
 
+// !  Something is wrong with refresh token rotation:
+// Rotation works ok, but, when browser is restarted, client-browser for some reason has old refreshtoken cookie, only happens after browser restart. I honestly have no idea what's causing this, will research. Removed rotation for now.
+
 export const refreshAccessToken = async (req, res, next) => {
   const requestId = crypto.randomUUID();
   const now = new Date();
