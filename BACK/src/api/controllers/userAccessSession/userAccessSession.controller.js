@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -27,11 +26,11 @@ export const refreshAccessToken = async (req, res, next) => {
   try {
     const session = await UserAccessSession.findOne({
       $or: [
-        { tokenHash },
-        {
-          previousTokenHash: tokenHash,
-          previousValidUntil: { $gt: now }
-        }
+        { tokenHash }
+        // {
+        //   previousTokenHash: tokenHash,
+        //   previousValidUntil: { $gt: now }
+        // }
       ]
     });
 
@@ -39,38 +38,42 @@ export const refreshAccessToken = async (req, res, next) => {
       console.log(`[REFRESH 401 NO SESSION] id=${requestId} hash=${tokenHash}`);
       return res.sendStatus(401);
     }
+    if (session.expiresAt < now) {
+      console.log(`[REFRESH 401 EXPIRED] id=${requestId}`);
+      return res.sendStatus(401);
+    }
 
-    const isUsingPrevious =
-      session.previousTokenHash === tokenHash &&
-      session.previousValidUntil > now;
+    // const isUsingPrevious =
+    //   session.previousTokenHash === tokenHash &&
+    //   session.previousValidUntil > now;
 
     const expiresAt = session.persistent
       ? new Date(Date.now() + rememberTtl)
       : session.expiresAt;
 
-    const graceWindowMs = 5000;
+    // const graceWindowMs = 5000;
 
-    let newRefreshToken;
-    let newRefreshTokenHash;
+    // let newRefreshToken;
+    // let newRefreshTokenHash;
 
-    if (!isUsingPrevious) {
-      newRefreshToken = generateRefreshToken();
-      newRefreshTokenHash = hashRefreshToken(newRefreshToken);
+    // if (!isUsingPrevious) {
+    //   newRefreshToken = generateRefreshToken();
+    //   newRefreshTokenHash = hashRefreshToken(newRefreshToken);
 
-      session.previousTokenHash = session.tokenHash;
-      session.previousValidUntil = new Date(Date.now() + graceWindowMs);
+    //   session.previousTokenHash = session.tokenHash;
+    //   session.previousValidUntil = new Date(Date.now() + graceWindowMs);
 
-      session.tokenHash = newRefreshTokenHash;
-      session.expiresAt = expiresAt;
+    //   session.tokenHash = newRefreshTokenHash;
+    session.expiresAt = expiresAt;
 
-      await session.save();
+    await session.save();
 
-      setRefreshCookie(
-        res,
-        newRefreshToken,
-        session.persistent ? rememberTtl : undefined
-      );
-    }
+    //   setRefreshCookie(
+    //     res,
+    //     newRefreshToken,
+    //     session.persistent ? rememberTtl : undefined
+    //   );
+    // }
 
     const accessToken = generateAccessToken(session.user);
 
