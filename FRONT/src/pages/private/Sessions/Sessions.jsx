@@ -3,6 +3,7 @@ import useText from '@/contexts/App/hooks/useText';
 import useFriendsList from '@/hooks/user/currentUser/useFriendsList';
 import cN from '@/utils/classNameManager';
 import ReceivedSessionRequestsSection from '@c/features/user/currentUser/ReceivedSessionRequestsSection';
+import SessionsSection from '@c/features/user/currentUser/SessionsSection/SessionsSection';
 import FullLengthPageWrapper from '@c/layouts/PrivateLayout/FullLengthPageWrapper/FullLengthPageWrapper';
 import MultiListContainer from '@c/ui/containers/MultiListContainer/MultiListContainer';
 import { PlusIcon } from '@heroicons/react/24/outline';
@@ -15,10 +16,8 @@ const Sessions = () => {
 
   const noFriends = !data?.friendsList || !data?.friendsList.length;
 
-  console.log(noFriends);
-
   return (
-    <FullLengthPageWrapper className='pt-20 gap-5'>
+    <FullLengthPageWrapper className='pt-20 gap-10'>
       <div
         className={cN(
           'glass p-2.5 rounded-box mx-2.5 max-mini:mx-0',
@@ -44,6 +43,7 @@ const Sessions = () => {
       </div>
 
       <MultiListContainer>
+        <SessionsSection />
         <ReceivedSessionRequestsSection secondary />
       </MultiListContainer>
     </FullLengthPageWrapper>

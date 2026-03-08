@@ -9,6 +9,8 @@ import {
 } from '../../../utils/modelUtils.js';
 import ERR from '../../../constants/domain/errorCodes.js';
 
+// ! MISSING REQ GROUP ID
+
 export const sessionParameters = {
   sessionName: { type: String, minlength: 3, maxlength: 30 },
 
@@ -31,6 +33,13 @@ export const sessionParameters = {
 const SessionSchema = buildSchema(
   {
     ...sessionParameters,
+
+    requestGroupId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      index: true,
+      unique: true
+    },
 
     participants: {
       type: [

@@ -139,8 +139,10 @@ const sendRequest = async (
     }
 
     if (additionalPayload) {
-      senderFieldPayload.additionalPayload = additionalPayload;
-      recipientFieldPayload.additionalPayload = additionalPayload;
+      if (type === 'sessions') {
+        senderFieldPayload.sessionParameters = additionalPayload;
+        recipientFieldPayload.sessionParameters = additionalPayload;
+      }
     }
 
     requireUniqueConnection
@@ -151,8 +153,12 @@ const sendRequest = async (
       ? recipientDoc[type].received.addToSet(recipientFieldPayload)
       : recipientDoc[type].received.push(recipientFieldPayload);
 
-    await senderDoc.save({ session });
-    await recipientDoc.save({ session });
+    try {
+      await senderDoc.save({ session });
+      await recipientDoc.save({ session });
+    } catch (error) {
+      throw error;
+    }
 
     return {
       senderDoc: senderDoc.toObject(),

@@ -83,6 +83,10 @@ const TEXTS = {
             noFriends: 'Your friends list is empty.',
             search: 'Search your friends'
           },
+          sessionsSection: {
+            title: 'Sessions',
+            noSessions: "You're not part of any sessions right now."
+          },
           receivedRequests: {
             noRequests: 'You have no pending requests.',
             friends: {
@@ -137,7 +141,7 @@ const TEXTS = {
             },
             mediaType: {
               legend: 'What shows do you want to see?',
-              options: { all: 'All', movies: 'Movies', series: 'Series' }
+              options: { all: 'All', movie: 'Movies', series: 'Series' }
             },
             genres: {
               legend: 'Choose genres (optional — defaults to all)',
@@ -177,7 +181,11 @@ const TEXTS = {
               info: "Availability varies by country. Select which country's platforms to check for this session."
             }
           },
-          create: 'Create'
+          create: 'Create',
+          created: {
+            title: 'Session created! Now waiting for others to join.',
+            button: 'Ok!'
+          }
         }
       },
       isNewItem: 'NEW'

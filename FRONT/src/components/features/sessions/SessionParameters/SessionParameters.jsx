@@ -9,7 +9,6 @@ import StreamingBadgesList from '@c/features/media/StreamingBadgesList/Streaming
 import CountrySelect from '@c/ui/CountrySelect/CountrySelect';
 import Fieldset from '@c/ui/form/Fieldset/Fieldset';
 import Form from '@c/ui/form/Form/Form';
-import Label from '@c/ui/form/Label/Label';
 import SubmitButton from '@c/ui/form/SubmitButton/SubmitButton';
 import TextField from '@c/ui/form/TextField/TextField';
 import InfoToolTip from '@c/ui/InfoToolTip/InfoToolTip';
