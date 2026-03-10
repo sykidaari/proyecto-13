@@ -558,14 +558,14 @@ Note: Some responses include additional fields depending on access level (self v
 - **PATCH** `/cancel`
   - Access : self
   - Body :
-    - Required : `otherUserId`
+    - Required : `otherUserId` `requestGroupId`
   - Description : cancels a sent session request
     <br>
 
 - **PATCH** `/reject`
   - Access : self
   - Body :
-    - Required : `otherUserId`
+    - Required : `otherUserId` `requestGroupId`
   - Description : rejects a session request
     <br>
 

@@ -8,14 +8,17 @@ const ReceivedSessionRequestsSection = ({ secondary = false }) => {
     noRequests: noItemsText
   } = useText('features.user.currentUser.receivedRequests');
 
-  const { data, isPending, isError, isSuccess } = useRequests();
+  const { data, isPending, isError } = useRequests();
 
-  console.log(data);
+  const requests = data?.sessions?.received;
 
   return (
-    <ListBox secondary title={titleText} noItemsText={noItemsText}>
-      ReceivedSessionRequestsSection
-    </ListBox>
+    <ListBox
+      secondary={secondary}
+      title={titleText}
+      noItemsText={noItemsText}
+      noItems={!requests || !requests.length}
+    ></ListBox>
   );
 };
 

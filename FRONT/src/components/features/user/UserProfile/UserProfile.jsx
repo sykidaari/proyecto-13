@@ -4,7 +4,7 @@ import useUserProfile from '@/hooks/user/useUserProfile.js';
 import FriendshipButtons from '@c/features/user/UserProfile/FriendshipButtons/FriendshipButton.jsx';
 import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserProfileCard.jsx';
 
-const UserProfile = ({ userId }) => {
+const UserProfile = ({ userId, noFriendshipButtons = false }) => {
   const isSelf = useIsSelf(userId);
   const isFriend = useIsFriend(userId);
 
@@ -29,7 +29,7 @@ const UserProfile = ({ userId }) => {
           />
         )}
       </div>
-      {!isSelf && <FriendshipButtons userId={userId} />}
+      {!isSelf && !noFriendshipButtons && <FriendshipButtons userId={userId} />}
       {(isSelf || (isFriend && hasShared)) && ''}
     </div>
   );

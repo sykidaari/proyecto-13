@@ -7,7 +7,9 @@ const StreamingBadgesList = ({ services, onClick, className }) => {
     <ul className='flex flex-wrap gap-1'>
       {services.map((s) => {
         const isLink = !!s.mediaLink;
-        const Tag = isLink ? 'a' : 'button';
+        const isClickable = !!onClick;
+
+        const Tag = isLink ? 'a' : isClickable ? 'button' : 'span';
 
         return (
           <li key={s.id} className='relative'>
@@ -18,13 +20,15 @@ const StreamingBadgesList = ({ services, onClick, className }) => {
                     target: '_blank',
                     rel: 'noopener noreferrer'
                   }
-                : {
-                    type: 'button',
-                    onClick: () => onClick?.(s.id)
-                  })}
+                : isClickable
+                  ? {
+                      type: 'button',
+                      onClick: () => onClick(s.id)
+                    }
+                  : {})}
               className={cN(
                 'relative badge bg-neutral',
-                onClick && 'cursor-pointer'
+                isClickable && 'cursor-pointer'
               )}
             >
               <div

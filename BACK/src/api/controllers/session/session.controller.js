@@ -185,7 +185,7 @@ export const markAllReceivedSessionsRequestsAsSeen =
 
 export const cancelSessionRequest = removeRequest({
   type: 'sessions',
-  option: 'reject',
+  option: 'cancel',
   resMessage: OK.sessions.requests.cancelled,
   emitMessage: SE.sessions.requests.cancelled,
   allowMultiple: false

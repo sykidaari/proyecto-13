@@ -2,11 +2,13 @@ import R from '@/constants/client/routePaths';
 import useText from '@/contexts/App/hooks/useText';
 import useFriendsList from '@/hooks/user/currentUser/useFriendsList';
 import cN from '@/utils/classNameManager';
-import ReceivedSessionRequestsSection from '@c/features/user/currentUser/ReceivedSessionRequestsSection';
+import ReceivedSessionRequestsSection from '@c/features/user/currentUser/ReceivedSessionRequestsSection/ReceivedSessionRequestsSection';
+import SentSessionRequestsSection from '@c/features/user/currentUser/SentSessionRequestsSection/SentSessionRequestsSection';
 import SessionsSection from '@c/features/user/currentUser/SessionsSection/SessionsSection';
 import FullLengthPageWrapper from '@c/layouts/PrivateLayout/FullLengthPageWrapper/FullLengthPageWrapper';
 import MultiListContainer from '@c/ui/containers/MultiListContainer/MultiListContainer';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Sessions = () => {
@@ -44,7 +46,11 @@ const Sessions = () => {
 
       <MultiListContainer>
         <SessionsSection />
-        <ReceivedSessionRequestsSection secondary />
+
+        <div className='flex flex-col gap-2.5  mobile:[&>*:first-child]:flex-3  mobile:[&>*:nth-child(2)]:flex-5'>
+          <SentSessionRequestsSection secondary />
+          <ReceivedSessionRequestsSection secondary />
+        </div>
       </MultiListContainer>
     </FullLengthPageWrapper>
   );

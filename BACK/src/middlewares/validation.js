@@ -35,3 +35,7 @@ export const validateMediaId = requireAndValidateReqBody({
 export const validateOtherUserId = requireAndValidateReqBody({
   required: 'otherUserId'
 });
+
+export const validateOtherUserIdAndRequestGroupId = requireAndValidateReqBody({
+  required: ['otherUserId', 'requestGroupId']
+});

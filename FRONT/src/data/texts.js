@@ -93,8 +93,16 @@ const TEXTS = {
               title: 'Friend requests'
             },
             sessions: {
-              title: 'Session requests',
-              noRequests: 'You have no pending requests.'
+              title: 'Received session requests'
+            }
+          },
+          sentRequests: {
+            to: 'To',
+            invited: 'Invited',
+            noRequests: 'You have no pending sent requests.',
+            sessions: {
+              title: 'Sent session requests',
+              cancel: 'Cancel session request'
             }
           }
         }
@@ -128,6 +136,7 @@ const TEXTS = {
         noFriends:
           'You have no friends yet! Add friends first to start a session',
         session: {
+          untitled: 'Untitled session',
           invite: {
             title: 'Invite friends',
             maxAmount: 'Sessions can have up to 6 participants'

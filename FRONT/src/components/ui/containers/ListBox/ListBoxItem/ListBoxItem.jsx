@@ -29,7 +29,7 @@ const ListBoxItem = ({ children, className, onClick, isNew, disabled }) => {
       <div
         onClick={() => {
           setRenderIsNew(false);
-          onClick();
+          onClick && onClick();
         }}
         className={cN(onClick && 'cursor-pointer')}
       >

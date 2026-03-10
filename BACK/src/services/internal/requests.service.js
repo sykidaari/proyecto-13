@@ -182,7 +182,6 @@ const acceptRequest = async (
     const { senderDoc, senderSentField, recipientDoc, recipientReceivedField } =
       await findRequestsDocsAndFields(senderId, recipientId, type, session);
 
-    // find the exact request
     let requestEntry;
 
     if (requestGroupId) {
@@ -201,7 +200,6 @@ const acceptRequest = async (
 
     const requestId = requestEntry._id;
 
-    // remove only this request
     senderSentField.pull({ _id: requestId });
     recipientReceivedField.pull({
       user: senderId,

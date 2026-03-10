@@ -26,7 +26,8 @@ import {
 import {
   validateFullMediaData,
   validateMediaId,
-  validateOtherUserId
+  validateOtherUserId,
+  validateOtherUserIdAndRequestGroupId
 } from '../../../middlewares/validation.js';
 
 const sessionRouter = Router({ mergeParams: true });
@@ -77,9 +78,21 @@ requestRouter
     ],
     sendSessionRequest
   )
-  .patch('/accept', [validateOtherUserId], acceptSessionRequestAndJoinSession)
-  .patch('/cancel', [validateOtherUserId], cancelSessionRequest)
-  .patch('/reject', [validateOtherUserId], rejectSessionRequest);
+  .patch(
+    '/accept',
+    [[validateOtherUserIdAndRequestGroupId]],
+    acceptSessionRequestAndJoinSession
+  )
+  .patch(
+    '/cancel',
+    [[validateOtherUserIdAndRequestGroupId]],
+    cancelSessionRequest
+  )
+  .patch(
+    '/reject',
+    [validateOtherUserIdAndRequestGroupId],
+    rejectSessionRequest
+  );
 
 existingSessionRouter.get('/', getSessionById).patch('/leave', leaveSession);
 
@@ -89,11 +102,7 @@ interactRouter
 
 existingSessionRequestRouter.patch(
   '/send',
-  [
-    requireAndValidateReqBody({
-      required: ['otherUserId', 'requestGroupId']
-    })
-  ],
+  [[validateOtherUserIdAndRequestGroupId]],
   sendSessionRequest
 );
 

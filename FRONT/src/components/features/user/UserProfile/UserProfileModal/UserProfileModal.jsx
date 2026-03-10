@@ -2,11 +2,21 @@ import cN from '@/utils/classNameManager.js';
 import UserProfile from '@c/features/user/UserProfile/UserProfile.jsx';
 import React from 'react';
 
-const UserProfileModal = ({ userId, open, setOpen }) => {
+const UserProfileModal = ({
+  userId,
+  open,
+  setOpen,
+  noFriendshipButtons = false,
+  children
+}) => {
   return (
     <dialog className={cN('modal', open && 'modal-open')}>
       <div className='modal-box max-w-2xs mobile:max-w-md'>
-        <UserProfile userId={userId} />
+        <UserProfile
+          userId={userId}
+          noFriendshipButtons={noFriendshipButtons}
+        />
+        {children}
       </div>
       <div
         method='dialog'

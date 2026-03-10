@@ -24,11 +24,13 @@ export const useEnrichedServices = ({
 
     return Object.values(
       sourceServices.reduce((acc, s) => {
-        const meta = countryConfig.services.find((cs) => cs.id === s.id);
+        const id = typeof s === 'string' ? s : s.id;
 
-        acc[s.id] = {
-          ...s,
-          name: meta?.name ?? s.id,
+        const meta = countryConfig.services.find((cs) => cs.id === id);
+
+        acc[id] = {
+          ...(typeof s === 'object' ? s : { id }),
+          name: meta?.name ?? id,
           themeColor: meta?.themecolor ?? ''
         };
 
