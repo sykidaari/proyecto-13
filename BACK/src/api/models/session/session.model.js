@@ -2,10 +2,7 @@ import mongoose, { model } from 'mongoose';
 import {
   buildSchema,
   mediaRef,
-  requiredString,
-  userRef,
-  userRefRequired,
-  userRefRequiredUnique
+  userRefRequired
 } from '../../../utils/modelUtils.js';
 import ERR from '../../../constants/domain/errorCodes.js';
 
@@ -42,7 +39,7 @@ const SessionSchema = buildSchema(
     participants: {
       type: [
         {
-          user: userRefRequiredUnique,
+          user: userRefRequired,
 
           matchProposals: [mediaRef]
         }

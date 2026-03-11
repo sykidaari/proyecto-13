@@ -1,7 +1,11 @@
 import useRequests from '@/hooks/user/currentUser/useRequests';
 import useSessionsList from '@/hooks/user/currentUser/useSessionsList';
 
-const groupSessionRequests = (requests = [], activeIds = new Set()) => {
+const groupSessionRequests = (
+  requests = [],
+  activeIds = new Set(),
+  trackNew = false
+) => {
   const grouped = new Map();
 
   requests.forEach((req) => {
@@ -9,12 +13,15 @@ const groupSessionRequests = (requests = [], activeIds = new Set()) => {
 
     if (existing) {
       existing.users.push(req.user);
+
+      if (trackNew) existing.isNew ||= req.isNewItem;
     } else {
       grouped.set(req.requestGroupId, {
         requestGroupId: req.requestGroupId,
         sessionParameters: req.sessionParameters,
         users: req.user ? [req.user] : [],
-        active: activeIds.has(req.requestGroupId)
+        active: activeIds.has(req.requestGroupId),
+        ...(trackNew && { isNew: !!req.isNewItem })
       });
     }
   });
@@ -35,7 +42,8 @@ const useSessionRequestsData = () => {
   const sentRequests = groupSessionRequests(sentSessionRequests, activeIds);
   const receivedRequests = groupSessionRequests(
     receivedSessionRequests,
-    activeIds
+    activeIds,
+    true
   );
 
   return {

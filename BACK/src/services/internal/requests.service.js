@@ -244,7 +244,7 @@ const acceptRequest = async (
       affectedSenderField,
       affectedRecipientField,
 
-      ...(isComplexOperation && { requestId })
+      ...(isComplexOperation && { request: requestEntry })
     };
   }, session);
 

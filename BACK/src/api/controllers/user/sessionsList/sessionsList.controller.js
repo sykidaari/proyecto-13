@@ -4,7 +4,10 @@ import { getUserChild, markItemAsSeen } from '../userChildren.controller.js';
 //* GET
 
 export const getSessionsList = getUserChild({
-  populateFields: ['sessionsList']
+  populateFields: [
+    'sessionsList.session',
+    'sessionsList.session.participants.user'
+  ]
 });
 
 export const markSessionInListAsSeen = markItemAsSeen(

@@ -1,5 +1,6 @@
 import useText from '@/contexts/App/hooks/useText';
 import useSessionsList from '@/hooks/user/currentUser/useSessionsList';
+import SessionCard from '@c/features/sessions/session/SessionCard/SessionCard';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
 
@@ -11,6 +12,7 @@ const SessionsSection = () => {
   const { data, isError, isPending } = useSessionsList();
 
   const sessions = data?.sessionsList;
+
   return (
     <ListBox
       title={titleText}
@@ -21,7 +23,14 @@ const SessionsSection = () => {
     >
       {sessions?.map((item) => (
         <ListBoxItem key={item._id}>
-          {/* <h4 className='h-6'>{item.sessionParameters?.sessionName}</h4> */}
+          {console.log(item.session)}
+          <SessionCard sessionParameters={item.session}>
+            <ul>
+              {item.participants?.map((item) => (
+                <li key={item._id}>{item?.user?.userName} </li>
+              ))}
+            </ul>
+          </SessionCard>
         </ListBoxItem>
       ))}
     </ListBox>

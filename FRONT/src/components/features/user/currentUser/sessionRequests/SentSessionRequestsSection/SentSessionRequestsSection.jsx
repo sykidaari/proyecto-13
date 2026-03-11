@@ -1,9 +1,8 @@
 import backend from '@/api/config/axios';
-import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText';
 import useText from '@/contexts/App/hooks/useText';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useSessionRequestsData from '@/hooks/user/currentUser/useSessionRequestsData';
-import cN from '@/utils/classNameManager';
+
 import SessionCard from '@c/features/sessions/session/SessionCard/SessionCard';
 import { useSessionModal } from '@c/features/sessions/session/SessionModal/hooks';
 import SessionModal from '@c/features/sessions/session/SessionModal/SessionModal';
@@ -11,21 +10,23 @@ import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileMod
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
+import LoadingButtonsSection from '@c/ui/LoadingButtonsSection/LoadingButtonsSection';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
 const SentSessionRequestsSection = ({ secondary = false }) => {
   const {
-    sessions: { title: titleText, cancel: cancelText },
+    sessions: { title: titleText },
     noRequests: noItemsText,
     to: ToText,
     invited: invitedText
   } = useText('features.user.currentUser.sentRequests');
-  const errorMessage = useServerProblemtext();
+  const cancelText = useText('features.sessions.invitations.cancelInvitation');
+
   const currentUserId = useCurrentUserId();
 
   const { sentRequests, isPending, isError } = useSessionRequestsData();
-  console.log(currentUserId);
+
   const {
     session: selectedSession,
     setSession: setSelectedSession,
@@ -42,11 +43,10 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
 
   const queryClient = useQueryClient();
   const {
-    data: cancelData,
     isPending: cancelIsPending,
     isError: cancelIsError,
 
-    mutate
+    mutate: cancelRequest
   } = useMutation({
     mutationFn: async () => {
       const { data } = await backend.patch(
@@ -64,8 +64,6 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
       queryClient.refetchQueries({ queryKey: ['requests'] });
     }
   });
-
-  console.log(console.log(selectedUser));
 
   return (
     <>
@@ -86,7 +84,7 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
             }}
           >
             <SessionCard sessionParameters={item.sessionParameters} minimal>
-              <div className='ml-auto text-xs flex gap-1.5'>
+              <div className='ml-auto text-xs flex gap-1'>
                 <h5>{ToText}:</h5>
                 {item.users[0]?.userName}
                 {item.users.length > 1 && ` +${item.users.length - 1}`}
@@ -100,12 +98,13 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
           sessionParameters={selectedSession?.sessionParameters}
           open={modalOpen}
           setOpen={setModalOpen}
+          isActive={selectedSession?.active}
         >
           <div className='flex items-center gap-1.5 mt-2.5'>
             <h4 className='text-xs'>{invitedText}:</h4>
             <ul className='flex gap-1 flex-wrap'>
               {selectedSession?.users?.map((user, i) => (
-                <li className='font-semibold text-xs' key={user._id}>
+                <li className='font-semibold text-sm' key={user._id}>
                   <button
                     onClick={() => {
                       setSelectedUser(user);
@@ -130,16 +129,13 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
           open={userModalOpen}
           setOpen={setUserModalOpen}
         >
-          <button
-            className={cN(
-              'mt-2.5 btn btn-block btn-soft',
-              cancelIsError ? 'tooltip tooltip-error btn-error' : 'btn-warning '
-            )}
-            data-tip={errorMessage}
-            onClick={mutate}
+          <LoadingButtonsSection
+            className='mt-2.5'
+            isError={cancelIsError}
+            isLoading={cancelIsPending}
           >
-            {cancelIsPending ? <span className='loading' /> : cancelText}
-          </button>
+            <button onClick={cancelRequest}>{cancelText}</button>
+          </LoadingButtonsSection>
         </UserProfileModal>
       )}
     </>

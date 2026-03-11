@@ -1,11 +1,9 @@
-import useServerProblemtext from '@/contexts/App/hooks/useServerProblemText';
 import useText from '@/contexts/App/hooks/useText.js';
 import useIsSelf from '@/contexts/UserSession/hooks/useIsSelf';
 import useFriendshipMutation from '@/hooks/people/useFriendshipMutation';
 import useRelationship from '@/hooks/people/useRelationship';
-import cN from '@/utils/classNameManager.js';
 import { createRelationshipConfig } from '@c/features/user/UserProfile/FriendshipButtons/helpers';
-import { XCircleIcon } from '@heroicons/react/24/outline';
+import LoadingButtonsSection from '@c/ui/LoadingButtonsSection/LoadingButtonsSection';
 
 const FriendshipButtons = ({ userId }) => {
   const {
@@ -15,7 +13,6 @@ const FriendshipButtons = ({ userId }) => {
     rejectFriendship: rejectFriendshipText,
     removeFriendship: removeFriendText
   } = useText('features.people.friendship');
-  const errorMessage = useServerProblemtext();
 
   const isSelf = useIsSelf(userId);
 
@@ -53,27 +50,15 @@ const FriendshipButtons = ({ userId }) => {
   }
 
   return (
-    <section
-      className={cN(
-        'flex *:btn *:btn-soft *:mobile:flex-1 gap-1 max-mobile:flex-col',
-        isError && 'tooltip tooltip-error'
-      )}
-      data-tip={errorMessage}
+    <LoadingButtonsSection
+      isError={isError}
+      isLoading={isPending || mutationIsPending}
     >
       <button
-        className={cN(
-          isError ? 'btn-error' : config.className,
-          mutationIsPending && 'btn-disabled'
-        )}
+        className={config.className}
         onClick={() => mutate({ action: config.action, userId })}
       >
-        {isError ? (
-          <XCircleIcon className='size-7' />
-        ) : isPending || mutationIsPending ? (
-          <span className='loading' />
-        ) : (
-          config.text
-        )}
+        {config.text}
       </button>
       {config.secondary && (
         <button
@@ -83,7 +68,7 @@ const FriendshipButtons = ({ userId }) => {
           {config.secondary.text}
         </button>
       )}
-    </section>
+    </LoadingButtonsSection>
   );
 };
 

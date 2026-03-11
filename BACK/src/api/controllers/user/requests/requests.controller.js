@@ -150,8 +150,10 @@ export const acceptRequest =
           recipientDoc,
           affectedRecipientDoc,
           affectedRecipientField,
+          affectedSenderDoc,
           affectedSenderField,
-          senderDoc
+          senderDoc,
+          request
         } = await requestsService.acceptRequest(
           {
             senderId,
@@ -172,9 +174,11 @@ export const acceptRequest =
               senderDoc,
               senderId,
               recipientId,
+              affectedSenderDoc,
+              affectedRecipientDoc,
               affectedRecipientField,
               affectedSenderField,
-              requestId
+              request
             },
             session
           );
@@ -188,7 +192,7 @@ export const acceptRequest =
 
       emit({ from: currentUserId, to: otherUserId }, emitMessage);
 
-      return res.status(status).json({
+      return res.status(status || 200).json({
         message: resMessage,
         ...result
       });

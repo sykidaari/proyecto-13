@@ -118,29 +118,27 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
       affectedRecipientDoc,
       affectedSenderField,
       affectedRecipientField,
-      requestId
+      request
     },
     session
   ) => {
-    const request = senderDoc.sessions.sent.id(requestId);
-    if (!request) throw customError(404, ERR.session.notFound);
-
-    const { additionalPayload: sessionParameters, requestGroupId } = request;
+    const { sessionParameters, requestGroupId } = request;
 
     const sessionDoc = await Session.findOneAndUpdate(
       { requestGroupId },
       {
         $setOnInsert: {
           ...sessionParameters,
-          requestGroupId,
-          participants: [{ user: senderId }]
+          requestGroupId
         },
         $addToSet: {
-          participants: { user: recipientId }
+          participants: {
+            $each: [{ user: senderId }, { user: recipientId }]
+          }
         }
       },
       {
-        new: true,
+        returnDocument: 'after',
         upsert: true,
         session
       }

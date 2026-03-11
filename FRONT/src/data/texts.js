@@ -88,12 +88,14 @@ const TEXTS = {
             noSessions: "You're not part of any sessions right now."
           },
           receivedRequests: {
+            from: 'From',
             noRequests: 'You have no pending requests.',
             friends: {
               title: 'Friend requests'
             },
             sessions: {
-              title: 'Received session requests'
+              title: 'Received session requests',
+              invitationFrom: 'Invited by'
             }
           },
           sentRequests: {
@@ -101,8 +103,7 @@ const TEXTS = {
             invited: 'Invited',
             noRequests: 'You have no pending sent requests.',
             sessions: {
-              title: 'Sent session requests',
-              cancel: 'Cancel session request'
+              title: 'Sent session requests'
             }
           }
         }
@@ -132,6 +133,13 @@ const TEXTS = {
         }
       },
       sessions: {
+        invitations: {
+          sendInvitation: 'Send session invitation',
+          acceptInvitation: 'Accept and join',
+          rejectInvitation: 'Reject invitation',
+          cancelInvitation: 'Cancel session invitation'
+        },
+        openSession: 'Open Session',
         createSession: 'Create new session',
         noFriends:
           'You have no friends yet! Add friends first to start a session',
