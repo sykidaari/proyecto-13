@@ -19,6 +19,7 @@ import {
   setIsSessionParticipant
 } from '../../../middlewares/access.js';
 import {
+  findOrCreateByUser,
   findSessionById,
   requireAndValidateReqBody,
   saveMedia
@@ -29,6 +30,7 @@ import {
   validateOtherUserId,
   validateOtherUserIdAndRequestGroupId
 } from '../../../middlewares/validation.js';
+import Requests from '../../models/user/requests/requests.model.js';
 
 const sessionRouter = Router({ mergeParams: true });
 const requestRouter = Router({ mergeParams: true });
@@ -57,7 +59,11 @@ sessionRouter
   .get('/shared/:otherUserId', getSharedSessions);
 
 requestRouter
-  .patch('/mark-all-seen', markAllReceivedSessionsRequestsAsSeen)
+  .patch(
+    '/mark-all-seen',
+    [[requireSelf, findOrCreateByUser(Requests, 'requestDoc')]],
+    markAllReceivedSessionsRequestsAsSeen
+  )
   .patch(
     '/send',
     [

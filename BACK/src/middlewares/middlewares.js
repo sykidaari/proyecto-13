@@ -89,6 +89,7 @@ export const findOrCreateByUser =
 
       req[reqProperty] = doc;
       req.status = status;
+
       next();
     } catch (err) {
       next(err);

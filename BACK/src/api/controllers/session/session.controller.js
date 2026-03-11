@@ -180,8 +180,10 @@ export const acceptSessionRequestAndJoinSession = acceptRequest({
   }
 });
 
-export const markAllReceivedSessionsRequestsAsSeen =
-  markAllItemsAsSeen('sessions.received');
+export const markAllReceivedSessionsRequestsAsSeen = markAllItemsAsSeen(
+  'sessions.received',
+  'requestDoc'
+);
 
 export const cancelSessionRequest = removeRequest({
   type: 'sessions',
