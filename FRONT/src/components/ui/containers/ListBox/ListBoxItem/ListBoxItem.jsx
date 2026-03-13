@@ -3,7 +3,8 @@ import cN from '@/utils/classNameManager';
 import { useState } from 'react';
 
 const ListBoxItem = ({ children, className, onClick, isNew, disabled }) => {
-  const isNewText = useText('features.isNewItem');
+  const { isNewItem: isNewText, isUpdatedItem: IsUpdatedText } =
+    useText('features');
 
   // internal isNew so isNew visual is removed inmediately upon interaction with item
   const [renderIsNew, setRenderIsNew] = useState(isNew);

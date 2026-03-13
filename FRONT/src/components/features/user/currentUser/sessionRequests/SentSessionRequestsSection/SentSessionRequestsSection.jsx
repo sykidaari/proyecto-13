@@ -1,12 +1,10 @@
 import backend from '@/api/config/axios';
 import useText from '@/contexts/App/hooks/useText';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
+import useModal from '@/hooks/useModal';
 import useSessionRequestsData from '@/hooks/user/currentUser/useSessionRequestsData';
-
 import SessionCard from '@c/features/sessions/session/SessionCard/SessionCard';
-import { useSessionModal } from '@c/features/sessions/session/SessionModal/hooks';
 import SessionModal from '@c/features/sessions/session/SessionModal/SessionModal';
-import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileModal/hooks';
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
@@ -22,24 +20,22 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
     invited: invitedText
   } = useText('features.user.currentUser.sentRequests');
   const cancelText = useText('features.sessions.invitations.cancelInvitation');
-
   const currentUserId = useCurrentUserId();
 
-  const { sentRequests, isPending, isError } = useSessionRequestsData();
-
   const {
-    session: selectedSession,
-    setSession: setSelectedSession,
+    item: selectedSession,
     open: modalOpen,
-    setOpen: setModalOpen
-  } = useSessionModal();
-
+    setOpen: setModalOpen,
+    openSelectedItemModal: openSelectedSessionModal
+  } = useModal();
   const {
-    user: selectedUser,
-    setUser: setSelectedUser,
+    item: selectedUser,
     open: userModalOpen,
-    setOpen: setUserModalOpen
-  } = useUserProfileModal();
+    setOpen: setUserModalOpen,
+    openSelectedItemModal: openSelectedUserModal
+  } = useModal();
+
+  const { sentRequests, isPending, isError } = useSessionRequestsData();
 
   const queryClient = useQueryClient();
   const {
@@ -78,10 +74,7 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
         {sentRequests?.map((item) => (
           <ListBoxItem
             key={item.requestGroupId}
-            onClick={() => {
-              setSelectedSession(item);
-              setModalOpen(true);
-            }}
+            onClick={() => openSelectedSessionModal(item)}
           >
             <SessionCard sessionParameters={item.sessionParameters} minimal>
               <div className='ml-auto text-xs flex gap-1'>
@@ -93,7 +86,7 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
           </ListBoxItem>
         ))}
       </ListBox>
-      {modalOpen && (
+      {selectedSession && (
         <SessionModal
           sessionParameters={selectedSession?.sessionParameters}
           open={modalOpen}
@@ -107,8 +100,7 @@ const SentSessionRequestsSection = ({ secondary = false }) => {
                 <li className='font-semibold text-sm' key={user._id}>
                   <button
                     onClick={() => {
-                      setSelectedUser(user);
-                      setUserModalOpen(true);
+                      openSelectedUserModal(user);
                     }}
                     className='cursor-pointer'
                   >

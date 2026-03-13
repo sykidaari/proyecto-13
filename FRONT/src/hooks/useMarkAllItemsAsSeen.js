@@ -2,7 +2,7 @@ import backend from '@/api/config/axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-// no special error management, if fails there's no severe consequence
+// no special error/loading management, if fails there's no severe consequence
 const useMarkAllItemsAsSeen = (routeStart, shouldRun, relatedQueryKey) => {
   const queryClient = useQueryClient();
 

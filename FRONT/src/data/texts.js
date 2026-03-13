@@ -202,10 +202,12 @@ const TEXTS = {
           created: {
             title: 'Session created! Now waiting for others to join.',
             button: 'Ok!'
-          }
+          },
+          participants: 'Participants'
         }
       },
-      isNewItem: 'NEW'
+      isNewItem: 'NEW',
+      isUpdatedItem: 'NEW ACTIVITY'
     },
 
     layouts: {

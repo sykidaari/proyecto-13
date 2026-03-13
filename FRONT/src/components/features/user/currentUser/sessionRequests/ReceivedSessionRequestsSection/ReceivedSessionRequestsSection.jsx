@@ -2,16 +2,16 @@ import backend from '@/api/config/axios';
 import useText from '@/contexts/App/hooks/useText';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useMarkAllItemsAsSeen from '@/hooks/useMarkAllItemsAsSeen';
+import useModal from '@/hooks/useModal';
 import useSessionRequestsData from '@/hooks/user/currentUser/useSessionRequestsData';
 import SessionCard from '@c/features/sessions/session/SessionCard/SessionCard';
-import { useSessionModal } from '@c/features/sessions/session/SessionModal/hooks';
 import SessionModal from '@c/features/sessions/session/SessionModal/SessionModal';
-import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileModal/hooks';
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
 import LoadingButtonsSection from '@c/ui/LoadingButtonsSection/LoadingButtonsSection';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 const ReceivedSessionRequestsSection = ({ secondary = false }) => {
   const {
@@ -21,30 +21,27 @@ const ReceivedSessionRequestsSection = ({ secondary = false }) => {
   } = useText('features.user.currentUser.receivedRequests');
   const { acceptInvitation: acceptText, rejectInvitation: rejectText } =
     useText('features.sessions.invitations');
-
   const currentUserId = useCurrentUserId();
+  const navigate = useNavigate();
+
+  const {
+    item: selectedSession,
+    open: modalOpen,
+    setOpen: setModalOpen,
+    openSelectedItemModal: openSelectedSessionModal
+  } = useModal();
+  const { open: userModalOpen, setOpen: setUserModalOpen } = useModal();
 
   const { receivedRequests, isPending, isError, isSuccess } =
     useSessionRequestsData();
-
-  const {
-    session: selectedSession,
-    setSession: setSelectedSession,
-    open: modalOpen,
-    setOpen: setModalOpen
-  } = useSessionModal();
-  const { open: userModalOpen, setOpen: setUserModalOpen } =
-    useUserProfileModal();
+  useMarkAllItemsAsSeen(`/${currentUserId}/session/request`, isSuccess);
 
   const inviterUser = selectedSession?.users?.[0];
-
-  useMarkAllItemsAsSeen(`/${currentUserId}/session/request`, isSuccess);
 
   const queryClient = useQueryClient();
   const {
     isPending: mutateIsPending,
     isError: mutateIsError,
-    data,
     mutate
   } = useMutation({
     mutationFn: async (option) => {
@@ -59,7 +56,8 @@ const ReceivedSessionRequestsSection = ({ secondary = false }) => {
       return data;
     },
     onSuccess: (data, option) => {
-      if (option === 'accept') console.log(data);
+      if (option === 'accept' && data?.sideEffectResult?._id)
+        navigate(data?.sideEffectResult?._id);
       else {
         setUserModalOpen(false);
         queryClient.refetchQueries({ queryKey: ['requests'] });
@@ -79,10 +77,7 @@ const ReceivedSessionRequestsSection = ({ secondary = false }) => {
       {receivedRequests?.map((item) => (
         <ListBoxItem
           key={item.requestGroupId}
-          onClick={() => {
-            setSelectedSession(item);
-            setModalOpen(true);
-          }}
+          onClick={() => openSelectedSessionModal(item)}
           isNew={item.isNew}
         >
           <SessionCard sessionParameters={item.sessionParameters} minimal>
@@ -93,7 +88,7 @@ const ReceivedSessionRequestsSection = ({ secondary = false }) => {
           </SessionCard>
         </ListBoxItem>
       ))}
-      {modalOpen && (
+      {selectedSession && (
         <SessionModal
           sessionParameters={selectedSession?.sessionParameters}
           open={modalOpen}

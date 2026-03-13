@@ -4,20 +4,20 @@ import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId.js';
 import UsersSearch from '@c/features/user/UsersSearch/UsersSearch.jsx';
 import FriendsSection from '@c/features/user/currentUser/FriendsSection/FriendsSection';
 import ReceivedFriendRequestsSection from '@c/features/user/currentUser/ReceivedFriendRequestsSection/ReceivedFriendRequestsSection';
-import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileModal/hooks';
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal.jsx';
 import FullLengthPageWrapper from '@c/layouts/PrivateLayout/FullLengthPageWrapper/FullLengthPageWrapper.jsx';
 import MultiListContainer from '@c/ui/containers/MultiListContainer/MultiListContainer';
 import { useNavigate } from 'react-router-dom';
+import useModal from '@/hooks/useModal';
 
 const People = () => {
   const currentUserId = useCurrentUserId();
   const {
-    user: selectedUser,
-    setUser: setSelectedUser,
+    item: selectedUser,
     open: selectedUserOpen,
-    setOpen: setSelectedUserOpen
-  } = useUserProfileModal();
+    setOpen: setSelectedUserOpen,
+    openSelectedItemModal: openSelectedUserModal
+  } = useModal();
   const navigate = useNavigate();
 
   return (
@@ -28,8 +28,7 @@ const People = () => {
             if (isSelf(user._id, currentUserId))
               return navigate(R.private.profile.abs);
 
-            setSelectedUser(user);
-            setSelectedUserOpen(true);
+            openSelectedUserModal(user);
           }}
         />
       </div>

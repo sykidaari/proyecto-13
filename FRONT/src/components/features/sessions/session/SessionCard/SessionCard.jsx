@@ -39,7 +39,7 @@ const SessionCard = ({
     >
       <h4
         className={cN(
-          minimal ? 'text-sm h-5' : 'text-base h-6',
+          minimal ? 'text-sm py-0.5' : 'text-base py-1',
           detail && 'text-lg text-primary mb-2.5 h-auto font-semibold',
           !sessionParameters.sessionName &&
             (minimal

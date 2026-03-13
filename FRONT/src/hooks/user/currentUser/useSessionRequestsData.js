@@ -3,13 +3,14 @@ import useSessionsList from '@/hooks/user/currentUser/useSessionsList';
 
 const groupSessionRequests = (
   requests = [],
-  activeIds = new Set(),
+  sessionsByGroupId = new Map(),
   trackNew = false
 ) => {
   const grouped = new Map();
 
   requests.forEach((req) => {
     const existing = grouped.get(req.requestGroupId);
+    const session = sessionsByGroupId.get(req.requestGroupId);
 
     if (existing) {
       existing.users.push(req.user);
@@ -18,9 +19,9 @@ const groupSessionRequests = (
     } else {
       grouped.set(req.requestGroupId, {
         requestGroupId: req.requestGroupId,
-        sessionParameters: req.sessionParameters,
+        sessionParameters: session || req.sessionParameters,
         users: req.user ? [req.user] : [],
-        active: activeIds.has(req.requestGroupId),
+        active: !!session,
         ...(trackNew && { isNew: !!req.isNewItem })
       });
     }
@@ -28,7 +29,6 @@ const groupSessionRequests = (
 
   return [...grouped.values()];
 };
-
 const useSessionRequestsData = () => {
   const { data: requestsData, isError, isPending, isSuccess } = useRequests();
   const { data } = useSessionsList();
@@ -37,12 +37,18 @@ const useSessionRequestsData = () => {
   const receivedSessionRequests = requestsData?.sessions?.received || [];
   const activeSessions = data?.sessionsList || [];
 
-  const activeIds = new Set(activeSessions.map((s) => s.requestGroupId));
+  const sessionsByGroupId = new Map(
+    activeSessions.map((s) => [s.session?.requestGroupId, s.session])
+  );
 
-  const sentRequests = groupSessionRequests(sentSessionRequests, activeIds);
+  const sentRequests = groupSessionRequests(
+    sentSessionRequests,
+    sessionsByGroupId
+  );
+
   const receivedRequests = groupSessionRequests(
     receivedSessionRequests,
-    activeIds,
+    sessionsByGroupId,
     true
   );
 
@@ -54,4 +60,5 @@ const useSessionRequestsData = () => {
     isSuccess
   };
 };
+
 export default useSessionRequestsData;

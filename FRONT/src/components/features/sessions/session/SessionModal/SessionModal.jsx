@@ -1,7 +1,6 @@
 import useText from '@/contexts/App/hooks/useText';
 import cN from '@/utils/classNameManager';
 import SessionCard from '@c/features/sessions/session/SessionCard/SessionCard';
-import { Children } from 'react';
 import { Link } from 'react-router-dom';
 
 const SessionModal = ({
@@ -9,17 +8,21 @@ const SessionModal = ({
   open,
   setOpen,
   children,
-  isActive
+  isActive = false
 }) => {
   const openText = useText('features.sessions.openSession');
-
+  console.log;
   return (
     <dialog className={cN('modal', open && 'modal-open')}>
       <div className='modal-box max-w-2xs mobile:max-w-md'>
         <SessionCard sessionParameters={sessionParameters} detail>
           {children}
 
-          {isActive && <Link className='mt-5 btn btn-primary'>{openText}</Link>}
+          {isActive && (
+            <Link className='mt-5 btn btn-primary' to={sessionParameters._id}>
+              {openText}
+            </Link>
+          )}
         </SessionCard>
       </div>
       <div

@@ -1,5 +1,9 @@
 import ERR from '../../../../constants/domain/errorCodes.js';
-import { getUserChild, markItemAsSeen } from '../userChildren.controller.js';
+import {
+  getUserChild,
+  markAllItemsAsSeen,
+  markItemAsSeen
+} from '../userChildren.controller.js';
 
 //* GET
 
@@ -14,6 +18,8 @@ export const markSessionInListAsSeen = markItemAsSeen(
   'sessionsList',
   'session'
 );
+
+export const markAllSessionsInListAsSeen = markAllItemsAsSeen('sessionsList');
 
 export const setSessionLastSeenAt = async (req, res, next) => {
   const {

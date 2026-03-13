@@ -1,9 +1,9 @@
 import useText from '@/contexts/App/hooks/useText';
 import useCurrentUserId from '@/contexts/UserSession/hooks/useCurrentUserId';
 import useMarkAllItemsAsSeen from '@/hooks/useMarkAllItemsAsSeen';
+import useModal from '@/hooks/useModal';
 import useRequests from '@/hooks/user/currentUser/useRequests';
 import UserProfileCard from '@c/features/user/UserProfile/UserProfileCard/UserProfileCard';
-import { useUserProfileModal } from '@c/features/user/UserProfile/UserProfileModal/hooks';
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
@@ -15,11 +15,11 @@ const ReceivedFriendRequestsSection = ({ secondary = false }) => {
   } = useText('features.user.currentUser.receivedRequests');
 
   const {
-    user: selectedUser,
-    setUser: setSelectedUser,
+    item: selectedUser,
     open: selectedUserOpen,
-    setOpen: setSelectedUserOpen
-  } = useUserProfileModal();
+    setOpen: setSelectedUserOpen,
+    openSelectedItemModal: openSelectedUserModal
+  } = useModal();
 
   const { data, isPending, isError, isSuccess } = useRequests();
 
@@ -46,8 +46,7 @@ const ReceivedFriendRequestsSection = ({ secondary = false }) => {
             <ListBoxItem
               key={item._id}
               onClick={() => {
-                setSelectedUser(item.user);
-                setSelectedUserOpen(true);
+                openSelectedUserModal(item.user);
               }}
               isNew={item.isNewItem}
             >

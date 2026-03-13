@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getSessionsList,
+  markAllSessionsInListAsSeen,
   markSessionInListAsSeen,
   setSessionLastSeenAt
 } from '../../../controllers/user/sessionsList/sessionsList.controller.js';
@@ -16,6 +17,7 @@ sessionsListRouter
     [requireSelf, requireAndValidateReqBody({ required: 'session' })],
     markSessionInListAsSeen
   )
+  .patch('/mark-all-seen', [requireSelf], markAllSessionsInListAsSeen)
   .patch(
     '/set-last-seen',
     [requireSelf, requireAndValidateReqBody({ required: 'session' })],
