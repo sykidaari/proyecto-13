@@ -7,11 +7,13 @@ export const validateFullMediaData = requireAndValidateReqBody({
   optional: [
     'media.showType',
 
+    'media.imageSet',
     'media.imageSet.verticalPoster',
     'media.imageSet.horizontalPoster',
     'media.imageSet.verticalBackdrop',
     'media.imageSet.horizontalBackdrop',
 
+    'media.details',
     'media.details.releaseYear',
     'media.details.overview',
     'media.details.genres',

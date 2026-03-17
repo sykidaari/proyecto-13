@@ -17,7 +17,7 @@ const Discover = () => {
     useFetchMedias({
       ...(keyword && { keyword })
     });
-  const { index, advance } = useMediaSwipeIndex();
+  const { index, advance } = useMediaSwipeIndex(shows.length);
   usePrefetchNextPage({
     totalLength: shows.length,
     currentIndex: index,

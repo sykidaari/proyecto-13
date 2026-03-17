@@ -60,6 +60,7 @@ export const getSessionById = async (req, res, next) => {
   try {
     await session.populate([
       { path: 'participants.user', select: 'userName' },
+      'participants.matchProposals',
       'matchedMedias'
     ]);
 

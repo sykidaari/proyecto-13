@@ -569,7 +569,7 @@ Note: Some responses include additional fields depending on access level (self v
   - Description : rejects a session request
     <br>
 
-`/api/v1/user/:userId/session/:sessionId`
+`/api/v1/:userId/session/:sessionId`
 
 - **GET**
   - Access : session participant | admin

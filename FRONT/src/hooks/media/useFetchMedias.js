@@ -14,6 +14,7 @@ const useFetchMedias = (optionalParams = {}) => {
     queryKey: ['fetchMedias', paramsKey, country, language],
     queryFn: async ({ pageParam = null }) => {
       const params = {
+        // ALLOWS OVERRIDES
         countryCode: country,
         languageCode: language,
         ...optionalParams,

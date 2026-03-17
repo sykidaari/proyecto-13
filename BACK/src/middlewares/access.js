@@ -136,7 +136,7 @@ export const setIsSessionParticipant = async (req, res, next) => {
   req.isSessionParticipant = false;
 
   const isParticipant = session.participants.some(
-    (participant) => participant.user.toString() === user.toString()
+    (participant) => participant.user.toString() === user._id.toString()
   );
 
   if (isParticipant) req.isSessionParticipant = true;
@@ -149,4 +149,6 @@ export const requireSessionParticipantOrAdmin = (req, res, next) => {
 
   if (!isSessionParticipant && !isAdmin)
     throw customError(403, ERR.access.notParticipantOrAdmin);
+
+  next();
 };

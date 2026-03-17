@@ -3,7 +3,12 @@ import DetailsToggle from '@c/features/media/MediaSection/MediaCardStack/MediaCa
 import MediaDetails from '@c/features/media/MediaSection/MediaCardStack/MediaCard/MediaDetails/MediaDetails.jsx';
 import { useEffect, useRef, useState } from 'react';
 
-const MediaCard = ({ media, specifyShowType, onMediaLoaded }) => {
+const MediaCard = ({
+  media,
+  specifyShowType,
+  onMediaLoaded,
+  noDetails = false
+}) => {
   const [showDetails, setShowDetails] = useState(false);
   const { movie: movieText, series: seriesText } = useText(
     'features.media.showTypes'
@@ -49,12 +54,14 @@ const MediaCard = ({ media, specifyShowType, onMediaLoaded }) => {
       style={imgWidth ? { width: imgWidth } : undefined}
     >
       <div className='w-fit min-h-0 rounded-box overflow-hidden relative'>
-        <DetailsToggle onChange={toggleDetails} />
+        {!noDetails && <DetailsToggle onChange={toggleDetails} />}
 
         {showDetails && (
           <MediaDetails
             details={media?.details}
-            streamingOptions={media?.streamingOptions}
+            streamingOptions={
+              media?.streamingOptions || media?.details?.streamingOptions
+            }
           />
         )}
 

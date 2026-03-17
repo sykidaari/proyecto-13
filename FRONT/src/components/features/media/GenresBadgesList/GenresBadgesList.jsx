@@ -1,10 +1,17 @@
+import useText from '@/contexts/App/hooks/useText';
 import cN from '@/utils/classNameManager';
 
 const GenresBadgesList = ({ genres, onClick, className }) => {
+  const options = useText(
+    'features.sessions.session.parameters.genres.options'
+  );
+
   if (!genres) return null;
 
   const items = Array.isArray(genres)
-    ? genres
+    ? genres.map((g) =>
+        typeof g === 'string' ? { id: g, name: options[g] ?? g } : g
+      )
     : Object.entries(genres).map(([key, value]) => ({
         id: key,
         name: value

@@ -5,18 +5,17 @@ import useModal from '@/hooks/useModal';
 import useSessionsList from '@/hooks/user/currentUser/useSessionsList';
 import SessionCard from '@c/features/sessions/session/SessionCard/SessionCard';
 import SessionModal from '@c/features/sessions/session/SessionModal/SessionModal';
+import SessionParticipants from '@c/features/sessions/session/SessionParticipants/SessionParticipants';
 import UserProfileModal from '@c/features/user/UserProfile/UserProfileModal/UserProfileModal';
 import ListBox from '@c/ui/containers/ListBox/ListBox';
 import ListBoxItem from '@c/ui/containers/ListBox/ListBoxItem/ListBoxItem';
 
-//! NEED TO ADD ISUPDATED
+//! NEED TO ADD ISUPDATED, ALSO FOR NOTIFS
 const SessionsSection = () => {
   const { noSessions: noSessionsText, title: titleText } = useText(
     'features.user.currentUser.sessionsSection'
   );
-  const { participants: participantsText } = useText(
-    'features.sessions.session'
-  );
+
   const {
     state: { userName: currentUserName, userId: currentUserId }
   } = useUserSessionContext();
@@ -41,8 +40,6 @@ const SessionsSection = () => {
     `/user/${currentUserId}/private/sessions-list`,
     isSuccess
   );
-
-  console.log(data);
 
   return (
     <>
@@ -87,25 +84,10 @@ const SessionsSection = () => {
           sessionParameters={selectedSession.session}
           isActive
         >
-          <div className='flex items-center gap-1.5 mt-2.5'>
-            <h4 className='text-xs'>{participantsText}:</h4>
-            <ul className='flex gap-1 flex-wrap'>
-              {selectedSession?.session?.participants?.map((p, i) => (
-                <li className='font-semibold text-sm' key={p?.user._id}>
-                  <button
-                    onClick={() => {
-                      openSelectedUserModal(p?.user);
-                    }}
-                    className='cursor-pointer'
-                  >
-                    {p?.user?.userName}
-                    {i < selectedSession?.session?.participants?.length - 1 &&
-                      ','}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <SessionParticipants
+            session={selectedSession?.session}
+            openSelectedUserModal={openSelectedUserModal}
+          />
         </SessionModal>
       )}
       {selectedUser && (

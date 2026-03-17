@@ -1,5 +1,5 @@
-import cN from '@/utils/classNameManager.js';
 import UserProfile from '@c/features/user/UserProfile/UserProfile.jsx';
+import Modal from '@c/ui/Modal/Modal';
 import React from 'react';
 
 const UserProfileModal = ({
@@ -10,22 +10,10 @@ const UserProfileModal = ({
   children
 }) => {
   return (
-    <dialog className={cN('modal', open && 'modal-open')}>
-      <div className='modal-box max-w-2xs mobile:max-w-md'>
-        <UserProfile
-          userId={userId}
-          noFriendshipButtons={noFriendshipButtons}
-        />
-        {children}
-      </div>
-      <div
-        method='dialog'
-        className='modal-backdrop cursor-pointer'
-        onClick={() => {
-          setOpen(false);
-        }}
-      ></div>
-    </dialog>
+    <Modal open={open} setOpen={setOpen}>
+      <UserProfile userId={userId} noFriendshipButtons={noFriendshipButtons} />
+      {children}
+    </Modal>
   );
 };
 

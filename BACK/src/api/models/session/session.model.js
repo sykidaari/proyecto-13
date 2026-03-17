@@ -63,7 +63,11 @@ const SessionSchema = buildSchema(
       type: Date
     }
   },
-  'sessions'
+  'sessions',
+  {
+    toJSON: { flattenMaps: true },
+    toObject: { flattenMaps: true }
+  }
 );
 
 const Session = model('Session', SessionSchema);

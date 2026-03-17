@@ -88,7 +88,7 @@ const MediaCardStack = ({
           </motion.div>
         )}
       </div>
-      <div className='flex gap-2.5 items-center *:btn *:btn-lg *:p-2.5 *:btn-circle glass p-2.5 justify-center rounded-box bg-base-100/25 relative z-20 max-compact:*:btn-md'>
+      <div className='flex gap-2.5 items-center *:btn *:btn-lg *:p-2.5 *:btn-circle glass p-2.5 justify-center rounded-box bg-base-100/25 relative z-20 max-compact:*:btn-md mr-11.5'>
         {controlButtons?.({
           swipePositive: doPositive,
           swipeNegative: doNegative,

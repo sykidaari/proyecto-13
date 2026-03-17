@@ -41,6 +41,7 @@ const MediaSchema = buildSchema(
 
       streamingOptions: [
         {
+          _id: false,
           country: requiredString,
           services: {
             // key is service.id
@@ -53,7 +54,11 @@ const MediaSchema = buildSchema(
       ]
     }
   },
-  'medias'
+  'medias',
+  {
+    toJSON: { flattenMaps: true },
+    toObject: { flattenMaps: true }
+  }
 );
 
 const Media = model('Media', MediaSchema);

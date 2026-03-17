@@ -111,6 +111,7 @@ const TEXTS = {
       media: {
         showTypes: { movie: 'Movie', series: 'Series' },
         detailsTitles: {
+          releaseYear: 'Release year',
           rating: 'Rating',
           directors: 'Directors',
           creators: 'Creators',
@@ -145,6 +146,7 @@ const TEXTS = {
           'You have no friends yet! Add friends first to start a session',
         session: {
           untitled: 'Untitled session',
+
           invite: {
             title: 'Invite friends',
             maxAmount: 'Sessions can have up to 6 participants'
@@ -203,7 +205,28 @@ const TEXTS = {
             title: 'Session created! Now waiting for others to join.',
             button: 'Ok!'
           },
-          participants: 'Participants'
+          participants: 'Participants',
+          menu: {
+            open: 'Open menu',
+            close: 'Close menu',
+            sessionDetails: 'Session details',
+            sessionOptions: {
+              title: 'Options',
+              options: {
+                leaveSession: {
+                  title: 'Leave session',
+                  confirmation: 'Are you sure you wish to leave this session?',
+                  yes: 'Yes, leave',
+                  no: 'No, stay'
+                }
+              }
+            },
+            matchedMedias: {
+              title: 'Matched shows',
+              none: "You've matched no medias yet. Keep swiping!"
+            }
+          },
+          newMatch: 'NEW MATCH!'
         }
       },
       isNewItem: 'NEW',

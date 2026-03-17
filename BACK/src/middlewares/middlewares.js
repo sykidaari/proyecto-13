@@ -111,6 +111,8 @@ export const findSessionById = async (req, res, next) => {
     if (!session) throw customError(404, ERR.session.notFound);
 
     req.session = session;
+
+    next();
   } catch (err) {
     next(err);
   }
@@ -137,6 +139,7 @@ export const saveMedia = async (req, res, next) => {
     media.details = mediaData.details || {};
 
     media.titles = existingTitles || new Map();
+
     media.titles.set(languageCode, mediaData.title);
 
     if (mediaData.details?.overview || existingOverview) {
@@ -161,6 +164,7 @@ export const saveMedia = async (req, res, next) => {
     }
 
     await media.save();
+
     next();
   } catch (err) {
     next(err);

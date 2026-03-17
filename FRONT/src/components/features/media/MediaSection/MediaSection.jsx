@@ -15,7 +15,7 @@ const MediaSection = ({
   isError,
   hasNextPage,
 
-  swipeDirection,
+  swipeDirection = 'x',
 
   specifyShowType = false,
 
