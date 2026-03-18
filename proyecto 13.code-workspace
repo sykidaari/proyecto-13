@@ -2,6 +2,9 @@
   "folders": [
     {
       "path": "."
+    },
+    {
+      "path": "../proyecto 12"
     }
   ],
   "settings": {
