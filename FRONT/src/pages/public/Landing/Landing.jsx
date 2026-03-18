@@ -13,8 +13,8 @@ const Landing = () => {
   return (
     <div className='flex items-center justify-center w-full'>
       <TopShowBanners />
-      <div className='relative z-1 rounded-box glass p-2.5 small:px-5  bg-base-100/15 w-full max-w-sm'>
-        <section className='relative z-1  my-5 p-2.5 small:p-7 glass h-fit rounded-box shadow bg-base-100 flex flex-col gap-5 items-center'>
+      <div className='relative z-1 rounded-box glass p-2.5 small:px-5 max-small:max-w-2xs bg-base-100/15 w-full max-w-sm'>
+        <section className='relative z-1 my-2.5 small:my-5 p-2.5 small:p-7 glass h-fit rounded-box shadow bg-base-100 flex flex-col gap-5 items-center'>
           <h2 className='text-xl text-center'>
             <Slogan />
           </h2>
