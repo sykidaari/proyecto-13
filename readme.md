@@ -96,6 +96,7 @@ The backend routes all have different access levels, so the application is very 
 
 - In the user profiles, there are components pending for the lists mentioned above.
 - Additionally, there will be in the future a **`settings`** page which is accessed through the profile-page (_/profile_, displays the currently logged in user's profile). In this settings page, the user will be able to change their appSettings: which include app-theme (light-dark), and whether or not these are synced across devices on their account, or on the other hand if they are device specific. They will also be able to change their account settings and information, which include their username, nickname, emailaddress, password, country, language, and whether or not their favorites and watchlist are shared with friends
+- In th settings page, the user will also be able to log out
 
 ###### GENERAL:
 
